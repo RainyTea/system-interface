@@ -1,0 +1,1799 @@
+{
+  "woodcutting": {
+    "petBaseChance": 317647,
+    "resources": [
+      {
+        "name": "Logs",
+        "levelRequired": 1,
+        "xpPerAction": 25.0,
+        "itemId": 1511,
+        "objectIds": [1276, 1278, 1279, 1286, 1289, 1290, 1291, 1365, 1383, 1384, 2409, 3033, 3034, 3035, 3036, 3881, 3882, 3883, 52823, 58540],
+        "uses": ["Fletching:1", "Firemaking:1", "Construction:1"],
+        "petBaseChanceOverride": null
+      },
+      {
+        "name": "Oak logs",
+        "levelRequired": 15,
+        "xpPerAction": 37.5,
+        "itemId": 1521,
+        "objectIds": [10820, 42395, 51772],
+        "wikiPage": "Oak tree",
+        "uses": ["Fletching:20", "Firemaking:15", "Construction:15"],
+        "petBaseChanceOverride": 361146
+      },
+      {
+        "name": "Willow logs",
+        "levelRequired": 30,
+        "xpPerAction": 67.5,
+        "itemId": 1519,
+        "objectIds": [10819, 10829, 10831, 10833],
+        "wikiPage": "Willow tree",
+        "uses": ["Fletching:35", "Firemaking:30"],
+        "petBaseChanceOverride": 289286
+      },
+      {
+        "name": "Teak logs",
+        "levelRequired": 35,
+        "xpPerAction": 85.0,
+        "itemId": 6333,
+        "objectIds": [9036, 36686, 40758],
+        "wikiPage": "Teak tree",
+        "uses": ["Fletching:35", "Firemaking:35", "Construction:35"],
+        "petBaseChanceOverride": 264336
+      },
+      {
+        "name": "Arctic pine logs",
+        "levelRequired": 42,
+        "xpPerAction": 40.0,
+        "itemId": 10810,
+        "objectIds": [3037, 10578, 10579],
+        "wikiPage": "Arctic pine",
+        "uses": ["Firemaking:42"],
+        "petBaseChanceOverride": 145758
+      },
+      {
+        "name": "Maple logs",
+        "levelRequired": 45,
+        "xpPerAction": 100.0,
+        "itemId": 1517,
+        "objectIds": [10832, 36681, 40754],
+        "wikiPage": "Maple tree",
+        "uses": ["Fletching:50", "Firemaking:45"],
+        "petBaseChanceOverride": 221918
+      },
+      {
+        "name": "Mahogany logs",
+        "levelRequired": 50,
+        "xpPerAction": 125.0,
+        "itemId": 6332,
+        "objectIds": [9034, 36688, 40760],
+        "wikiPage": "Mahogany tree",
+        "uses": ["Firemaking:50", "Construction:50"],
+        "petBaseChanceOverride": 220623
+      },
+      {
+        "name": "Yew logs",
+        "levelRequired": 60,
+        "xpPerAction": 175.0,
+        "itemId": 1515,
+        "objectIds": [10822, 36683, 40756, 42391, 57790],
+        "wikiPage": "Yew tree",
+        "uses": ["Fletching:65", "Firemaking:60"],
+        "petBaseChanceOverride": 145013
+      },
+      {
+        "name": "Magic logs",
+        "levelRequired": 75,
+        "xpPerAction": 250.0,
+        "itemId": 1513,
+        "objectIds": [10834],
+        "wikiPage": "Magic tree",
+        "uses": ["Fletching:80", "Firemaking:75"],
+        "petBaseChanceOverride": 72321
+      },
+      {
+        "name": "Sulliuscep cap",
+        "levelRequired": 65,
+        "xpPerAction": 127.0,
+        "itemId": 22448,
+        "objectIds": [30602, 30603, 30920],
+        "wikiPage": "Sulliuscep",
+        "uses": ["Firemaking:65"],
+        "petBaseChanceOverride": 343000
+      },
+      {
+        "name": "Redwood logs",
+        "levelRequired": 90,
+        "xpPerAction": 380.0,
+        "itemId": 19669,
+        "objectIds": [29668, 29669, 29670, 29671, 29681, 29682],
+        "wikiPage": "Redwood tree",
+        "uses": ["Fletching:85", "Firemaking:90"],
+        "petBaseChanceOverride": 72321
+      },
+      {
+        "name": "Bird nest",
+        "levelRequired": 1,
+        "xpPerAction": 0.0,
+        "itemId": 22798,
+        "itemIds": [5070, 5071, 5072, 5073, 5074, 22798],
+        "objectIds": [10820, 42395, 51772, 10819, 10829, 10831, 10833, 9036, 36686, 40758, 3037, 10578, 10579, 10832, 36681, 40754, 9034, 36688, 40760, 10822, 36683, 40756, 42391, 57790, 10834],
+        "rewardOnly": true,
+        "rate": 0.00390625,
+        "uses": ["Woodcutting:1", "Farming:1", "Crafting:5", "Prayer:1", "Herblore:1"],
+        "petBaseChanceOverride": null
+      },
+      {
+        "name": "Oak leaves",
+        "levelRequired": 15,
+        "xpPerAction": 0.0,
+        "itemId": 6022,
+        "objectIds": [10820, 42395, 51772],
+        "rewardOnly": true,
+        "requiredItemsAny": [28136, 28143, 28145],
+        "rate": 0.25,
+        "petBaseChanceOverride": null
+      },
+      {
+        "name": "Willow leaves",
+        "levelRequired": 30,
+        "xpPerAction": 0.0,
+        "itemId": 6024,
+        "objectIds": [10819, 10829, 10831, 10833],
+        "rewardOnly": true,
+        "requiredItemsAny": [28136, 28143, 28145],
+        "rate": 0.25,
+        "petBaseChanceOverride": null
+      },
+      {
+        "name": "Maple leaves",
+        "levelRequired": 45,
+        "xpPerAction": 0.0,
+        "itemId": 6028,
+        "objectIds": [10832, 36681, 40754],
+        "rewardOnly": true,
+        "requiredItemsAny": [28136, 28143, 28145],
+        "rate": 0.25,
+        "petBaseChanceOverride": null
+      },
+      {
+        "name": "Yew leaves",
+        "levelRequired": 60,
+        "xpPerAction": 0.0,
+        "itemId": 6026,
+        "objectIds": [10822, 36683, 40756, 42391, 57790],
+        "rewardOnly": true,
+        "requiredItemsAny": [28136, 28143, 28145],
+        "rate": 0.25,
+        "petBaseChanceOverride": null
+      },
+      {
+        "name": "Magic leaves",
+        "levelRequired": 75,
+        "xpPerAction": 0.0,
+        "itemId": 6030,
+        "objectIds": [10834],
+        "rewardOnly": true,
+        "requiredItemsAny": [28136, 28143, 28145],
+        "rate": 0.25,
+        "petBaseChanceOverride": null
+      },
+      {
+        "name": "Clue nest",
+        "levelRequired": 1,
+        "xpPerAction": 0.0,
+        "itemId": 23127,
+        "itemIds": [23127, 19712, 19714, 19716, 19718],
+        "uses": ["Woodcutting:1", "Treasure Trails:1"],
+        "petBaseChanceOverride": null
+      }
+    ]
+  },
+  "mining": {
+    "petBaseChance": 741600,
+    "resources": [
+      {
+        "name": "Copper ore",
+        "levelRequired": 1,
+        "xpPerAction": 17.5,
+        "itemId": 436,
+        "objectIds": [10943, 11161],
+        "wikiPage": "Copper rocks",
+        "uses": ["Smithing:1"],
+        "petBaseChanceOverride": null
+      },
+      {
+        "name": "Tin ore",
+        "levelRequired": 1,
+        "xpPerAction": 17.5,
+        "itemId": 438,
+        "objectIds": [11360, 11361],
+        "wikiPage": "Tin rocks",
+        "uses": ["Smithing:1"],
+        "petBaseChanceOverride": null
+      },
+      {
+        "name": "Iron ore",
+        "levelRequired": 15,
+        "xpPerAction": 35.0,
+        "itemId": 440,
+        "objectIds": [11364, 11365],
+        "wikiPage": "Iron rocks",
+        "uses": ["Smithing:15"],
+        "petBaseChanceOverride": null
+      },
+      {
+        "name": "Silver ore",
+        "levelRequired": 20,
+        "xpPerAction": 40.0,
+        "itemId": 442,
+        "objectIds": [11368, 11369],
+        "wikiPage": "Silver rocks",
+        "uses": ["Smithing:20", "Crafting:16"],
+        "petBaseChanceOverride": null
+      },
+      {
+        "name": "Coal",
+        "levelRequired": 30,
+        "xpPerAction": 50.0,
+        "itemId": 453,
+        "objectIds": [11366, 11367],
+        "wikiPage": "Coal rocks",
+        "uses": ["Smithing:30"],
+        "petBaseChanceOverride": 290640
+      },
+      {
+        "name": "Gold ore",
+        "levelRequired": 40,
+        "xpPerAction": 65.0,
+        "itemId": 444,
+        "objectIds": [11370, 11371],
+        "wikiPage": "Gold rocks",
+        "uses": ["Smithing:40", "Crafting:5"],
+        "petBaseChanceOverride": 296640
+      },
+      {
+        "name": "Mithril ore",
+        "levelRequired": 55,
+        "xpPerAction": 80.0,
+        "itemId": 447,
+        "objectIds": [11372, 11373],
+        "wikiPage": "Mithril rocks",
+        "uses": ["Smithing:50"],
+        "petBaseChanceOverride": 148320
+      },
+      {
+        "name": "Adamantite ore",
+        "levelRequired": 70,
+        "xpPerAction": 95.0,
+        "itemId": 449,
+        "objectIds": [11374, 11375],
+        "wikiPage": "Adamantite rocks",
+        "uses": ["Smithing:70"],
+        "petBaseChanceOverride": 59328
+      },
+      {
+        "name": "Runite ore",
+        "levelRequired": 85,
+        "xpPerAction": 125.0,
+        "itemId": 451,
+        "objectIds": [11376, 11377],
+        "wikiPage": "Runite rocks",
+        "uses": ["Smithing:85"],
+        "petBaseChanceOverride": 42377
+      },
+      {
+        "name": "Amethyst",
+        "levelRequired": 92,
+        "xpPerAction": 240.0,
+        "itemId": 21347,
+        "objectIds": [11388, 11389],
+        "wikiPage": "Amethyst crystals",
+        "uses": ["Crafting:82", "Fletching:82"],
+        "petBaseChanceOverride": 46350
+      }
+    ]
+  },
+  "fishing": {
+    "petBaseChance": 257770,
+    "resources": [
+      {
+        "name": "Raw shrimps",
+        "method": "net",
+        "levelRequired": 1,
+        "xpPerAction": 10.0,
+        "itemId": 317,
+        "npcIds": [1514, 1517, 1518, 1521, 1523, 1524, 1525, 1528, 1530, 1532, 1544, 3913],
+        "uses": ["Cooking:1"],
+        "petBaseChanceOverride": 870330
+      },
+      {
+        "name": "Raw sardine",
+        "method": "bait",
+        "levelRequired": 5,
+        "xpPerAction": 20.0,
+        "itemId": 327,
+        "secondaries": [313],
+        "npcIds": [1514, 1517, 1518, 1521, 1523, 1524, 1525, 1528, 1530, 1532, 1544, 3913],
+        "uses": ["Cooking:1"],
+        "petBaseChanceOverride": 1056000
+      },
+      {
+        "name": "Raw herring",
+        "method": "bait",
+        "levelRequired": 10,
+        "xpPerAction": 30.0,
+        "itemId": 345,
+        "secondaries": [313],
+        "npcIds": [1514, 1517, 1518, 1521, 1523, 1524, 1525, 1528, 1530, 1532, 1544, 3913],
+        "uses": ["Cooking:5"],
+        "petBaseChanceOverride": 1056000
+      },
+      {
+        "name": "Raw anchovies",
+        "method": "net",
+        "levelRequired": 15,
+        "xpPerAction": 40.0,
+        "itemId": 321,
+        "npcIds": [1514, 1517, 1518, 1521, 1523, 1524, 1525, 1528, 1530, 1532, 1544, 3913],
+        "uses": ["Cooking:1"],
+        "petBaseChanceOverride": 870330
+      },
+      {
+        "name": "Raw trout",
+        "method": "lure",
+        "levelRequired": 20,
+        "xpPerAction": 50.0,
+        "itemId": 335,
+        "secondaries": [314],
+        "npcIds": [394, 1506, 1507, 1508, 1509, 1512, 1513, 1515, 1516, 1526, 1527, 1531],
+        "uses": ["Cooking:15"],
+        "petBaseChanceOverride": 923616
+      },
+      {
+        "name": "Raw pike",
+        "method": "bait",
+        "levelRequired": 25,
+        "xpPerAction": 60.0,
+        "itemId": 349,
+        "secondaries": [313],
+        "npcIds": [394, 1506, 1507, 1508, 1509, 1512, 1513, 1515, 1516, 1526, 1527, 1531],
+        "uses": ["Cooking:20"],
+        "petBaseChanceOverride": 305792
+      },
+      {
+        "name": "Raw salmon",
+        "method": "lure",
+        "levelRequired": 30,
+        "xpPerAction": 70.0,
+        "itemId": 331,
+        "secondaries": [314],
+        "npcIds": [394, 1506, 1507, 1508, 1509, 1512, 1513, 1515, 1516, 1526, 1527, 1531],
+        "uses": ["Cooking:25"],
+        "petBaseChanceOverride": 923616
+      },
+      {
+        "name": "Leaping trout",
+        "method": "barbarian",
+        "levelRequired": 48,
+        "xpPerAction": 50.0,
+        "itemId": 11328,
+        "secondaries": [313, 314, 11324, 11326, 11334],
+        "uses": ["Strength:15", "Agility:15", "Cooking:1"],
+        "petBaseChanceOverride": null
+      },
+      {
+        "name": "Leaping salmon",
+        "method": "barbarian",
+        "levelRequired": 58,
+        "xpPerAction": 70.0,
+        "itemId": 11330,
+        "secondaries": [313, 314, 11324, 11326, 11334],
+        "uses": ["Strength:30", "Agility:30", "Cooking:1"],
+        "petBaseChanceOverride": null
+      },
+      {
+        "name": "Leaping sturgeon",
+        "method": "barbarian",
+        "levelRequired": 70,
+        "xpPerAction": 80.0,
+        "itemId": 11332,
+        "secondaries": [313, 314, 11324, 11326, 11334],
+        "uses": ["Strength:45", "Agility:45", "Cooking:1"],
+        "petBaseChanceOverride": null
+      },
+      {
+        "name": "Raw tuna",
+        "method": "harpoon",
+        "levelRequired": 35,
+        "xpPerAction": 80.0,
+        "itemId": 359,
+        "npcIds": [1510, 1519, 1522, 1533, 2146, 3657, 3914, 7199, 7460, 7465],
+        "uses": ["Cooking:30"],
+        "petBaseChanceOverride": 257770
+      },
+      {
+        "name": "Raw lobster",
+        "method": "cage",
+        "levelRequired": 40,
+        "xpPerAction": 90.0,
+        "itemId": 377,
+        "npcIds": [1510, 1519, 1522, 1533, 2146, 3657, 3914, 7199, 7460, 7465],
+        "uses": ["Cooking:40"],
+        "petBaseChanceOverride": 116129
+      },
+      {
+        "name": "Raw bass",
+        "method": "bignet",
+        "levelRequired": 46,
+        "xpPerAction": 100.0,
+        "itemId": 363,
+        "npcIds": [1511, 1520, 1534, 3419, 3915, 4476, 4477, 5233, 5234, 7200],
+        "uses": ["Cooking:43"],
+        "petBaseChanceOverride": null
+      },
+      {
+        "name": "Raw swordfish",
+        "method": "harpoon",
+        "levelRequired": 50,
+        "xpPerAction": 100.0,
+        "itemId": 371,
+        "npcIds": [1510, 1519, 1522, 1533, 2146, 3657, 3914, 7199, 7460, 7465],
+        "uses": ["Cooking:45"],
+        "petBaseChanceOverride": 257770
+      },
+      {
+        "name": "Raw monkfish",
+        "method": "net",
+        "levelRequired": 62,
+        "xpPerAction": 120.0,
+        "itemId": 7944,
+        "npcIds": [4316],
+        "uses": ["Cooking:62"],
+        "petBaseChanceOverride": 138583
+      },
+      {
+        "name": "Raw karambwan",
+        "method": "vessel",
+        "levelRequired": 65,
+        "xpPerAction": 50.0,
+        "itemId": 3142,
+        "secondaries": [3150],
+        "npcIds": [4712, 4713],
+        "uses": ["Cooking:30"],
+        "petBaseChanceOverride": 170874
+      },
+      {
+        "name": "Raw shark",
+        "method": "harpoon",
+        "levelRequired": 76,
+        "xpPerAction": 110.0,
+        "itemId": 383,
+        "npcIds": [1511, 1520, 1534, 3419, 3915, 4476, 4477, 5233, 5234, 7200],
+        "uses": ["Cooking:80"],
+        "petBaseChanceOverride": 82243
+      },
+      {
+        "name": "Raw anglerfish",
+        "method": "bait",
+        "levelRequired": 82,
+        "xpPerAction": 120.0,
+        "itemId": 13439,
+        "secondaries": [13430, 13431, 13432],
+        "npcIds": [6825],
+        "uses": ["Cooking:84"],
+        "petBaseChanceOverride": 78649
+      }
+    ]
+  },
+  "hunter": {
+    "petBaseChance": 0,
+    "resources": [
+      {
+        "name": "Chinchompa",
+        "levelRequired": 53,
+        "xpPerAction": 198.5,
+        "itemId": 10033,
+        "uses": ["Ranged:45"],
+        "petBaseChanceOverride": null
+      },
+      {
+        "name": "Red chinchompa",
+        "levelRequired": 63,
+        "xpPerAction": 265.0,
+        "itemId": 10034,
+        "uses": ["Ranged:55"],
+        "petBaseChanceOverride": null
+      },
+      {
+        "name": "Black chinchompa",
+        "levelRequired": 73,
+        "xpPerAction": 315.0,
+        "itemId": 11959,
+        "uses": ["Ranged:65"],
+        "petBaseChanceOverride": null
+      },
+      {
+        "name": "Black warlock",
+        "levelRequired": 45,
+        "xpPerAction": 54.0,
+        "itemId": 10014,
+        "uses": ["Hunter:45"],
+        "petBaseChanceOverride": null
+      },
+      {
+        "name": "Snowy knight",
+        "levelRequired": 35,
+        "xpPerAction": 44.0,
+        "itemId": 10016,
+        "uses": ["Hunter:35"],
+        "petBaseChanceOverride": null
+      },
+      {
+        "name": "Sapphire glacialis",
+        "levelRequired": 25,
+        "xpPerAction": 34.0,
+        "itemId": 10018,
+        "uses": ["Hunter:25"],
+        "petBaseChanceOverride": null
+      },
+      {
+        "name": "Ruby harvest",
+        "levelRequired": 15,
+        "xpPerAction": 24.0,
+        "itemId": 10020,
+        "uses": ["Hunter:15"],
+        "petBaseChanceOverride": null
+      },
+      {
+        "name": "Sunlight moth",
+        "levelRequired": 75,
+        "xpPerAction": 180.0,
+        "itemId": 28890,
+        "uses": ["Hunter:75"],
+        "petBaseChanceOverride": null
+      },
+      {
+        "name": "Moonlight moth",
+        "levelRequired": 85,
+        "xpPerAction": 250.0,
+        "itemId": 28893,
+        "uses": ["Hunter:85"],
+        "petBaseChanceOverride": null
+      },
+      {
+        "name": "Stripy feather",
+        "levelRequired": 19,
+        "xpPerAction": 36.0,
+        "itemId": 10087,
+        "uses": ["Fishing:20"],
+        "petBaseChanceOverride": null
+      },
+      {
+        "name": "Polar kebbit fur",
+        "levelRequired": 1,
+        "xpPerAction": 30.0,
+        "itemId": 10117,
+        "uses": ["Hunter:1"],
+        "petBaseChanceOverride": null
+      },
+      {
+        "name": "Larupia fur",
+        "levelRequired": 31,
+        "xpPerAction": 180.0,
+        "itemId": 10095,
+        "uses": ["Crafting:28"],
+        "petBaseChanceOverride": null
+      },
+      {
+        "name": "Graahk fur",
+        "levelRequired": 41,
+        "xpPerAction": 240.0,
+        "itemId": 10099,
+        "uses": ["Crafting:38"],
+        "petBaseChanceOverride": null
+      },
+      {
+        "name": "Kyatt fur",
+        "levelRequired": 55,
+        "xpPerAction": 300.0,
+        "itemId": 10103,
+        "uses": ["Crafting:52"],
+        "petBaseChanceOverride": null
+      },
+      {
+        "name": "Raw bird meat",
+        "levelRequired": 1,
+        "xpPerAction": 34.0,
+        "itemId": 9978,
+        "uses": ["Cooking:11"],
+        "petBaseChanceOverride": null
+      },
+      {
+        "name": "Swamp lizard",
+        "levelRequired": 29,
+        "xpPerAction": 152.0,
+        "itemId": 10149,
+        "uses": ["Ranged:30"],
+        "petBaseChanceOverride": null
+      },
+      {
+        "name": "Orange salamander",
+        "levelRequired": 47,
+        "xpPerAction": 224.0,
+        "itemId": 10146,
+        "uses": ["Ranged:50"],
+        "petBaseChanceOverride": null
+      },
+      {
+        "name": "Red salamander",
+        "levelRequired": 59,
+        "xpPerAction": 272.0,
+        "itemId": 10147,
+        "uses": ["Ranged:60"],
+        "petBaseChanceOverride": null
+      },
+      {
+        "name": "Black salamander",
+        "levelRequired": 67,
+        "xpPerAction": 319.0,
+        "itemId": 10148,
+        "uses": ["Ranged:70"],
+        "petBaseChanceOverride": null
+      },
+      {
+        "name": "Tecu salamander",
+        "levelRequired": 79,
+        "xpPerAction": 344.0,
+        "itemId": 28834,
+        "uses": ["Ranged:80"],
+        "petBaseChanceOverride": null
+      },
+      {
+        "name": "Impling jar",
+        "levelRequired": 17,
+        "xpPerAction": 20.0,
+        "itemId": 11238,
+        "itemIds": [11238, 11240, 11242, 11244, 11246, 11248, 11250, 11252, 11254, 11256, 19732, 23768],
+        "uses": ["Hunter:17"],
+        "petBaseChanceOverride": null
+      },
+      {
+        "name": "Kebbit fur",
+        "levelRequired": 3,
+        "xpPerAction": 36.0,
+        "itemId": 10119,
+        "itemIds": [10119, 10121, 10123, 10125, 10127],
+        "uses": ["Crafting:1"],
+        "petBaseChanceOverride": null
+      },
+      {
+        "name": "Varlamore hunter meat",
+        "levelRequired": 72,
+        "xpPerAction": 350.0,
+        "itemId": 29113,
+        "itemIds": [29113, 29116],
+        "uses": ["Cooking:72"],
+        "petBaseChanceOverride": null
+      },
+      {
+        "name": "Varlamore hunter fur",
+        "levelRequired": 72,
+        "xpPerAction": 350.0,
+        "itemId": 29163,
+        "itemIds": [29163, 29174, 29177, 29218],
+        "uses": ["Crafting:1"],
+        "petBaseChanceOverride": null
+      },
+      {
+        "name": "Hunter rumour wing",
+        "levelRequired": 45,
+        "xpPerAction": 54.0,
+        "itemId": 29230,
+        "itemIds": [29224, 29227, 29230, 29237, 29240],
+        "uses": ["Hunter:45"],
+        "petBaseChanceOverride": null
+      }
+    ]
+  },
+  "farming": {
+    "petBaseChance": 0,
+    "resources": [
+      {
+        "name": "Potato",
+        "levelRequired": 1,
+        "xpPerAction": 9.0,
+        "itemId": 1942,
+        "uses": ["Cooking:7"],
+        "petBaseChanceOverride": null
+      },
+      {
+        "name": "Onion",
+        "levelRequired": 5,
+        "xpPerAction": 10.5,
+        "itemId": 1957,
+        "uses": ["Cooking:9"],
+        "petBaseChanceOverride": null
+      },
+      {
+        "name": "Cabbage",
+        "levelRequired": 7,
+        "xpPerAction": 11.5,
+        "itemId": 1965,
+        "uses": ["Cooking:11"],
+        "petBaseChanceOverride": null
+      },
+      {
+        "name": "Tomato",
+        "levelRequired": 12,
+        "xpPerAction": 14.0,
+        "itemId": 1982,
+        "uses": ["Cooking:12"],
+        "petBaseChanceOverride": null
+      },
+      {
+        "name": "Sweetcorn",
+        "levelRequired": 20,
+        "xpPerAction": 19.0,
+        "itemId": 5986,
+        "uses": ["Cooking:28"],
+        "petBaseChanceOverride": null
+      },
+      {
+        "name": "Strawberry",
+        "levelRequired": 31,
+        "xpPerAction": 29.0,
+        "itemId": 5504,
+        "uses": ["Cooking:31"],
+        "petBaseChanceOverride": null
+      },
+      {
+        "name": "Watermelon",
+        "levelRequired": 47,
+        "xpPerAction": 54.5,
+        "itemId": 5982,
+        "uses": ["Cooking:47"],
+        "petBaseChanceOverride": null
+      },
+      {
+        "name": "Guam leaf",
+        "levelRequired": 9,
+        "xpPerAction": 12.5,
+        "itemId": 249,
+        "uses": ["Herblore:3"],
+        "petBaseChanceOverride": null
+      },
+      {
+        "name": "Limpwurt root",
+        "levelRequired": 26,
+        "xpPerAction": 18.5,
+        "itemId": 225,
+        "uses": ["Herblore:12"],
+        "petBaseChanceOverride": null
+      },
+      {
+        "name": "Snape grass",
+        "levelRequired": 61,
+        "xpPerAction": 82.0,
+        "itemId": 231,
+        "uses": ["Herblore:38"],
+        "petBaseChanceOverride": null
+      },
+      {
+        "name": "Grimy herb",
+        "levelRequired": 9,
+        "xpPerAction": 12.5,
+        "itemId": 199,
+        "itemIds": [199, 201, 203, 205, 207, 3049, 209, 211, 213, 3051, 215, 2485, 217, 219],
+        "uses": ["Herblore:3"],
+        "petBaseChanceOverride": null
+      },
+      {
+        "name": "Hops",
+        "levelRequired": 3,
+        "xpPerAction": 10.0,
+        "itemId": 6006,
+        "itemIds": [6006, 5994, 5996, 5931, 5998, 6000, 6002],
+        "uses": ["Cooking:1"],
+        "petBaseChanceOverride": null
+      },
+      {
+        "name": "Bush berries",
+        "levelRequired": 10,
+        "xpPerAction": 4.5,
+        "itemId": 1951,
+        "itemIds": [1951, 753, 2126, 247, 239, 6018],
+        "uses": ["Cooking:10", "Herblore:1"],
+        "petBaseChanceOverride": null
+      },
+      {
+        "name": "Fruit tree harvest",
+        "levelRequired": 27,
+        "xpPerAction": 8.5,
+        "itemId": 1955,
+        "itemIds": [1955, 1963, 2108, 5970, 2114, 5972, 5974, 5980, 22929],
+        "uses": ["Cooking:1"],
+        "petBaseChanceOverride": null
+      },
+      {
+        "name": "Cactus harvest",
+        "levelRequired": 55,
+        "xpPerAction": 25.0,
+        "itemId": 6016,
+        "itemIds": [6016, 3138],
+        "uses": ["Herblore:66"],
+        "petBaseChanceOverride": null
+      },
+      {
+        "name": "Special patch harvest",
+        "levelRequired": 53,
+        "xpPerAction": 57.7,
+        "itemId": 2398,
+        "itemIds": [2398, 2970, 21504, 22937, 22934],
+        "uses": ["Herblore:1", "Crafting:1"],
+        "petBaseChanceOverride": null
+      }
+    ]
+  },
+  "thieving": {
+    "petBaseChance": 257211,
+    "resources": [
+      {
+        "name": "Coin pouch",
+        "levelRequired": 1,
+        "xpPerAction": 8.0,
+        "itemId": 22521,
+        "itemIds": [22521, 22522, 22523, 22524, 22525, 22526, 22527, 22528, 22529, 22530, 22531, 22532, 22533, 22534, 22535, 22536, 22537, 22538, 24703, 28822, 32895],
+        "actions": ["Pickpocket"],
+        "sourceNames": ["Man", "Woman", "Farmer", "Warrior", "Al Kharid warrior", "Guard", "Knight of Ardougne", "Knight of Varlamore", "Watchman", "Paladin", "Gnome", "Hero", "Elf", "Vyre", "Wealthy citizen"],
+        "uses": ["Thieving:1"],
+        "petBaseChanceOverride": null
+      },
+      {
+        "name": "Onion",
+        "levelRequired": 2,
+        "xpPerAction": 10.0,
+        "itemId": 1957,
+        "actions": ["Steal-from"],
+        "sourceNames": ["Vegetable stall", "Veg stall", "Veg stall (Port Roberts)"],
+        "method": "stall",
+        "uses": ["Cooking:1"],
+        "petBaseChanceOverride": null
+      },
+      {
+        "name": "Cabbage",
+        "levelRequired": 2,
+        "xpPerAction": 10.0,
+        "itemId": 1965,
+        "actions": ["Steal-from"],
+        "sourceNames": ["Vegetable stall", "Veg stall", "Veg stall (Port Roberts)"],
+        "method": "stall",
+        "uses": ["Cooking:1"],
+        "petBaseChanceOverride": null
+      },
+      {
+        "name": "Tomato",
+        "levelRequired": 2,
+        "xpPerAction": 10.0,
+        "itemId": 1982,
+        "actions": ["Steal-from"],
+        "sourceNames": ["Vegetable stall", "Veg stall", "Veg stall (Port Roberts)"],
+        "method": "stall",
+        "uses": ["Cooking:1"],
+        "petBaseChanceOverride": null
+      },
+      {
+        "name": "Garlic",
+        "levelRequired": 2,
+        "xpPerAction": 10.0,
+        "itemId": 1550,
+        "actions": ["Steal-from"],
+        "sourceNames": ["Vegetable stall", "Veg stall", "Veg stall (Port Roberts)"],
+        "method": "stall",
+        "uses": ["Cooking:1"],
+        "petBaseChanceOverride": null
+      },
+      {
+        "name": "Coins",
+        "levelRequired": 1,
+        "xpPerAction": 8.0,
+        "itemId": 995,
+        "uses": ["Currency:1"],
+        "petBaseChanceOverride": null
+      },
+      {
+        "name": "House keys",
+        "levelRequired": 50,
+        "xpPerAction": 96.0,
+        "itemId": 29325,
+        "actions": ["Pickpocket"],
+        "sourceNames": ["Wealthy citizen"],
+        "rate": 0.0588235294,
+        "uses": ["Thieving:50"],
+        "petBaseChanceOverride": null
+      },
+      {
+        "name": "Clue scroll (easy)",
+        "levelRequired": 50,
+        "xpPerAction": 96.0,
+        "itemId": 2677,
+        "itemIds": [2677, 24362],
+        "actions": ["Pickpocket"],
+        "sourceNames": ["Wealthy citizen"],
+        "rate": 0.0117647059,
+        "uses": ["Treasure Trails:1"],
+        "petBaseChanceOverride": null
+      },
+      {
+        "name": "Bread",
+        "levelRequired": 5,
+        "xpPerAction": 16.0,
+        "itemId": 2309,
+        "actions": ["Steal-from"],
+        "sourceNames": ["Bakery stall", "Baker's stall", "Baker's Stall"],
+        "rate": 0.25,
+        "uses": ["Food:1"],
+        "petBaseChanceOverride": null
+      },
+      {
+        "name": "Cake",
+        "levelRequired": 5,
+        "xpPerAction": 16.0,
+        "itemId": 1891,
+        "actions": ["Steal-from"],
+        "sourceNames": ["Bakery stall", "Baker's stall", "Baker's Stall"],
+        "rate": 0.65,
+        "uses": ["Food:1"],
+        "petBaseChanceOverride": null
+      },
+      {
+        "name": "Chocolate slice",
+        "levelRequired": 5,
+        "xpPerAction": 16.0,
+        "itemId": 1901,
+        "actions": ["Steal-from"],
+        "sourceNames": ["Bakery stall", "Baker's stall", "Baker's Stall"],
+        "rate": 0.1,
+        "uses": ["Food:1"],
+        "petBaseChanceOverride": null
+      },
+      {
+        "name": "Cup of tea",
+        "levelRequired": 5,
+        "xpPerAction": 16.0,
+        "itemId": 1978,
+        "actions": ["Steal-from"],
+        "sourceNames": ["Tea stall"],
+        "method": "stall",
+        "uses": ["Cooking:1"],
+        "petBaseChanceOverride": null
+      },
+      {
+        "name": "Silk",
+        "levelRequired": 20,
+        "xpPerAction": 24.0,
+        "itemId": 950,
+        "actions": ["Steal-from"],
+        "sourceNames": ["Silk stall"],
+        "rate": 1.0,
+        "uses": ["Crafting:1"],
+        "petBaseChanceOverride": null
+      },
+      {
+        "name": "Jug of water",
+        "levelRequired": 22,
+        "xpPerAction": 27.0,
+        "itemId": 1937,
+        "actions": ["Steal-from"],
+        "sourceNames": ["Wine stall"],
+        "method": "stall",
+        "uses": ["Cooking:1"],
+        "petBaseChanceOverride": null
+      },
+      {
+        "name": "Jug of wine",
+        "levelRequired": 22,
+        "xpPerAction": 27.0,
+        "itemId": 1993,
+        "actions": ["Steal-from"],
+        "sourceNames": ["Wine stall"],
+        "method": "stall",
+        "uses": ["Food:1"],
+        "petBaseChanceOverride": null
+      },
+      {
+        "name": "Grapes",
+        "levelRequired": 22,
+        "xpPerAction": 27.0,
+        "itemId": 1987,
+        "actions": ["Steal-from"],
+        "sourceNames": ["Wine stall"],
+        "method": "stall",
+        "uses": ["Cooking:1"],
+        "petBaseChanceOverride": null
+      },
+      {
+        "name": "Jug",
+        "levelRequired": 22,
+        "xpPerAction": 27.0,
+        "itemId": 1935,
+        "actions": ["Steal-from"],
+        "sourceNames": ["Wine stall"],
+        "method": "stall",
+        "uses": ["Cooking:1"],
+        "petBaseChanceOverride": null
+      },
+      {
+        "name": "Bottle of wine",
+        "levelRequired": 22,
+        "xpPerAction": 27.0,
+        "itemId": 7919,
+        "actions": ["Steal-from"],
+        "sourceNames": ["Wine stall"],
+        "method": "stall",
+        "uses": ["Food:1"],
+        "petBaseChanceOverride": null
+      },
+      {
+        "name": "Cooking apple",
+        "levelRequired": 25,
+        "xpPerAction": 28.5,
+        "itemId": 1955,
+        "actions": ["Steal-from"],
+        "sourceNames": ["Fruit stall", "Fruit Stall"],
+        "method": "stall",
+        "uses": ["Cooking:1"],
+        "petBaseChanceOverride": null
+      },
+      {
+        "name": "Banana",
+        "levelRequired": 25,
+        "xpPerAction": 28.5,
+        "itemId": 1963,
+        "actions": ["Steal-from"],
+        "sourceNames": ["Fruit stall", "Fruit Stall"],
+        "method": "stall",
+        "uses": ["Cooking:1"],
+        "petBaseChanceOverride": null
+      },
+      {
+        "name": "Strawberry",
+        "levelRequired": 25,
+        "xpPerAction": 28.5,
+        "itemId": 5504,
+        "actions": ["Steal-from"],
+        "sourceNames": ["Fruit stall", "Fruit Stall"],
+        "method": "stall",
+        "uses": ["Cooking:31"],
+        "petBaseChanceOverride": null
+      },
+      {
+        "name": "Redberries",
+        "levelRequired": 25,
+        "xpPerAction": 28.5,
+        "itemId": 1951,
+        "actions": ["Steal-from"],
+        "sourceNames": ["Fruit stall", "Fruit Stall"],
+        "method": "stall",
+        "uses": ["Cooking:1"],
+        "petBaseChanceOverride": null
+      },
+      {
+        "name": "Jangerberries",
+        "levelRequired": 25,
+        "xpPerAction": 28.5,
+        "itemId": 247,
+        "actions": ["Steal-from"],
+        "sourceNames": ["Fruit stall", "Fruit Stall"],
+        "method": "stall",
+        "uses": ["Herblore:48"],
+        "petBaseChanceOverride": null
+      },
+      {
+        "name": "Strange fruit",
+        "levelRequired": 25,
+        "xpPerAction": 28.5,
+        "itemId": 464,
+        "actions": ["Steal-from"],
+        "sourceNames": ["Fruit stall", "Fruit Stall"],
+        "method": "stall",
+        "uses": ["Food:1"],
+        "petBaseChanceOverride": null
+      },
+      {
+        "name": "Lime",
+        "levelRequired": 25,
+        "xpPerAction": 28.5,
+        "itemId": 2120,
+        "actions": ["Steal-from"],
+        "sourceNames": ["Fruit stall", "Fruit Stall"],
+        "method": "stall",
+        "uses": ["Cooking:1"],
+        "petBaseChanceOverride": null
+      },
+      {
+        "name": "Lemon",
+        "levelRequired": 25,
+        "xpPerAction": 28.5,
+        "itemId": 2102,
+        "actions": ["Steal-from"],
+        "sourceNames": ["Fruit stall", "Fruit Stall"],
+        "method": "stall",
+        "uses": ["Cooking:1"],
+        "petBaseChanceOverride": null
+      },
+      {
+        "name": "Pineapple",
+        "levelRequired": 25,
+        "xpPerAction": 28.5,
+        "itemId": 2114,
+        "actions": ["Steal-from"],
+        "sourceNames": ["Fruit stall", "Fruit Stall"],
+        "method": "stall",
+        "uses": ["Cooking:1"],
+        "petBaseChanceOverride": null
+      },
+      {
+        "name": "Papaya fruit",
+        "levelRequired": 25,
+        "xpPerAction": 28.5,
+        "itemId": 5972,
+        "actions": ["Steal-from"],
+        "sourceNames": ["Fruit stall", "Fruit Stall"],
+        "method": "stall",
+        "uses": ["Farming:57"],
+        "petBaseChanceOverride": null
+      },
+      {
+        "name": "Golovanova fruit top",
+        "levelRequired": 25,
+        "xpPerAction": 28.5,
+        "itemId": 19653,
+        "actions": ["Steal-from"],
+        "sourceNames": ["Fruit stall", "Fruit Stall"],
+        "method": "stall",
+        "uses": ["Cooking:1"],
+        "petBaseChanceOverride": null
+      },
+      {
+        "name": "Grey wolf fur",
+        "levelRequired": 35,
+        "xpPerAction": 45.0,
+        "itemId": 958,
+        "actions": ["Steal-from"],
+        "sourceNames": ["Fur stall"],
+        "rate": 1.0,
+        "uses": ["Crafting:1"],
+        "petBaseChanceOverride": null
+      },
+      {
+        "name": "Fur",
+        "levelRequired": 35,
+        "xpPerAction": 45.0,
+        "itemId": 6814,
+        "actions": ["Steal-from"],
+        "sourceNames": ["Fur stall"],
+        "method": "stall",
+        "uses": ["Crafting:1"],
+        "petBaseChanceOverride": null
+      },
+      {
+        "name": "Silver ore",
+        "levelRequired": 50,
+        "xpPerAction": 205.0,
+        "itemId": 442,
+        "actions": ["Steal-from"],
+        "sourceNames": ["Silver stall"],
+        "rate": 0.8,
+        "uses": ["Smithing:20", "Crafting:16"],
+        "petBaseChanceOverride": null
+      },
+      {
+        "name": "Silver bar",
+        "levelRequired": 50,
+        "xpPerAction": 205.0,
+        "itemId": 2355,
+        "actions": ["Steal-from"],
+        "sourceNames": ["Silver stall"],
+        "rate": 0.15,
+        "uses": ["Smithing:20", "Crafting:16"],
+        "petBaseChanceOverride": null
+      },
+      {
+        "name": "Tiara",
+        "levelRequired": 50,
+        "xpPerAction": 205.0,
+        "itemId": 5525,
+        "actions": ["Steal-from"],
+        "sourceNames": ["Silver stall"],
+        "rate": 0.05,
+        "uses": ["Crafting:23", "Runecraft:1"],
+        "petBaseChanceOverride": null
+      },
+      {
+        "name": "Spice",
+        "levelRequired": 65,
+        "xpPerAction": 92.0,
+        "itemId": 2007,
+        "actions": ["Steal-from"],
+        "sourceNames": ["Spice stall", "Spice stall (Port Roberts)"],
+        "method": "stall",
+        "rate": 1.0,
+        "uses": ["Cooking:1"],
+        "petBaseChanceOverride": null
+      },
+      {
+        "name": "Air rune",
+        "levelRequired": 65,
+        "xpPerAction": 90.0,
+        "itemId": 556,
+        "actions": ["Steal-from"],
+        "sourceNames": ["Magic stall"],
+        "method": "stall",
+        "uses": ["Magic:1", "Runecraft:1"],
+        "petBaseChanceOverride": null
+      },
+      {
+        "name": "Earth rune",
+        "levelRequired": 65,
+        "xpPerAction": 90.0,
+        "itemId": 557,
+        "actions": ["Steal-from"],
+        "sourceNames": ["Magic stall"],
+        "method": "stall",
+        "uses": ["Magic:1", "Runecraft:9"],
+        "petBaseChanceOverride": null
+      },
+      {
+        "name": "Fire rune",
+        "levelRequired": 65,
+        "xpPerAction": 90.0,
+        "itemId": 554,
+        "actions": ["Steal-from"],
+        "sourceNames": ["Magic stall"],
+        "method": "stall",
+        "uses": ["Magic:1", "Runecraft:14"],
+        "petBaseChanceOverride": null
+      },
+      {
+        "name": "Nature rune",
+        "levelRequired": 65,
+        "xpPerAction": 90.0,
+        "itemId": 561,
+        "actions": ["Steal-from"],
+        "sourceNames": ["Magic stall"],
+        "method": "stall",
+        "uses": ["Magic:1", "Runecraft:44"],
+        "petBaseChanceOverride": null
+      },
+      {
+        "name": "Law rune",
+        "levelRequired": 65,
+        "xpPerAction": 90.0,
+        "itemId": 563,
+        "actions": ["Steal-from"],
+        "sourceNames": ["Magic stall"],
+        "method": "stall",
+        "uses": ["Magic:1", "Runecraft:54"],
+        "petBaseChanceOverride": null
+      },
+      {
+        "name": "Iron scimitar",
+        "levelRequired": 65,
+        "xpPerAction": 210.0,
+        "itemId": 1323,
+        "actions": ["Steal-from"],
+        "sourceNames": ["Scimitar stall"],
+        "method": "stall",
+        "uses": ["Combat:1", "Smithing:20"],
+        "petBaseChanceOverride": null
+      },
+      {
+        "name": "Steel scimitar",
+        "levelRequired": 65,
+        "xpPerAction": 210.0,
+        "itemId": 1325,
+        "actions": ["Steal-from"],
+        "sourceNames": ["Scimitar stall"],
+        "method": "stall",
+        "uses": ["Combat:5", "Smithing:35"],
+        "petBaseChanceOverride": null
+      },
+      {
+        "name": "Mithril scimitar",
+        "levelRequired": 65,
+        "xpPerAction": 210.0,
+        "itemId": 1329,
+        "actions": ["Steal-from"],
+        "sourceNames": ["Scimitar stall"],
+        "method": "stall",
+        "uses": ["Combat:20", "Smithing:55"],
+        "petBaseChanceOverride": null
+      },
+      {
+        "name": "Adamant scimitar",
+        "levelRequired": 65,
+        "xpPerAction": 210.0,
+        "itemId": 1331,
+        "actions": ["Steal-from"],
+        "sourceNames": ["Scimitar stall"],
+        "method": "stall",
+        "uses": ["Combat:30", "Smithing:75"],
+        "petBaseChanceOverride": null
+      },
+      {
+        "name": "Raw salmon",
+        "levelRequired": 42,
+        "xpPerAction": 42.0,
+        "itemId": 331,
+        "actions": ["Steal-from"],
+        "sourceNames": ["Fish stall"],
+        "rate": 0.7,
+        "uses": ["Cooking:25"],
+        "petBaseChanceOverride": null
+      },
+      {
+        "name": "Raw tuna",
+        "levelRequired": 42,
+        "xpPerAction": 42.0,
+        "itemId": 359,
+        "actions": ["Steal-from"],
+        "sourceNames": ["Fish stall"],
+        "rate": 0.25,
+        "uses": ["Cooking:30"],
+        "petBaseChanceOverride": null
+      },
+      {
+        "name": "Raw lobster",
+        "levelRequired": 42,
+        "xpPerAction": 42.0,
+        "itemId": 377,
+        "actions": ["Steal-from"],
+        "sourceNames": ["Fish stall"],
+        "rate": 0.05,
+        "uses": ["Cooking:40"],
+        "petBaseChanceOverride": null
+      },
+      {
+        "name": "Bronze bolts",
+        "levelRequired": 49,
+        "xpPerAction": 52.0,
+        "itemId": 877,
+        "actions": ["Steal-from"],
+        "sourceNames": ["Crossbow stall"],
+        "method": "stall",
+        "uses": ["Ranged:1"],
+        "petBaseChanceOverride": null
+      },
+      {
+        "name": "Bronze limbs",
+        "levelRequired": 49,
+        "xpPerAction": 52.0,
+        "itemId": 9420,
+        "actions": ["Steal-from"],
+        "sourceNames": ["Crossbow stall"],
+        "method": "stall",
+        "uses": ["Fletching:6"],
+        "petBaseChanceOverride": null
+      },
+      {
+        "name": "Mithril bolts",
+        "levelRequired": 49,
+        "xpPerAction": 52.0,
+        "itemId": 9142,
+        "actions": ["Steal-from"],
+        "sourceNames": ["Crossbow stall"],
+        "method": "stall",
+        "uses": ["Ranged:1"],
+        "petBaseChanceOverride": null
+      },
+      {
+        "name": "Mithril limbs",
+        "levelRequired": 49,
+        "xpPerAction": 52.0,
+        "itemId": 9427,
+        "actions": ["Steal-from"],
+        "sourceNames": ["Crossbow stall"],
+        "method": "stall",
+        "uses": ["Fletching:56"],
+        "petBaseChanceOverride": null
+      },
+      {
+        "name": "Wooden stock",
+        "levelRequired": 49,
+        "xpPerAction": 52.0,
+        "itemId": 9440,
+        "actions": ["Steal-from"],
+        "sourceNames": ["Crossbow stall"],
+        "method": "stall",
+        "uses": ["Fletching:9"],
+        "petBaseChanceOverride": null
+      },
+      {
+        "name": "Hammerstone seed",
+        "levelRequired": 27,
+        "xpPerAction": 10.0,
+        "itemId": 5307,
+        "actions": ["Steal-from"],
+        "sourceNames": ["Seed stall", "Seed Stall"],
+        "rate": 0.12,
+        "uses": ["Farming:4"],
+        "petBaseChanceOverride": null
+      },
+      {
+        "name": "Potato seed",
+        "levelRequired": 27,
+        "xpPerAction": 10.0,
+        "itemId": 5318,
+        "actions": ["Steal-from"],
+        "sourceNames": ["Seed stall", "Seed Stall"],
+        "rate": 0.119,
+        "uses": ["Farming:1"],
+        "petBaseChanceOverride": null
+      },
+      {
+        "name": "Marigold seed",
+        "levelRequired": 27,
+        "xpPerAction": 10.0,
+        "itemId": 5096,
+        "actions": ["Steal-from"],
+        "sourceNames": ["Seed stall", "Seed Stall"],
+        "rate": 0.119,
+        "uses": ["Farming:2"],
+        "petBaseChanceOverride": null
+      },
+      {
+        "name": "Barley seed",
+        "levelRequired": 27,
+        "xpPerAction": 10.0,
+        "itemId": 5305,
+        "actions": ["Steal-from"],
+        "sourceNames": ["Seed stall", "Seed Stall"],
+        "rate": 0.118,
+        "uses": ["Farming:3"],
+        "petBaseChanceOverride": null
+      },
+      {
+        "name": "Onion seed",
+        "levelRequired": 27,
+        "xpPerAction": 10.0,
+        "itemId": 5319,
+        "actions": ["Steal-from"],
+        "sourceNames": ["Seed stall", "Seed Stall"],
+        "rate": 0.089,
+        "uses": ["Farming:5"],
+        "petBaseChanceOverride": null
+      },
+      {
+        "name": "Asgarnian seed",
+        "levelRequired": 27,
+        "xpPerAction": 10.0,
+        "itemId": 5308,
+        "actions": ["Steal-from"],
+        "sourceNames": ["Seed stall", "Seed Stall"],
+        "rate": 0.083,
+        "uses": ["Farming:8"],
+        "petBaseChanceOverride": null
+      },
+      {
+        "name": "Cabbage seed",
+        "levelRequired": 27,
+        "xpPerAction": 10.0,
+        "itemId": 5324,
+        "actions": ["Steal-from"],
+        "sourceNames": ["Seed stall", "Seed Stall"],
+        "rate": 0.071,
+        "uses": ["Farming:7"],
+        "petBaseChanceOverride": null
+      },
+      {
+        "name": "Yanillian seed",
+        "levelRequired": 27,
+        "xpPerAction": 10.0,
+        "itemId": 5309,
+        "actions": ["Steal-from"],
+        "sourceNames": ["Seed stall", "Seed Stall"],
+        "rate": 0.047,
+        "uses": ["Farming:16"],
+        "petBaseChanceOverride": null
+      },
+      {
+        "name": "Rosemary seed",
+        "levelRequired": 27,
+        "xpPerAction": 10.0,
+        "itemId": 5097,
+        "actions": ["Steal-from"],
+        "sourceNames": ["Seed stall", "Seed Stall"],
+        "rate": 0.036,
+        "uses": ["Farming:11"],
+        "petBaseChanceOverride": null
+      },
+      {
+        "name": "Nasturtium seed",
+        "levelRequired": 27,
+        "xpPerAction": 10.0,
+        "itemId": 5098,
+        "actions": ["Steal-from"],
+        "sourceNames": ["Seed stall", "Seed Stall"],
+        "rate": 0.035,
+        "uses": ["Farming:24"],
+        "petBaseChanceOverride": null
+      },
+      {
+        "name": "Tomato seed",
+        "levelRequired": 27,
+        "xpPerAction": 10.0,
+        "itemId": 5322,
+        "actions": ["Steal-from"],
+        "sourceNames": ["Seed stall", "Seed Stall"],
+        "rate": 0.035,
+        "uses": ["Farming:12"],
+        "petBaseChanceOverride": null
+      },
+      {
+        "name": "Jute seed",
+        "levelRequired": 27,
+        "xpPerAction": 10.0,
+        "itemId": 5306,
+        "actions": ["Steal-from"],
+        "sourceNames": ["Seed stall", "Seed Stall"],
+        "rate": 0.035,
+        "uses": ["Farming:13"],
+        "petBaseChanceOverride": null
+      },
+      {
+        "name": "Sweetcorn seed",
+        "levelRequired": 27,
+        "xpPerAction": 10.0,
+        "itemId": 5320,
+        "actions": ["Steal-from"],
+        "sourceNames": ["Seed stall", "Seed Stall"],
+        "rate": 0.03,
+        "uses": ["Farming:20"],
+        "petBaseChanceOverride": null
+      },
+      {
+        "name": "Krandorian seed",
+        "levelRequired": 27,
+        "xpPerAction": 10.0,
+        "itemId": 5310,
+        "actions": ["Steal-from"],
+        "sourceNames": ["Seed stall", "Seed Stall"],
+        "rate": 0.024,
+        "uses": ["Farming:21"],
+        "petBaseChanceOverride": null
+      },
+      {
+        "name": "Strawberry seed",
+        "levelRequired": 27,
+        "xpPerAction": 10.0,
+        "itemId": 5323,
+        "actions": ["Steal-from"],
+        "sourceNames": ["Seed stall", "Seed Stall"],
+        "rate": 0.018,
+        "uses": ["Farming:31"],
+        "petBaseChanceOverride": null
+      },
+      {
+        "name": "Wildblood seed",
+        "levelRequired": 27,
+        "xpPerAction": 10.0,
+        "itemId": 5311,
+        "actions": ["Steal-from"],
+        "sourceNames": ["Seed stall", "Seed Stall"],
+        "rate": 0.012,
+        "uses": ["Farming:28"],
+        "petBaseChanceOverride": null
+      },
+      {
+        "name": "Watermelon seed",
+        "levelRequired": 27,
+        "xpPerAction": 10.0,
+        "itemId": 5321,
+        "actions": ["Steal-from"],
+        "sourceNames": ["Seed stall", "Seed Stall"],
+        "rate": 0.009,
+        "uses": ["Farming:47"],
+        "petBaseChanceOverride": null
+      },
+      {
+        "name": "Coal",
+        "levelRequired": 82,
+        "xpPerAction": 350.0,
+        "itemId": 453,
+        "actions": ["Steal-from"],
+        "sourceNames": ["Ore stall", "Ore stall (Mor Ul Rek)", "Ore stall (Port Roberts)"],
+        "method": "stall",
+        "uses": ["Smithing:30"],
+        "petBaseChanceOverride": null
+      },
+      {
+        "name": "Iron ore",
+        "levelRequired": 82,
+        "xpPerAction": 350.0,
+        "itemId": 440,
+        "actions": ["Steal-from"],
+        "sourceNames": ["Ore stall", "Ore stall (Mor Ul Rek)", "Ore stall (Port Roberts)"],
+        "method": "stall",
+        "uses": ["Smithing:15"],
+        "petBaseChanceOverride": null
+      },
+      {
+        "name": "Silver ore",
+        "levelRequired": 82,
+        "xpPerAction": 350.0,
+        "itemId": 442,
+        "actions": ["Steal-from"],
+        "sourceNames": ["Ore stall", "Ore stall (Mor Ul Rek)", "Ore stall (Port Roberts)"],
+        "method": "stall",
+        "uses": ["Smithing:20", "Crafting:16"],
+        "petBaseChanceOverride": null
+      },
+      {
+        "name": "Gold ore",
+        "levelRequired": 82,
+        "xpPerAction": 350.0,
+        "itemId": 444,
+        "actions": ["Steal-from"],
+        "sourceNames": ["Ore stall", "Ore stall (Mor Ul Rek)", "Ore stall (Port Roberts)"],
+        "method": "stall",
+        "uses": ["Smithing:40", "Crafting:5"],
+        "petBaseChanceOverride": null
+      },
+      {
+        "name": "Mithril ore",
+        "levelRequired": 82,
+        "xpPerAction": 350.0,
+        "itemId": 447,
+        "actions": ["Steal-from"],
+        "sourceNames": ["Ore stall", "Ore stall (Mor Ul Rek)", "Ore stall (Port Roberts)"],
+        "method": "stall",
+        "uses": ["Smithing:50"],
+        "petBaseChanceOverride": null
+      },
+      {
+        "name": "Adamantite ore",
+        "levelRequired": 82,
+        "xpPerAction": 350.0,
+        "itemId": 449,
+        "actions": ["Steal-from"],
+        "sourceNames": ["Ore stall", "Ore stall (Mor Ul Rek)", "Ore stall (Port Roberts)"],
+        "method": "stall",
+        "uses": ["Smithing:70"],
+        "petBaseChanceOverride": null
+      },
+      {
+        "name": "Runite ore",
+        "levelRequired": 82,
+        "xpPerAction": 350.0,
+        "itemId": 451,
+        "actions": ["Steal-from"],
+        "sourceNames": ["Ore stall", "Ore stall (Mor Ul Rek)", "Ore stall (Port Roberts)"],
+        "method": "stall",
+        "uses": ["Smithing:85"],
+        "petBaseChanceOverride": null
+      },
+      {
+        "name": "Bronze cannonball",
+        "levelRequired": 87,
+        "xpPerAction": 223.0,
+        "itemId": 31906,
+        "actions": ["Steal-from"],
+        "sourceNames": ["Cannonball stall"],
+        "method": "stall",
+        "uses": ["Ranged:1"],
+        "petBaseChanceOverride": null
+      },
+      {
+        "name": "Iron cannonball",
+        "levelRequired": 87,
+        "xpPerAction": 223.0,
+        "itemId": 31908,
+        "actions": ["Steal-from"],
+        "sourceNames": ["Cannonball stall"],
+        "method": "stall",
+        "uses": ["Ranged:1"],
+        "petBaseChanceOverride": null
+      },
+      {
+        "name": "Steel cannonball",
+        "levelRequired": 87,
+        "xpPerAction": 223.0,
+        "itemId": 2,
+        "actions": ["Steal-from"],
+        "sourceNames": ["Cannonball stall"],
+        "method": "stall",
+        "uses": ["Ranged:1"],
+        "petBaseChanceOverride": null
+      },
+      {
+        "name": "Mithril cannonball",
+        "levelRequired": 87,
+        "xpPerAction": 223.0,
+        "itemId": 31910,
+        "actions": ["Steal-from"],
+        "sourceNames": ["Cannonball stall"],
+        "method": "stall",
+        "uses": ["Ranged:1"],
+        "petBaseChanceOverride": null
+      },
+      {
+        "name": "Adamant cannonball",
+        "levelRequired": 87,
+        "xpPerAction": 223.0,
+        "itemId": 31912,
+        "actions": ["Steal-from"],
+        "sourceNames": ["Cannonball stall"],
+        "method": "stall",
+        "uses": ["Ranged:1"],
+        "petBaseChanceOverride": null
+      },
+      {
+        "name": "Rune cannonball",
+        "levelRequired": 87,
+        "xpPerAction": 223.0,
+        "itemId": 31914,
+        "actions": ["Steal-from"],
+        "sourceNames": ["Cannonball stall"],
+        "method": "stall",
+        "uses": ["Ranged:1"],
+        "petBaseChanceOverride": null
+      },
+      {
+        "name": "Dragon cannonball",
+        "levelRequired": 87,
+        "xpPerAction": 223.0,
+        "itemId": 31916,
+        "actions": ["Steal-from"],
+        "sourceNames": ["Cannonball stall"],
+        "method": "stall",
+        "uses": ["Ranged:1"],
+        "petBaseChanceOverride": null
+      },
+      {
+        "name": "Uncut sapphire",
+        "levelRequired": 75,
+        "xpPerAction": 408.0,
+        "itemId": 1623,
+        "actions": ["Steal-from"],
+        "sourceNames": ["Gem stall", "Gem Stall"],
+        "rate": 0.8203125,
+        "uses": ["Crafting:1"],
+        "petBaseChanceOverride": null
+      },
+      {
+        "name": "Uncut emerald",
+        "levelRequired": 75,
+        "xpPerAction": 408.0,
+        "itemId": 1621,
+        "actions": ["Steal-from"],
+        "sourceNames": ["Gem stall", "Gem Stall"],
+        "rate": 0.1328125,
+        "uses": ["Crafting:1"],
+        "petBaseChanceOverride": null
+      },
+      {
+        "name": "Uncut ruby",
+        "levelRequired": 75,
+        "xpPerAction": 408.0,
+        "itemId": 1619,
+        "actions": ["Steal-from"],
+        "sourceNames": ["Gem stall", "Gem Stall"],
+        "rate": 0.0390625,
+        "uses": ["Crafting:1"],
+        "petBaseChanceOverride": null
+      },
+      {
+        "name": "Uncut diamond",
+        "levelRequired": 75,
+        "xpPerAction": 408.0,
+        "itemId": 1617,
+        "actions": ["Steal-from"],
+        "sourceNames": ["Gem stall", "Gem Stall"],
+        "rate": 0.0078125,
+        "uses": ["Crafting:1"],
+        "petBaseChanceOverride": null
+      }
+    ]
+  }
+}
