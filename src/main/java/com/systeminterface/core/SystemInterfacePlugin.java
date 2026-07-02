@@ -505,6 +505,20 @@ public class SystemInterfacePlugin extends Plugin
 			objectExamineService.recordPendingExamine(event.getId(), Text.removeTags(event.getMenuTarget()), client.getTickCount());
 		}
 
+		final MenuAction action = event.getMenuAction();
+		if (action == MenuAction.GAME_OBJECT_FIRST_OPTION
+			|| action == MenuAction.GAME_OBJECT_SECOND_OPTION
+			|| action == MenuAction.GAME_OBJECT_THIRD_OPTION
+			|| action == MenuAction.GAME_OBJECT_FOURTH_OPTION
+			|| action == MenuAction.GAME_OBJECT_FIFTH_OPTION)
+		{
+			final int objectId = event.getId();
+			if (!resourceData.forObjectId(objectId).isEmpty())
+			{
+				skillTracker.setActiveObject(objectId);
+			}
+		}
+
 		if (!isItemRemovalAction(event.getMenuOption()))
 		{
 			return;
