@@ -467,4 +467,24 @@ public class SkillTrackerTest
 
 		assertEquals(SALMON_PRICE, totals.todayRewards(LocalDate.now()));   // only the new delta
 	}
+
+	@Test
+	public void setActiveObjectRecordsTheEngagedObject()
+	{
+		ResourceData data = ResourceData.load(new Gson());
+		SkillTracker t = new SkillTracker(data, PRICES);
+		t.setActiveObject(1511);            // a tree object id
+		assertEquals(1511, t.getActiveObjectId());
+		assertEquals(-1, t.getActiveFishingSpotId());   // single active node: fishing spot cleared
+	}
+
+	@Test
+	public void profileChangeClearsActiveObject()
+	{
+		ResourceData data = ResourceData.load(new Gson());
+		SkillTracker t = new SkillTracker(data, PRICES);
+		t.setActiveObject(1511);
+		t.onProfileChanged();               // logout / profile switch
+		assertEquals(-1, t.getActiveObjectId());
+	}
 }

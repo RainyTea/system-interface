@@ -184,6 +184,9 @@ public final class SkillTracker
 	// being fished (for Appraise).
 	private volatile int activeFishingSpotId = -1;
 
+	// Gathering context. The gathering object (tree/rock) the player last engaged (for Appraise).
+	private volatile int activeObjectId = -1;
+
 	// --- Kept-vs-finalized ledger ---
 	// Kept deliberately cohesive: a later step extracts this into a shared AcquisitionLedger.
 	//
@@ -392,6 +395,19 @@ public final class SkillTracker
 		return activeFishingSpotId;
 	}
 
+	/** The gathering object (tree/rock) the player last engaged, or -1 if none. */
+	public int getActiveObjectId()
+	{
+		return activeObjectId;
+	}
+
+	/** Records the engaged gathering object; clears any active fishing spot (single active node). */
+	public void setActiveObject(int objectId)
+	{
+		this.activeObjectId = objectId;
+		this.activeFishingSpotId = -1;
+	}
+
 	/** Whether the given NPC id is a known fishing spot in the curated data. */
 	public boolean isFishingSpot(int npcId)
 	{
@@ -412,6 +428,7 @@ public final class SkillTracker
 		if (hasFishingTool())
 		{
 			activeFishingSpotId = npcId;
+			activeObjectId = -1;
 			setActiveSkill(Skill.FISHING);
 			markActivity();
 		}
@@ -621,6 +638,7 @@ public final class SkillTracker
 			{
 				setActiveSkill(null);
 				activeFishingSpotId = -1;
+				activeObjectId = -1;
 			}
 		}
 	}
@@ -639,6 +657,7 @@ public final class SkillTracker
 			return false;
 		}
 		activeFishingSpotId = npcId;
+		activeObjectId = -1;
 		return true;
 	}
 
@@ -1039,6 +1058,7 @@ public final class SkillTracker
 		activeSkill = null;
 		lastActiveSkill = null;
 		activeFishingSpotId = -1;
+		activeObjectId = -1;
 		// Kept-vs-finalized ledger: live set + outstanding ground drops + per-tick reconciliation
 		// buffers are all session-scoped, so clear them for a fresh login.
 		liveGathered.clear();
