@@ -9,10 +9,8 @@ import java.nio.charset.StandardCharsets;
 import java.util.ArrayList;
 import java.util.Collections;
 import java.util.HashMap;
-import java.util.HashSet;
 import java.util.List;
 import java.util.Map;
-import java.util.Set;
 import lombok.extern.slf4j.Slf4j;
 import net.runelite.api.Skill;
 
@@ -186,21 +184,6 @@ public final class ResourceData
 	public ResourceEntry forItemId(int itemId)
 	{
 		return byItemId.get(itemId);
-	}
-
-	public Set<Integer> allResourceItemIds(Skill skill)
-	{
-		SkillData sd = skills.get(skill);
-		if (sd == null)
-		{
-			return Collections.emptySet();
-		}
-		Set<Integer> ids = new HashSet<>();
-		for (ResourceEntry r : sd.resources)
-		{
-			ids.add(r.itemId);
-		}
-		return ids;
 	}
 
 	public static final class SkillData

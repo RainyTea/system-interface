@@ -316,9 +316,11 @@ public class SkillingSection extends JPanel
 		headerPanel.revalidate();
 		headerPanel.repaint();
 
-		// Section-level Track table: interaction-only, shown only while trackingSkill is set.
+		// Section-level Track table: interaction-only, shown only while trackingSkill is set
+		// AND a gathering node is actually engaged (no node -> nothing to show, no fallback
+		// to the full per-skill resource list).
 		trackArea.removeAll();
-		if (trackingSkill != null)
+		if (trackingSkill != null && !currentNodeItemIds().isEmpty())
 		{
 			trackArea.add(buildTrackSection(trackingSkill));
 		}
@@ -529,6 +531,33 @@ public class SkillingSection extends JPanel
 	// only rendered by rebuild() while trackingSkill != null (see applySkillingFocus).
 	// ---------------------------------------------------------------------
 
+	/**
+	 * Output item ids of the currently engaged gathering node (tree/rock object, or fishing-spot
+	 * NPC — at most one is active at a time per {@link SkillTracker}). Empty when no node is
+	 * engaged. A {@link LinkedHashSet} keeps a stable, deduped display order.
+	 */
+	private Set<Integer> currentNodeItemIds()
+	{
+		Set<Integer> ids = new LinkedHashSet<>();
+		int objId = skillTracker.getActiveObjectId();
+		int spotId = skillTracker.getActiveFishingSpotId();
+		if (objId != -1)
+		{
+			for (ResourceData.ResourceEntry e : resourceData.forObjectId(objId))
+			{
+				ids.add(e.getItemId());
+			}
+		}
+		else if (spotId != -1)
+		{
+			for (ResourceData.ResourceEntry e : resourceData.forNpcId(spotId))
+			{
+				ids.add(e.getItemId());
+			}
+		}
+		return ids;
+	}
+
 	private JPanel buildTrackSection(Skill skill)
 	{
 		JPanel wrap = new JPanel();
@@ -536,11 +565,11 @@ public class SkillingSection extends JPanel
 		wrap.setBackground(ColorScheme.DARK_GRAY_COLOR);
 		wrap.setBorder(new EmptyBorder(6, 0, 0, 0));
 
-		// All resources this skill can gather (curated data), not just what's been received yet,
-		// so the full Track watchlist is reachable — mirrors the Combat Track grid showing the
-		// full drop table, not just received drops.
-		Set<Integer> allItemIds = resourceData.allResourceItemIds(skill);
-		if (allItemIds.isEmpty())
+		// Outputs of the CURRENTLY ENGAGED node only (tree/rock or fishing spot) — not every
+		// resource the skill can ever gather — so the table reflects what's actually in front
+		// of the player right now. Hidden entirely (see rebuild()) when no node is engaged.
+		Set<Integer> nodeItemIds = currentNodeItemIds();
+		if (nodeItemIds.isEmpty())
 		{
 			JLabel none = new JLabel("Nothing to track yet");
 			none.setForeground(new Color(150, 150, 150));
@@ -554,7 +583,7 @@ public class SkillingSection extends JPanel
 		SkillTracker.SkillState state = skillTracker.getSkillState(skill);
 		final Map<Integer, Long> keptItems = state != null ? state.getResourceCounts() : java.util.Collections.emptyMap();
 
-		List<Integer> sortedIds = new java.util.ArrayList<>(allItemIds);
+		List<Integer> sortedIds = new java.util.ArrayList<>(nodeItemIds);
 		sortedIds.sort(java.util.Comparator.comparing(this::itemName, String.CASE_INSENSITIVE_ORDER));
 
 		// Grid of item slots (reusing the shared Combat-section item-slot builder), one per
