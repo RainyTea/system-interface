@@ -479,6 +479,27 @@ public class SkillTrackerTest
 	}
 
 	@Test
+	public void setActiveObjectBumpsGenerationOnChange()
+	{
+		ResourceData data = ResourceData.load(new Gson());
+		SkillTracker t = new SkillTracker(data, PRICES);
+		long g0 = t.getGeneration();
+		t.setActiveObject(1511);
+		assertTrue(t.getGeneration() > g0);   // node changed -> refresh
+	}
+
+	@Test
+	public void setActiveObjectSameIdDoesNotBumpGeneration()
+	{
+		ResourceData data = ResourceData.load(new Gson());
+		SkillTracker t = new SkillTracker(data, PRICES);
+		t.setActiveObject(1511);
+		long g1 = t.getGeneration();
+		t.setActiveObject(1511);              // same node re-clicked
+		assertEquals(g1, t.getGeneration());  // no churn
+	}
+
+	@Test
 	public void profileChangeClearsActiveObject()
 	{
 		ResourceData data = ResourceData.load(new Gson());

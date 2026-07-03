@@ -404,6 +404,10 @@ public final class SkillTracker
 	/** Records the engaged gathering object; clears any active fishing spot (single active node). */
 	public void setActiveObject(int objectId)
 	{
+		if (this.activeObjectId != objectId || this.activeFishingSpotId != -1)
+		{
+			generation.incrementAndGet();
+		}
 		this.activeObjectId = objectId;
 		this.activeFishingSpotId = -1;
 	}
@@ -427,6 +431,10 @@ public final class SkillTracker
 		}
 		if (hasFishingTool())
 		{
+			if (activeFishingSpotId != npcId || activeObjectId != -1)
+			{
+				generation.incrementAndGet();
+			}
 			activeFishingSpotId = npcId;
 			activeObjectId = -1;
 			setActiveSkill(Skill.FISHING);
@@ -655,6 +663,10 @@ public final class SkillTracker
 		if (!isFishingSpot(npcId) || !hasFishingTool())
 		{
 			return false;
+		}
+		if (activeFishingSpotId != npcId || activeObjectId != -1)
+		{
+			generation.incrementAndGet();
 		}
 		activeFishingSpotId = npcId;
 		activeObjectId = -1;
