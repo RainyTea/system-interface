@@ -519,6 +519,19 @@ public class SystemInterfacePlugin extends Plugin
 			}
 		}
 
+		if (action == MenuAction.NPC_FIRST_OPTION
+			|| action == MenuAction.NPC_SECOND_OPTION
+			|| action == MenuAction.NPC_THIRD_OPTION
+			|| action == MenuAction.NPC_FOURTH_OPTION
+			|| action == MenuAction.NPC_FIFTH_OPTION)
+		{
+			final String method = SkillTracker.fishingMethodForOption(event.getMenuOption());
+			if (method != null)
+			{
+				skillTracker.setActiveFishingMethod(method);
+			}
+		}
+
 		if (!isItemRemovalAction(event.getMenuOption()))
 		{
 			return;

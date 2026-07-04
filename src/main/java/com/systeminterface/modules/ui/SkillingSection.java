@@ -550,7 +550,7 @@ public class SkillingSection extends JPanel
 		}
 		else if (spotId != -1)
 		{
-			for (ResourceData.ResourceEntry e : resourceData.forNpcId(spotId))
+			for (ResourceData.ResourceEntry e : resourceData.forNpcIdAndMethod(spotId, skillTracker.getActiveFishingMethod()))
 			{
 				ids.add(e.getItemId());
 			}
