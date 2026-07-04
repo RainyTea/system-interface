@@ -462,10 +462,10 @@ public class ActiveOverlay extends OverlayPanel
 	}
 
 	/**
-	 * Output for tracked items only (track-driven). Guaranteed primaries show name + session count.
-	 * Rate-based rewards (bird nest, leaves) reuse the combat overlay's rich block — rate, chance-seen,
-	 * progress bar, deviation, luck — driven by the XP-tracker session action count as the sample size
-	 * (session-scoped, mirroring how combat falls back to KC when there are no drops). Text-only.
+	 * Output for tracked, rate-based rewards only (bird nest, leaves) — the combat overlay's rich block
+	 * (rate, chance-seen, progress bar, deviation, luck), driven by the XP-tracker session action count
+	 * as the sample size. Guaranteed primaries are NOT shown here (the gathered node is already named in
+	 * the Activity row). Track-driven and text-only (no ItemManager on the render thread).
 	 */
 	private void buildOutputChips(Skill active)
 	{
@@ -476,67 +476,21 @@ public class ActiveOverlay extends OverlayPanel
 		}
 		final SkillTracker.SkillState state = skillTracker.getSkillState(active);
 		final boolean compact = config.compactOverlay();
-
-		// Guaranteed primaries — every action yields them, so no rate/luck: name + session count.
-		for (ResourceData.ResourceEntry e : currentNodePrimaries(active))
-		{
-			if (!containsIgnoreCase(tracked, e.getName()))
-			{
-				continue;
-			}
-			final long count = state != null ? state.getResourceCount(e.getItemId()) : 0;
-			panelComponent.getChildren().add(LineComponent.builder()
-				.left(e.getName()).leftColor(OSRS_GOLD)
-				.right(count > 0 ? "x" + formatInt(count) : "")
-				.build());
-		}
-
-		// Rate-based rewards — the full combat-style stats block (or a plain count if a reward has no rate).
 		final int actions = skillTracker.getActions(active); // session actions ≈ sample size
+
 		for (ResourceData.RewardEntry rw : skillTracker.getResourceData()
 			.getApplicableRewards(active, heldItemCache.heldIds()))
 		{
-			if (!containsIgnoreCase(tracked, rw.getName()))
+			final Double rate = rw.getRate();
+			if (rate == null || rate <= 0.0 || !containsIgnoreCase(tracked, rw.getName()))
 			{
 				continue;
 			}
-			final Double rate = rw.getRate();
 			final long count = state != null ? state.getResourceCount(rw.getItemId()) : 0;
-			if (rate != null && rate > 0.0)
-			{
-				final long denom = Math.max(1L, Math.round(1.0 / rate));
-				buildProgressSection(rw.getName(), rate, denom, actions,
-					(int) Math.min(count, Integer.MAX_VALUE), actions, compact);
-			}
-			else
-			{
-				panelComponent.getChildren().add(LineComponent.builder()
-					.left(rw.getName()).leftColor(OSRS_GOLD)
-					.right(count > 0 ? "x" + formatInt(count) : "")
-					.build());
-			}
+			final long denom = Math.max(1L, Math.round(1.0 / rate));
+			buildProgressSection(rw.getName(), rate, denom, actions,
+				(int) Math.min(count, Integer.MAX_VALUE), actions, compact);
 		}
-	}
-
-	private java.util.List<ResourceData.ResourceEntry> currentNodePrimaries(Skill active)
-	{
-		final int objId = skillTracker.getActiveObjectId();
-		if (objId != -1)
-		{
-			return skillTracker.getResourceData().forObjectId(objId);
-		}
-		final int spotId = skillTracker.getActiveFishingSpotId();
-		if (spotId != -1)
-		{
-			java.util.List<ResourceData.ResourceEntry> out = new java.util.ArrayList<>();
-			for (ResourceData.ResourceEntry e : skillTracker.getResourceData()
-				.forNpcIdAndMethod(spotId, skillTracker.getActiveFishingMethod()))
-			{
-				if (ResourceData.isTrackableMethod(e.getMethod())) { out.add(e); }
-			}
-			return out;
-		}
-		return java.util.Collections.emptyList();
 	}
 
 	private static boolean containsIgnoreCase(java.util.Set<String> set, String s)
