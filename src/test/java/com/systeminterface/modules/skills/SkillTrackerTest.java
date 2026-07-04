@@ -531,12 +531,19 @@ public class SkillTrackerTest
 	public void birdNestNotCreditedWithoutSignal()
 	{
 		tracker.applyInventoryDiff(inv(), 200);
-		// No signal — a bank withdrawal / GE collect of a nest must not count.
+		// Prove recognition is live: a nest WITH a coincident signal IS credited.
+		tracker.recordGatherSignal(Skill.WOODCUTTING, 201);
 		tracker.applyInventoryDiff(inv(BIRD_NEST, 1), 201);
-		tracker.expireStalePending(203); // advance past the window
-
 		SkillTracker.SkillState wc = tracker.getSkillState(Skill.WOODCUTTING);
-		assertTrue(wc == null || wc.getResourceCount(BIRD_NEST) == 0L);
+		assertNotNull(wc);
+		assertEquals(1L, wc.getResourceCount(BIRD_NEST));
+
+		// A second nest with NO signal (a bank withdrawal / GE collect of a nest) must NOT be
+		// credited even though the item IS recognized — the provenance gate blocks it. If the gate
+		// were removed, this unsignaled gain would credit and the count would become 2.
+		tracker.applyInventoryDiff(inv(BIRD_NEST, 2), 202);
+		tracker.expireStalePending(204);
+		assertEquals(1L, wc.getResourceCount(BIRD_NEST));
 	}
 
 	@Test
