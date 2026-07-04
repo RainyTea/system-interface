@@ -198,9 +198,10 @@ public class SystemInterfacePlugin extends Plugin
 		{
 			final boolean reward = resourceData.rewardForItemId(itemId) != null;
 			final boolean tracked = isTracked(itemNameCache.name(itemId));
-			final long unitValue = 0; // skilling gathers ping regardless of value; notability via reward/tracked
+			// creditGather fires on the client thread (inventory/chat/stat events), so pricing here is safe.
+			final long unitValue = Math.max(0, itemManager.getItemPrice(itemId));
 			final boolean notable = ItemGainPings.isNotable(itemId, unitValue, tracked, reward,
-				config.pingNotableValueThreshold());
+				config.pingSkillingValueThreshold());
 			itemGainPings.add(itemId, itemNameCache.name(itemId), qty, notable, System.currentTimeMillis());
 		});
 

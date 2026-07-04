@@ -152,14 +152,27 @@ public interface SystemInterfaceConfig extends Config
 	@ConfigItem(
 		position = 105,
 		keyName = "pingNotableValueThreshold",
-		name = "Notable ping value (GP)",
-		description = "Gains at or above this GP unit value get a distinct, longer-lived ping. 0 disables the value rule.",
+		name = "Notable combat ping value (GP)",
+		description = "Combat loot at or above this GP unit value gets a distinct, longer-lived ping. 0 disables the value rule for combat.",
 		section = FEATURES
 	)
 	@Range(min = 0, max = 100_000_000)
 	default int pingNotableValueThreshold()
 	{
 		return 20_000;
+	}
+
+	@ConfigItem(
+		position = 106,
+		keyName = "pingSkillingValueThreshold",
+		name = "Notable skilling ping value (GP)",
+		description = "Gathered resources at or above this GP unit value get a distinct, longer-lived ping. 0 disables the value rule for skilling.",
+		section = FEATURES
+	)
+	@Range(min = 0, max = 100_000_000)
+	default int pingSkillingValueThreshold()
+	{
+		return 1_000;
 	}
 
 	// --- Active overlay skilling row toggles (section: Active overlay rows). ---
