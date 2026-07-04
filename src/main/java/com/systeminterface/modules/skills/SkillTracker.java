@@ -1078,6 +1078,24 @@ public final class SkillTracker
 		}
 	}
 
+	private int thievingFails;
+	private int thievingSuccesses;
+
+	/** Feeds the conservative Thieving fail-rate from explicit pickpocket chat lines. */
+	public void onThievingChat(String message)
+	{
+		if (message == null) { return; }
+		if (message.startsWith("You fail to pick")) { thievingFails++; }
+		else if (message.startsWith("You pick")) { thievingSuccesses++; }
+	}
+
+	/** Fails / (fails + successes) so far, or null with no attempts recorded. */
+	public Double getThievingFailRate()
+	{
+		final int total = thievingFails + thievingSuccesses;
+		return total == 0 ? null : (double) thievingFails / total;
+	}
+
 	/**
 	 * A tracked-skill XP gain is an action signal for that skill (the supplies-tracker pattern:
 	 * only count when the matching skill XP dropped). Gates inventory gains as gathered.
@@ -1156,6 +1174,8 @@ public final class SkillTracker
 		sessionSkillingTotalGp = 0;
 		keptGpBySkill = Collections.emptyMap();
 		prevSummaryGp = 0;
+		thievingFails = 0;
+		thievingSuccesses = 0;
 		generation.incrementAndGet();
 	}
 

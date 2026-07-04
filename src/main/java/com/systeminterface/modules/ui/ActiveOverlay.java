@@ -360,10 +360,26 @@ public class ActiveOverlay extends OverlayPanel
 			}
 		}
 
+		appendSkillSpecificRows(active);
+
 		// Output chips (text rows): tracked primary node output(s) + applicable rewards.
 		buildOutputChips(active);
 
 		return super.render(graphics);
+	}
+
+	/** One optional skill-specific row per skill (extension point; Thieving fail-rate for now). */
+	private void appendSkillSpecificRows(Skill active)
+	{
+		if (active == Skill.THIEVING)
+		{
+			final Double fail = skillTracker.getThievingFailRate();
+			if (fail != null)
+			{
+				panelComponent.getChildren().add(LineComponent.builder()
+					.left("Fail rate").right(formatPercent(fail)).rightColor(DIM).build());
+			}
+		}
 	}
 
 	/** The current gathering source label: engaged object/spot resource name, or "—". */

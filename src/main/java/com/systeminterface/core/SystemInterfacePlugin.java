@@ -307,6 +307,7 @@ public class SystemInterfacePlugin extends Plugin
 	{
 		listener.onChatMessage(event);
 		skillTracker.onChatMessage(Text.removeTags(event.getMessage()));
+		skillTracker.onThievingChat(Text.removeTags(event.getMessage()));
 		if (event.getType() == ChatMessageType.OBJECT_EXAMINE)
 		{
 			objectExamineService.onObjectExamineMessage(Text.removeTags(event.getMessage()), client.getTickCount());

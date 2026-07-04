@@ -579,4 +579,15 @@ public class SkillTrackerTest
 		t.onProfileChanged();
 		assertNull(t.getActiveFishingMethod());
 	}
+
+	@Test
+	public void thievingFailRate_nullUntilData_thenReflectsFailsOverAttempts()
+	{
+		assertNull(tracker.getThievingFailRate());
+		tracker.onThievingChat("You fail to pick the man's pocket.");
+		tracker.onThievingChat("You pick the man's pocket."); // a success line
+		Double rate = tracker.getThievingFailRate();
+		assertNotNull(rate);
+		assertEquals(0.5, rate, 1e-9);
+	}
 }
