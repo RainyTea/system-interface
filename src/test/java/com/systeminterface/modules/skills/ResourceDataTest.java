@@ -11,6 +11,7 @@ import org.junit.Test;
 import static org.junit.Assert.assertEquals;
 import static org.junit.Assert.assertFalse;
 import static org.junit.Assert.assertNotNull;
+import static org.junit.Assert.assertNull;
 import static org.junit.Assert.assertTrue;
 
 /**
@@ -164,5 +165,46 @@ public class ResourceDataTest
 	{
 		// No entry at 1510 uses "net" -> fallback shows all rather than empty.
 		assertEquals(data.forNpcId(1510).size(), data.forNpcIdAndMethod(1510, "net").size());
+	}
+
+	@Test
+	public void resolveFishingMethodIsSpotAwareForNetFamily()
+	{
+		// 1514 is a small-net/bait spot; 1511 is a big-net/harpoon spot. Same option word,
+		// different method depending on which the spot actually offers.
+		assertEquals("net", data.resolveFishingMethod(1514, "Net"));
+		assertEquals("bignet", data.resolveFishingMethod(1511, "Net"));
+		assertEquals("bignet", data.resolveFishingMethod(1511, "Big Net"));
+	}
+
+	@Test
+	public void resolveFishingMethodHandlesUnambiguousOptions()
+	{
+		assertEquals("harpoon", data.resolveFishingMethod(1510, "Harpoon"));
+		assertEquals("cage", data.resolveFishingMethod(1510, "Cage"));
+		assertEquals("harpoon", data.resolveFishingMethod(1511, "Harpoon"));
+		assertEquals("bait", data.resolveFishingMethod(1514, "Bait"));
+		assertEquals("lure", data.resolveFishingMethod(1506, "Lure"));
+		assertEquals("vessel", data.resolveFishingMethod(4712, "Fish"));
+		assertEquals("harpoon", data.resolveFishingMethod(1510, "harpoon")); // case-insensitive
+	}
+
+	@Test
+	public void resolveFishingMethodNullWhenOptionNotOfferedOrUnknown()
+	{
+		assertNull(data.resolveFishingMethod(1510, "Net"));   // 1510 offers no net/bignet
+		assertNull(data.resolveFishingMethod(1510, "Examine"));
+		assertNull(data.resolveFishingMethod(999999, "Harpoon")); // not a fishing spot
+		assertNull(data.resolveFishingMethod(1510, null));
+	}
+
+	@Test
+	public void isTrackableMethodExcludesOnlyBignet()
+	{
+		assertFalse(ResourceData.isTrackableMethod("bignet"));
+		assertTrue(ResourceData.isTrackableMethod("harpoon"));
+		assertTrue(ResourceData.isTrackableMethod("net"));
+		assertTrue(ResourceData.isTrackableMethod("cage"));
+		assertTrue(ResourceData.isTrackableMethod(null));
 	}
 }

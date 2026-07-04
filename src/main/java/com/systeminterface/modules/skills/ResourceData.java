@@ -9,8 +9,10 @@ import java.nio.charset.StandardCharsets;
 import java.util.ArrayList;
 import java.util.Collections;
 import java.util.HashMap;
+import java.util.HashSet;
 import java.util.List;
 import java.util.Map;
+import java.util.Set;
 import lombok.extern.slf4j.Slf4j;
 import net.runelite.api.Skill;
 
@@ -202,6 +204,66 @@ public final class ResourceData
 			}
 		}
 		return filtered.isEmpty() ? all : Collections.unmodifiableList(filtered);
+	}
+
+	/**
+	 * Resolves a clicked fishing-spot menu option (e.g. "Harpoon", "Cage", "Net", "Big Net", "Fish")
+	 * to the data {@code method} value <em>for that specific spot</em>, or null when the option is
+	 * not a fishing action, the spot does not offer that option's method, or the npc is not a known
+	 * fishing spot. Spot-aware so the ambiguous net-family word maps to {@code net} at a small-net
+	 * spot but {@code bignet} at a big-net spot.
+	 */
+	public String resolveFishingMethod(int npcId, String menuOption)
+	{
+		if (menuOption == null)
+		{
+			return null;
+		}
+		List<ResourceEntry> entries = forNpcId(npcId);
+		if (entries.isEmpty())
+		{
+			return null;
+		}
+		Set<String> spotMethods = new HashSet<>();
+		for (ResourceEntry e : entries)
+		{
+			if (e.getMethod() != null)
+			{
+				spotMethods.add(e.getMethod());
+			}
+		}
+		switch (menuOption.toLowerCase().trim())
+		{
+			case "harpoon":   return spotMethods.contains("harpoon") ? "harpoon" : null;
+			case "cage":      return spotMethods.contains("cage") ? "cage" : null;
+			case "lure":
+			case "fly":       return spotMethods.contains("lure") ? "lure" : null;
+			case "bait":      return spotMethods.contains("bait") ? "bait" : null;
+			case "fish":      return spotMethods.contains("vessel") ? "vessel" : null;
+			case "net":
+			case "small net":
+			case "big net":
+				if (spotMethods.contains("net"))
+				{
+					return "net";
+				}
+				if (spotMethods.contains("bignet"))
+				{
+					return "bignet";
+				}
+				return null;
+			default:          return null;
+		}
+	}
+
+	/**
+	 * Whether a fishing method's catch is shown in the tracking table. Roll-based methods with
+	 * unmodelled rates / incomplete catch data (currently {@code bignet}) are deferred to Phase 2
+	 * and excluded. Null (unknown) is treated as trackable so the show-all fallback still applies.
+	 */
+	public static boolean isTrackableMethod(String method)
+	{
+		return !"bignet".equals(method);
 	}
 
 	public ResourceEntry forItemId(int itemId)
