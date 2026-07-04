@@ -1081,6 +1081,12 @@ public final class SkillTracker
 	private int thievingFails;
 	private int thievingSuccesses;
 
+	// KNOWN LIMITATION (record per AGENTS.md bug discipline — do NOT rely on this until tightened):
+	// startsWith("You pick") also matches non-Thieving lines (herb/flower/allotment/fruit picking,
+	// lock-picking), and "You fail to pick" can match lock-picking failures — both would skew the
+	// fail-rate. This is currently INERT because Thieving is never an active skill in this build
+	// (not in TRACKED_SKILLS, no activity detection), so the fail-rate row is unreachable. Tighten
+	// the match (e.g. require a "pocket" token) BEFORE a future slice makes Thieving an active skill.
 	/** Feeds the conservative Thieving fail-rate from explicit pickpocket chat lines. */
 	public void onThievingChat(String message)
 	{
