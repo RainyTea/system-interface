@@ -12,6 +12,7 @@ import org.junit.Test;
 
 import static org.junit.Assert.assertEquals;
 import static org.junit.Assert.assertFalse;
+import static org.junit.Assert.assertNotNull;
 import static org.junit.Assert.assertNull;
 import static org.junit.Assert.assertTrue;
 
@@ -32,6 +33,7 @@ public class SkillTrackerTest
 {
 	private static final int SALMON = 331;  // lure fish, Skill.FISHING
 	private static final int IRON = 440;    // iron ore, Skill.MINING
+	private static final int BIRD_NEST = 5073;  // Phase-2 reward, resolves to Skill.WOODCUTTING
 	private static final long SALMON_PRICE = 100L;
 
 	private static final IntToLongFunction PRICES = id ->
@@ -40,6 +42,7 @@ public class SkillTrackerTest
 		{
 			case SALMON: return SALMON_PRICE;
 			case 317: return 10L;  // raw shrimps
+			case BIRD_NEST: return 0L;  // clue/seed nests may have 0 curated price; still must credit
 			default: return 0L;
 		}
 	};
@@ -508,6 +511,32 @@ public class SkillTrackerTest
 		t.setActiveObject(1511);
 		t.onProfileChanged();               // logout / profile switch
 		assertEquals(-1, t.getActiveObjectId());
+	}
+
+	@Test
+	public void birdNestCreditedWithCoincidentWoodcuttingSignal()
+	{
+		// Baseline inventory established first (applyInventoryDiff ignores the very first snapshot).
+		tracker.applyInventoryDiff(inv(), 100);
+		// A woodcutting action signal on tick 101, then the nest lands the same tick.
+		tracker.recordGatherSignal(Skill.WOODCUTTING, 101);
+		tracker.applyInventoryDiff(inv(BIRD_NEST, 1), 101);
+
+		SkillTracker.SkillState wc = tracker.getSkillState(Skill.WOODCUTTING);
+		assertNotNull(wc);
+		assertEquals(1L, wc.getResourceCount(BIRD_NEST));
+	}
+
+	@Test
+	public void birdNestNotCreditedWithoutSignal()
+	{
+		tracker.applyInventoryDiff(inv(), 200);
+		// No signal — a bank withdrawal / GE collect of a nest must not count.
+		tracker.applyInventoryDiff(inv(BIRD_NEST, 1), 201);
+		tracker.expireStalePending(203); // advance past the window
+
+		SkillTracker.SkillState wc = tracker.getSkillState(Skill.WOODCUTTING);
+		assertTrue(wc == null || wc.getResourceCount(BIRD_NEST) == 0L);
 	}
 
 	@Test

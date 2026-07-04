@@ -739,16 +739,16 @@ public final class SkillTracker
 				continue;
 			}
 
-			final ResourceData.ResourceEntry re = resourceData.forItemId(itemId);
-			if (re == null)
+			final Skill gatherSkill = gatherableSkillFor(itemId);
+			if (gatherSkill == null)
 			{
 				continue;
 			}
 
 			// A fresh gather — credited only with a coincident action signal (provenance gate).
-			if (signalFreshFor(re.getSkill(), tick))
+			if (signalFreshFor(gatherSkill, tick))
 			{
-				creditGather(re.getSkill(), itemId, gained);
+				creditGather(gatherSkill, itemId, gained);
 				changed = true;
 				creditedFreshGather = true;
 			}
@@ -804,6 +804,18 @@ public final class SkillTracker
 		}
 	}
 
+	/** The skill that owns {@code itemId} as a primary resource or a curated reward, or null. */
+	private Skill gatherableSkillFor(int itemId)
+	{
+		ResourceData.ResourceEntry re = resourceData.forItemId(itemId);
+		if (re != null)
+		{
+			return re.getSkill();
+		}
+		ResourceData.RewardEntry rw = resourceData.rewardForItemId(itemId);
+		return rw != null ? rw.getSkill() : null;
+	}
+
 	/** Records {@code qty} of {@code itemId} as gathered for {@code skill} (kept + gross + session + live). */
 	private void creditGather(Skill skill, int itemId, int qty)
 	{
@@ -847,10 +859,10 @@ public final class SkillTracker
 		while (it.hasNext())
 		{
 			final Map.Entry<Integer, Integer> e = it.next();
-			final ResourceData.ResourceEntry re = resourceData.forItemId(e.getKey());
-			if (re != null && re.getSkill() == signalSkill)
+			final Skill gatherSkill = gatherableSkillFor(e.getKey());
+			if (gatherSkill != null && gatherSkill == signalSkill)
 			{
-				creditGather(re.getSkill(), e.getKey(), e.getValue());
+				creditGather(gatherSkill, e.getKey(), e.getValue());
 				it.remove();
 				credited = true;
 			}
@@ -1049,6 +1061,16 @@ public final class SkillTracker
 				markActivity();
 			}
 			recordGatherSignal(Skill.FISHING, client.getTickCount());
+		}
+		if (message != null && message.contains("bird's nest"))
+		{
+			// Bird nests fall while gathering (chat-first provenance, spec §3). Credit under the
+			// active tracked skill so a coincident inventory gain of the nest is a real gather.
+			final Skill active = activeSkill;
+			if (active != null && TRACKED_SKILLS.contains(active))
+			{
+				recordGatherSignal(active, client.getTickCount());
+			}
 		}
 	}
 
