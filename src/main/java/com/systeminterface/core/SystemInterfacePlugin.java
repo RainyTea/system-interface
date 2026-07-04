@@ -10,7 +10,6 @@ import com.systeminterface.services.profit.ProfitTracker;
 import com.systeminterface.services.portrait.PortraitService;
 import com.systeminterface.modules.ui.AnalyzeOverlay;
 import com.systeminterface.modules.ui.ItemHoverOverlay;
-import com.systeminterface.modules.ui.SkillingOverlay;
 import com.systeminterface.modules.ui.ActiveOverlay;
 import com.systeminterface.modules.ui.CollapseStateStore;
 import com.systeminterface.modules.ui.SystemInterfacePanel;
@@ -151,9 +150,6 @@ public class SystemInterfacePlugin extends Plugin
 	private SessionTotals sessionTotals;
 
 	@Inject
-	private SkillingOverlay skillingOverlay;
-
-	@Inject
 	private ResourceData resourceData;
 
 	@Inject
@@ -178,7 +174,6 @@ public class SystemInterfacePlugin extends Plugin
 		overlayManager.add(overlay);
 		overlayManager.add(analyzeOverlay);
 		overlayManager.add(itemHoverOverlay);
-		overlayManager.add(skillingOverlay);
 		skillTracker.setXpTrackerService(xpTrackerService);
 		mouseManager.registerMouseListener(analyzeOverlay.getMouseListener());
 
@@ -247,7 +242,6 @@ public class SystemInterfacePlugin extends Plugin
 		overlayManager.remove(overlay);
 		overlayManager.remove(analyzeOverlay);
 		overlayManager.remove(itemHoverOverlay);
-		overlayManager.remove(skillingOverlay);
 		mouseManager.unregisterMouseListener(analyzeOverlay.getMouseListener());
 		chatCommandManager.unregisterCommand(APPRAISE_COMMAND);
 		chatCommandManager.unregisterCommand(STATUS_COMMAND);

@@ -230,6 +230,10 @@ public final class SkillTracker
 	// Last observed XP per tracked skill, to tell a real XP gain from the login baseline read.
 	private final Map<Skill, Integer> lastXp = new HashMap<>();
 
+	// Per-skill XP at the first StatChanged this session (the login baseline read), so
+	// getSessionXp can report session-gained XP = currentXp - baseline. Reset on logout.
+	private final Map<Skill, Integer> sessionStartXp = new HashMap<>();
+
 	private final AtomicLong generation = new AtomicLong(0);
 
 	private final Map<Skill, SkillState> skillStates = new HashMap<>();
@@ -1085,10 +1089,22 @@ public final class SkillTracker
 		{
 			return;
 		}
+		sessionStartXp.putIfAbsent(skill, event.getXp());
 		if (isXpGain(skill, event.getXp()))
 		{
 			recordGatherSignal(skill, client.getTickCount());
 		}
+	}
+
+	/** Session XP gained for {@code skill}: current total minus the session-start baseline (0 if unknown). */
+	public int getSessionXp(Skill skill)
+	{
+		final Integer start = sessionStartXp.get(skill);
+		if (start == null || client == null)
+		{
+			return 0;
+		}
+		return Math.max(0, client.getSkillExperience(skill) - start);
 	}
 
 	/**
@@ -1128,6 +1144,7 @@ public final class SkillTracker
 		lastGatherSignalSkill = null;
 		lastGatherSignalTick = Long.MIN_VALUE;
 		lastXp.clear();
+		sessionStartXp.clear();
 		// Reset the activity clock so the in-game overlay doesn't linger / reappear on the
 		// next login. The panel log re-surfaces the persisted skill via loadFromState, but
 		// the overlay only shows after real activity this session.

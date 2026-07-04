@@ -5,10 +5,14 @@ import com.systeminterface.core.SystemInterfacePlugin;
 import com.systeminterface.services.drops.DropTable;
 import com.systeminterface.services.drops.LootTables;
 import com.systeminterface.services.lookup.BossAliases;
+import com.systeminterface.services.lookup.HeldItemCache;
 import com.systeminterface.services.lookup.ItemMembership;
 import com.systeminterface.common.probability.LuckStatus;
 import com.systeminterface.common.probability.Probability;
 import com.systeminterface.common.model.BestiaryRank;
+import com.systeminterface.modules.skills.PetDisplay;
+import com.systeminterface.modules.skills.ResourceData;
+import com.systeminterface.modules.skills.SkillTracker;
 import com.systeminterface.services.state.StateTracker;
 import com.systeminterface.services.state.TargetState;
 
@@ -20,6 +24,7 @@ import javax.inject.Inject;
 import javax.inject.Singleton;
 import net.runelite.api.Client;
 import net.runelite.api.NPC;
+import net.runelite.api.Skill;
 import static net.runelite.api.MenuAction.RUNELITE_OVERLAY_CONFIG;
 import static net.runelite.client.ui.overlay.OverlayManager.OPTION_CONFIGURE;
 import net.runelite.client.ui.overlay.OverlayPanel;
@@ -51,6 +56,7 @@ import net.runelite.client.ui.overlay.components.TitleComponent;
 public class ActiveOverlay extends OverlayPanel
 {
 	private static final Color ACCENT = new Color(255, 152, 31);
+	private static final Color ACCENT_SKILL = new Color(120, 200, 255);
 	private static final Color DIM = new Color(170, 170, 180);
 	private static final Color OSRS_BG = new Color(45, 40, 31, 235);
 	private static final Color OSRS_GOLD = new Color(255, 200, 50);
@@ -62,6 +68,8 @@ public class ActiveOverlay extends OverlayPanel
 	private final SystemInterfaceConfig config;
 	private final ItemMembership itemMembership;
 	private final Client client;
+	private final SkillTracker skillTracker;
+	private final HeldItemCache heldItemCache;
 
 	private volatile String currentTarget;
 	private volatile NPC currentNpc;
@@ -70,6 +78,8 @@ public class ActiveOverlay extends OverlayPanel
 	/** Milliseconds since epoch of the last activity (interaction or loot). */
 	private volatile long lastActivityAtMs;
 
+	private boolean defaultLocationSeeded;
+
 	@Inject
 	public ActiveOverlay(
 		SystemInterfacePlugin plugin,
@@ -77,7 +87,9 @@ public class ActiveOverlay extends OverlayPanel
 		LootTables lootTables,
 		SystemInterfaceConfig config,
 		ItemMembership itemMembership,
-		Client client)
+		Client client,
+		SkillTracker skillTracker,
+		HeldItemCache heldItemCache)
 	{
 		super(plugin);
 		this.stateTracker = stateTracker;
@@ -85,6 +97,8 @@ public class ActiveOverlay extends OverlayPanel
 		this.config = config;
 		this.itemMembership = itemMembership;
 		this.client = client;
+		this.skillTracker = skillTracker;
+		this.heldItemCache = heldItemCache;
 		setPosition(OverlayPosition.DETACHED);
 		addMenuEntry(RUNELITE_OVERLAY_CONFIG, OPTION_CONFIGURE, "System Interface overlay");
 	}
@@ -130,14 +144,55 @@ public class ActiveOverlay extends OverlayPanel
 		{
 			return null;
 		}
+		seedDefaultLocation(); // the middle-left computation extracted from B1 Step 1
 
-		if (getPreferredLocation() == null && getBounds().getLocation().equals(new java.awt.Point(0, 0)))
+		// One context at a time, skilling precedence (fishing spots are NPCs → skilling, not combat).
+		final Skill skilling = resolveSkillingContext();
+		if (skilling != null)
+		{
+			return renderSkilling(graphics, skilling);
+		}
+		return renderCombat(graphics);
+	}
+
+	/** Seeds the middle-left default once, only if the user hasn't dragged/saved a location. */
+	private void seedDefaultLocation()
+	{
+		if (defaultLocationSeeded)
+		{
+			return;
+		}
+		defaultLocationSeeded = true;
+		if (getPreferredLocation() == null)
 		{
 			final int vpH = client.getViewportHeight();
 			final int y = vpH > 0 ? Math.max(0, (vpH / 2) - 60) : 100;
 			setPreferredLocation(new java.awt.Point(8, y));
 		}
+	}
 
+	/** The skill to show, or null when not skilling (combat/idle handled elsewhere). */
+	private Skill resolveSkillingContext()
+	{
+		Skill active = skillTracker.getActiveSkill();
+		if (active != null)
+		{
+			return active;
+		}
+		final long sinceActivity = skillTracker.getMillisSinceActivity();
+		if (sinceActivity != Long.MAX_VALUE)
+		{
+			final int hideSeconds = config.hideAfterSeconds();
+			if (hideSeconds == 0 || sinceActivity <= hideSeconds * 1000L)
+			{
+				return skillTracker.getDisplaySkill();
+			}
+		}
+		return null;
+	}
+
+	private Dimension renderCombat(Graphics2D graphics)
+	{
 		final String target = currentTarget;
 		if (target == null)
 		{
@@ -218,6 +273,201 @@ public class ActiveOverlay extends OverlayPanel
 		buildPlayerRows(target, combatLvl, table, state, kc, sessionKc, compact);
 
 		return super.render(graphics);
+	}
+
+	// ---------------------------------------------------------------------
+	// Skilling context
+	// ---------------------------------------------------------------------
+
+	private Dimension renderSkilling(Graphics2D graphics, Skill active)
+	{
+		final boolean compact = config.compactOverlay();
+		final int width = compact ? PANEL_WIDTH_COMPACT : PANEL_WIDTH;
+		panelComponent.setPreferredSize(new Dimension(width, 0));
+		panelComponent.setBackgroundColor(OSRS_BG);
+
+		panelComponent.getChildren().add(TitleComponent.builder()
+			.text("Active")
+			.color(OSRS_GOLD)
+			.build());
+
+		final ResourceData.SkillData skillData = skillTracker.getResourceData().getSkillData(active);
+		final int level = client.getRealSkillLevel(active);
+
+		// activity → source  (e.g. "Chopping → Yew tree", "Fishing → Lobster spot")
+		if (config.showActivitySource())
+		{
+			panelComponent.getChildren().add(LineComponent.builder()
+				.left(capitalize(active.getName()))
+				.right(sourceLabel(active))
+				.rightColor(ACCENT_SKILL)
+				.build());
+		}
+		if (config.showLevelRow())
+		{
+			panelComponent.getChildren().add(LineComponent.builder()
+				.left("Level").right(String.valueOf(level)).build());
+		}
+		if (config.showXpHrRow())
+		{
+			final int xpHr = skillTracker.getXpHr(active);
+			if (xpHr > 0)
+			{
+				panelComponent.getChildren().add(LineComponent.builder()
+					.left(compact ? "XP/hr" : "XP / hour").right(String.format("%,d", xpHr)).build());
+			}
+		}
+		if (config.showXpGainedRow())
+		{
+			final int xpGained = skillTracker.getSessionXp(active);
+			if (xpGained > 0)
+			{
+				panelComponent.getChildren().add(LineComponent.builder()
+					.left(compact ? "XP" : "XP gained").right(String.format("%,d", xpGained)).build());
+			}
+		}
+		if (config.showPetOddsRow() && skillData != null && level > 0)
+		{
+			panelComponent.getChildren().add(LineComponent.builder()
+				.left("Pet odds")
+				.right(PetDisplay.oddsText(skillData.getPetBaseChance(), level))
+				.rightColor(ACCENT_SKILL)
+				.build());
+		}
+		if (config.showActionsRow())
+		{
+			final int actions = skillTracker.getActions(active);
+			if (actions > 0)
+			{
+				panelComponent.getChildren().add(LineComponent.builder()
+					.left(compact ? "Actions" : "Actions").right(String.format("%,d", actions)).build());
+			}
+		}
+		if (config.showGpHrRow())
+		{
+			final long keptGp = skillTracker.getSkillKeptGp(active);
+			panelComponent.getChildren().add(LineComponent.builder()
+				.left("GP / hr").right(com.systeminterface.modules.ui.PanelFormat.gp(keptGp)).build());
+		}
+		if (config.showNextLevelRow())
+		{
+			final String timeToNext = skillTracker.getTimeToNextLevel(active);
+			if (timeToNext != null)
+			{
+				panelComponent.getChildren().add(LineComponent.builder()
+					.left(compact ? "Next lvl" : "Time to next lvl").right(timeToNext).rightColor(DIM).build());
+				buildXpBar(active, level, width, compact);
+			}
+		}
+
+		// Output chips (text rows): tracked primary node output(s) + applicable rewards.
+		buildOutputChips(active);
+
+		return super.render(graphics);
+	}
+
+	/** The current gathering source label: engaged object/spot resource name, or "—". */
+	private String sourceLabel(Skill active)
+	{
+		final int objId = skillTracker.getActiveObjectId();
+		if (objId != -1)
+		{
+			java.util.List<ResourceData.ResourceEntry> es = skillTracker.getResourceData().forObjectId(objId);
+			if (!es.isEmpty()) { return es.get(0).getName(); }
+		}
+		final int spotId = skillTracker.getActiveFishingSpotId();
+		if (spotId != -1)
+		{
+			return "Fishing spot";
+		}
+		return "—";
+	}
+
+	/** A thin XP progress bar toward the next level (reuses the combat bar glyphs). */
+	private void buildXpBar(Skill active, int level, int width, boolean compact)
+	{
+		if (level <= 0 || level >= net.runelite.api.Experience.MAX_REAL_LEVEL)
+		{
+			return;
+		}
+		final int lo = net.runelite.api.Experience.getXpForLevel(level);
+		final int hi = net.runelite.api.Experience.getXpForLevel(level + 1);
+		final int xp = client.getSkillExperience(active);
+		final double frac = Math.max(0.0, Math.min(1.0, (double) (xp - lo) / Math.max(1, hi - lo)));
+		final int barChars = compact ? 8 : HP_BAR_CHARS;
+		final int filled = (int) Math.round(frac * barChars);
+		final StringBuilder bar = new StringBuilder(barChars);
+		for (int i = 0; i < barChars; i++) { bar.append(i < filled ? BAR_FILLED : BAR_EMPTY); }
+		panelComponent.getChildren().add(LineComponent.builder()
+			.left(bar.toString()).leftColor(ACCENT_SKILL).right(formatPercent(frac)).build());
+	}
+
+	/**
+	 * Output chips as text rows: each engaged-node primary output (gold when tracked) and each
+	 * applicable secondary/conditional reward (blue, with a "reward" tag), with the session count.
+	 * Text-only (no icons) so nothing touches ItemManager on the render thread.
+	 */
+	private void buildOutputChips(Skill active)
+	{
+		final SkillTracker.SkillState state = skillTracker.getSkillState(active);
+		final java.util.Set<String> tracked = parseTracked(config.trackedItem());
+
+		// Primary: outputs of the engaged node (object or non-bignet fishing method).
+		for (ResourceData.ResourceEntry e : currentNodePrimaries(active))
+		{
+			final long count = state != null ? state.getResourceCount(e.getItemId()) : 0;
+			final boolean isTracked = containsIgnoreCase(tracked, e.getName());
+			panelComponent.getChildren().add(LineComponent.builder()
+				.left(e.getName())
+				.leftColor(isTracked ? OSRS_GOLD : ACCENT_SKILL)
+				.right(count > 0 ? "x" + formatInt(count) : "")
+				.build());
+		}
+
+		// Rewards: skill-wide secondary always; conditional only when its kit is held.
+		for (ResourceData.RewardEntry rw : skillTracker.getResourceData()
+			.getApplicableRewards(active, heldItemCache.heldIds()))
+		{
+			final long count = state != null ? state.getResourceCount(rw.getItemId()) : 0;
+			panelComponent.getChildren().add(LineComponent.builder()
+				.left(rw.getName() + "  [reward]")
+				.leftColor(DIM)
+				.right(count > 0 ? "x" + formatInt(count) : "")
+				.build());
+		}
+	}
+
+	private java.util.List<ResourceData.ResourceEntry> currentNodePrimaries(Skill active)
+	{
+		final int objId = skillTracker.getActiveObjectId();
+		if (objId != -1)
+		{
+			return skillTracker.getResourceData().forObjectId(objId);
+		}
+		final int spotId = skillTracker.getActiveFishingSpotId();
+		if (spotId != -1)
+		{
+			java.util.List<ResourceData.ResourceEntry> out = new java.util.ArrayList<>();
+			for (ResourceData.ResourceEntry e : skillTracker.getResourceData()
+				.forNpcIdAndMethod(spotId, skillTracker.getActiveFishingMethod()))
+			{
+				if (ResourceData.isTrackableMethod(e.getMethod())) { out.add(e); }
+			}
+			return out;
+		}
+		return java.util.Collections.emptyList();
+	}
+
+	private static boolean containsIgnoreCase(java.util.Set<String> set, String s)
+	{
+		for (String x : set) { if (x.equalsIgnoreCase(s)) { return true; } }
+		return false;
+	}
+
+	private static String capitalize(String s)
+	{
+		if (s == null || s.isEmpty()) { return s; }
+		return Character.toUpperCase(s.charAt(0)) + s.substring(1).toLowerCase();
 	}
 
 	// ---------------------------------------------------------------------

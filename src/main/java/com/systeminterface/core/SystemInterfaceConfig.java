@@ -18,6 +18,13 @@ public interface SystemInterfaceConfig extends Config
 	)
 	String FEATURES = "features";
 
+	@ConfigSection(
+		position = 200,
+		name = "Active overlay rows",
+		description = "Show or hide individual rows of the Active overlay's skilling view."
+	)
+	String ACTIVE_ROWS = "activeRows";
+
 	@ConfigItem(
 		position = 0,
 		keyName = "showActiveOverlay",
@@ -91,17 +98,6 @@ public interface SystemInterfaceConfig extends Config
 		return false;
 	}
 
-	@ConfigItem(
-		position = 6,
-		keyName = "showSkillingOverlay",
-		name = "Skilling overlay",
-		description = "Show the Skilling overlay during resource gathering."
-	)
-	default boolean showSkillingOverlay()
-	{
-		return true;
-	}
-
 	// --- Feature toggles (section: Features). All default on. ---
 
 	@ConfigItem(
@@ -140,6 +136,32 @@ public interface SystemInterfaceConfig extends Config
 	{
 		return true;
 	}
+
+	// --- Active overlay skilling row toggles (section: Active overlay rows). ---
+
+	@ConfigItem(position = 201, keyName = "showActivitySource", name = "Activity → source", description = "Show the current activity and gathering source.", section = ACTIVE_ROWS)
+	default boolean showActivitySource() { return true; }
+
+	@ConfigItem(position = 202, keyName = "showLevelRow", name = "Level", description = "Show the current skill level.", section = ACTIVE_ROWS)
+	default boolean showLevelRow() { return true; }
+
+	@ConfigItem(position = 203, keyName = "showXpHrRow", name = "XP / hr", description = "Show XP per hour.", section = ACTIVE_ROWS)
+	default boolean showXpHrRow() { return true; }
+
+	@ConfigItem(position = 204, keyName = "showXpGainedRow", name = "XP gained", description = "Show session XP for the active skill.", section = ACTIVE_ROWS)
+	default boolean showXpGainedRow() { return true; }
+
+	@ConfigItem(position = 205, keyName = "showPetOddsRow", name = "Pet odds", description = "Show pet odds at your level (skills with a pet).", section = ACTIVE_ROWS)
+	default boolean showPetOddsRow() { return true; }
+
+	@ConfigItem(position = 206, keyName = "showNextLevelRow", name = "Next level (+ bar)", description = "Show time-to-next-level and an XP progress bar.", section = ACTIVE_ROWS)
+	default boolean showNextLevelRow() { return true; }
+
+	@ConfigItem(position = 207, keyName = "showActionsRow", name = "Actions", description = "Show the session action count.", section = ACTIVE_ROWS)
+	default boolean showActionsRow() { return false; }
+
+	@ConfigItem(position = 208, keyName = "showGpHrRow", name = "GP / hr", description = "Show the value rate of gathered output.", section = ACTIVE_ROWS)
+	default boolean showGpHrRow() { return false; }
 
 	// Hidden config keys — managed by the side panel, not shown in plugin settings.
 
