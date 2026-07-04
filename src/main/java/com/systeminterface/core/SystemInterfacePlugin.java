@@ -109,6 +109,9 @@ public class SystemInterfacePlugin extends Plugin
 	private com.systeminterface.services.lookup.ItemNameCache itemNameCache;
 
 	@Inject
+	private com.systeminterface.services.lookup.HeldItemCache heldItemCache;
+
+	@Inject
 	private com.systeminterface.services.lookup.ObjectExamineService objectExamineService;
 
 	@Inject
@@ -466,7 +469,14 @@ public class SystemInterfacePlugin extends Plugin
 	@Subscribe
 	public void onItemContainerChanged(ItemContainerChanged event)
 	{
-		if (event.getContainerId() == InventoryID.INV)
+		final int id = event.getContainerId();
+		if (id == InventoryID.INV || id == InventoryID.WORN)
+		{
+			heldItemCache.refresh(
+				client.getItemContainer(InventoryID.INV),
+				client.getItemContainer(InventoryID.WORN));
+		}
+		if (id == InventoryID.INV)
 		{
 			profitTracker.onInventoryChanged(event.getItemContainer());
 			skillTracker.onInventoryChanged(event.getItemContainer());
@@ -919,6 +929,7 @@ public class SystemInterfacePlugin extends Plugin
 			return false; // retry next tick
 		}
 		stateTracker.setActiveProfile(p.getName());
+		heldItemCache.refreshNow();
 		log.debug("Profile activated for '{}', running backfill", p.getName());
 		Runnable refreshPanel = () ->
 		{
