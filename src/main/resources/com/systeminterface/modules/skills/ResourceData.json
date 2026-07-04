@@ -200,9 +200,6 @@
         "uses": ["Crafting:82", "Fletching:82"],
         "petBaseChanceOverride": 46350
       }
-    ],
-    "rewards": [
-      { "name": "Bird nest", "type": "secondary", "itemId": 5073, "rate": 0.00390625 }
     ]
   },
   "fishing": {
