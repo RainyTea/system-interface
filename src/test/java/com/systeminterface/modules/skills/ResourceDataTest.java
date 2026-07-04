@@ -207,4 +207,57 @@ public class ResourceDataTest
 		assertTrue(ResourceData.isTrackableMethod("cage"));
 		assertTrue(ResourceData.isTrackableMethod(null));
 	}
+
+	@Test
+	public void woodcuttingHasBirdNestSecondaryAndForestryConditional()
+	{
+		List<ResourceData.RewardEntry> rewards = data.getRewards(Skill.WOODCUTTING);
+		Set<String> names = new HashSet<>();
+		for (ResourceData.RewardEntry r : rewards) { names.add(r.getName()); }
+		assertTrue(names.contains("Bird nest"));
+		assertTrue(names.contains("Leaves"));
+	}
+
+	@Test
+	public void birdNestIsSkillWideSecondaryWithRate()
+	{
+		ResourceData.RewardEntry nest = data.rewardForItemId(5073);
+		assertNotNull(nest);
+		assertEquals(ResourceData.RewardType.SECONDARY, nest.getType());
+		assertEquals(Skill.WOODCUTTING, nest.getSkill());
+		assertNotNull(nest.getRate());
+		assertTrue(nest.getRequiredItemIds().isEmpty());
+	}
+
+	@Test
+	public void leavesIsConditionalGatedOnForestryKit()
+	{
+		ResourceData.RewardEntry leaves = data.rewardForItemId(6020);
+		assertNotNull(leaves);
+		assertEquals(ResourceData.RewardType.CONDITIONAL, leaves.getType());
+		assertTrue(leaves.getRequiredItemIds().contains(28136)); // Forestry kit
+	}
+
+	@Test
+	public void applicableRewards_secondaryAlways_conditionalOnlyWhenHeld()
+	{
+		Set<Integer> none = java.util.Collections.emptySet();
+		Set<String> withoutKit = new HashSet<>();
+		for (ResourceData.RewardEntry r : data.getApplicableRewards(Skill.WOODCUTTING, none)) { withoutKit.add(r.getName()); }
+		assertTrue(withoutKit.contains("Bird nest"));   // secondary always
+		assertFalse(withoutKit.contains("Leaves"));     // conditional gated out
+
+		Set<Integer> withKit = new HashSet<>(java.util.Arrays.asList(28136));
+		Set<String> withKitNames = new HashSet<>();
+		for (ResourceData.RewardEntry r : data.getApplicableRewards(Skill.WOODCUTTING, withKit)) { withKitNames.add(r.getName()); }
+		assertTrue(withKitNames.contains("Bird nest"));
+		assertTrue(withKitNames.contains("Leaves"));     // conditional now applies
+	}
+
+	@Test
+	public void getRewards_unknownSkill_isEmptyNotNull()
+	{
+		assertTrue(data.getRewards(Skill.AGILITY).isEmpty());
+		assertNull(data.rewardForItemId(999_999));
+	}
 }

@@ -10,6 +10,7 @@ import java.util.ArrayList;
 import java.util.Collections;
 import java.util.HashMap;
 import java.util.HashSet;
+import java.util.LinkedHashMap;
 import java.util.List;
 import java.util.Map;
 import java.util.Set;
@@ -19,6 +20,8 @@ import net.runelite.api.Skill;
 @Slf4j
 public final class ResourceData
 {
+	public enum RewardType { PRIMARY, SECONDARY, CONDITIONAL, PET }
+
 	private final Map<Skill, SkillData> skills;
 	// A node (object or NPC id) can map to several resources — a fishing spot yields
 	// shrimp, sardine, herring, anchovies all from one NPC id — so these are lists.
@@ -26,13 +29,28 @@ public final class ResourceData
 	private final Map<Integer, List<ResourceEntry>> byObjectId;
 	private final Map<Integer, List<ResourceEntry>> byNpcId;
 	private final Map<Integer, ResourceEntry> byItemId;
+	private final Map<Skill, List<RewardEntry>> rewardsBySkill;
+	private final Map<Integer, RewardEntry> rewardByItemId;
 
-	private ResourceData(Map<Skill, SkillData> skills)
+	private ResourceData(Map<Skill, SkillData> skills, Map<Skill, List<RewardEntry>> rewards)
 	{
 		this.skills = skills;
 		this.byObjectId = new HashMap<>();
 		this.byNpcId = new HashMap<>();
 		this.byItemId = new HashMap<>();
+		this.rewardsBySkill = rewards;
+		this.rewardByItemId = new HashMap<>();
+		for (List<RewardEntry> list : rewards.values())
+		{
+			for (RewardEntry re : list)
+			{
+				// First-declared skill wins if the same item id is a reward under multiple skills
+				// (e.g. bird nest under both woodcutting and mining) — relies on `rewards` iterating
+				// in JSON declaration order (LinkedHashMap in load()); putIfAbsent guards the invariant
+				// even if a caller passes an unordered map.
+				rewardByItemId.putIfAbsent(re.getItemId(), re);
+			}
+		}
 		for (SkillData sd : skills.values())
 		{
 			for (ResourceEntry r : sd.resources)
@@ -63,6 +81,11 @@ public final class ResourceData
 				new InputStreamReader(is, StandardCharsets.UTF_8), JsonObject.class);
 
 			Map<Skill, SkillData> skills = new HashMap<>();
+			// LinkedHashMap: preserves JSON declaration order so that when the same reward item id
+			// is declared under multiple skills (e.g. bird nest under both woodcutting and mining),
+			// rewardByItemId's reverse lookup deterministically resolves to the first-declared skill
+			// rather than depending on undefined HashMap iteration order.
+			Map<Skill, List<RewardEntry>> rewards = new LinkedHashMap<>();
 			for (Map.Entry<String, JsonElement> entry : root.entrySet())
 			{
 				Skill skill = parseSkill(entry.getKey());
@@ -137,8 +160,30 @@ public final class ResourceData
 						itemId, objectIds, npcIds, uses, petOverride, rate, method, secondaries));
 				}
 				skills.put(skill, new SkillData(skill, petBase, resources));
+
+				List<RewardEntry> rewardList = new ArrayList<>();
+				if (skillObj.has("rewards"))
+				{
+					for (JsonElement rewEl : skillObj.getAsJsonArray("rewards"))
+					{
+						JsonObject rw = rewEl.getAsJsonObject();
+						String rName = rw.get("name").getAsString();
+						int rItemId = rw.get("itemId").getAsInt();
+						RewardType rType = "conditional".equalsIgnoreCase(rw.get("type").getAsString())
+							? RewardType.CONDITIONAL : RewardType.SECONDARY;
+						Double rRate = rw.has("rate") && !rw.get("rate").isJsonNull()
+							? rw.get("rate").getAsDouble() : null;
+						List<Integer> req = new ArrayList<>();
+						if (rw.has("requiredItemIds"))
+						{
+							for (JsonElement rid : rw.getAsJsonArray("requiredItemIds")) { req.add(rid.getAsInt()); }
+						}
+						rewardList.add(new RewardEntry(rName, rItemId, rType, skill, rRate, req));
+					}
+				}
+				rewards.put(skill, Collections.unmodifiableList(rewardList));
 			}
-			return new ResourceData(skills);
+			return new ResourceData(skills, rewards);
 		}
 		catch (Exception e)
 		{
@@ -149,7 +194,7 @@ public final class ResourceData
 
 	private static ResourceData empty()
 	{
-		return new ResourceData(Collections.emptyMap());
+		return new ResourceData(Collections.emptyMap(), Collections.emptyMap());
 	}
 
 	private static Skill parseSkill(String name)
@@ -271,6 +316,44 @@ public final class ResourceData
 		return byItemId.get(itemId);
 	}
 
+	/** All curated reward entries (secondary/conditional) declared for {@code skill}. Empty if none. */
+	public List<RewardEntry> getRewards(Skill skill)
+	{
+		List<RewardEntry> list = rewardsBySkill.get(skill);
+		return list == null ? Collections.emptyList() : list;
+	}
+
+	/**
+	 * Reward entries that currently apply for {@code skill}: every {@code SECONDARY}, plus each
+	 * {@code CONDITIONAL} whose required held/worn item is present in {@code heldItemIds}. Pure —
+	 * the held set is supplied by the caller (client-thread {@code HeldItemCache} in production).
+	 */
+	public List<RewardEntry> getApplicableRewards(Skill skill, Set<Integer> heldItemIds)
+	{
+		List<RewardEntry> out = new ArrayList<>();
+		for (RewardEntry re : getRewards(skill))
+		{
+			if (re.getType() == RewardType.SECONDARY)
+			{
+				out.add(re);
+			}
+			else if (re.getType() == RewardType.CONDITIONAL && !re.getRequiredItemIds().isEmpty())
+			{
+				for (int req : re.getRequiredItemIds())
+				{
+					if (heldItemIds != null && heldItemIds.contains(req)) { out.add(re); break; }
+				}
+			}
+		}
+		return out;
+	}
+
+	/** Curated reward entry for an item id, or {@code null}. */
+	public RewardEntry rewardForItemId(int itemId)
+	{
+		return rewardByItemId.get(itemId);
+	}
+
 	public static final class SkillData
 	{
 		private final Skill skill;
@@ -342,5 +425,34 @@ public final class ResourceData
 		{
 			return petBaseChanceOverride != null ? petBaseChanceOverride : skillDefault;
 		}
+	}
+
+	public static final class RewardEntry
+	{
+		private final String name;
+		private final int itemId;
+		private final RewardType type;
+		private final Skill skill;
+		private final Double rate;
+		private final List<Integer> requiredItemIds;
+
+		RewardEntry(String name, int itemId, RewardType type, Skill skill, Double rate, List<Integer> requiredItemIds)
+		{
+			this.name = name;
+			this.itemId = itemId;
+			this.type = type;
+			this.skill = skill;
+			this.rate = rate;
+			this.requiredItemIds = Collections.unmodifiableList(requiredItemIds);
+		}
+
+		public String getName() { return name; }
+		public int getItemId() { return itemId; }
+		public RewardType getType() { return type; }
+		public Skill getSkill() { return skill; }
+		/** Skill-wide statistical rate (secondary), or {@code null}. */
+		public Double getRate() { return rate; }
+		/** Held/worn item ids gating a conditional reward (any one suffices). Empty for non-conditional. */
+		public List<Integer> getRequiredItemIds() { return requiredItemIds; }
 	}
 }
