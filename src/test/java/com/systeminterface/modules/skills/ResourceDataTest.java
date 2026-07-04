@@ -1,0 +1,140 @@
+package com.systeminterface.modules.skills;
+
+import com.google.gson.Gson;
+import java.util.HashSet;
+import java.util.List;
+import java.util.Set;
+import net.runelite.api.Skill;
+import org.junit.Before;
+import org.junit.Test;
+
+import static org.junit.Assert.assertEquals;
+import static org.junit.Assert.assertNotNull;
+import static org.junit.Assert.assertTrue;
+
+/**
+ * Tests the Phase 4 schema generalization: node lookups now return a <em>list</em> of
+ * resources. Trees/rocks resolve to a 1-element list (no behaviour change); a fishing spot
+ * NPC id resolves to several fish. Loads the real bundled {@code ResourceData.json}.
+ */
+public class ResourceDataTest
+{
+	private ResourceData data;
+
+	@Before
+	public void setUp()
+	{
+		data = ResourceData.load(new Gson());
+	}
+
+	private Set<String> names(List<ResourceData.ResourceEntry> entries)
+	{
+		Set<String> n = new HashSet<>();
+		for (ResourceData.ResourceEntry e : entries)
+		{
+			n.add(e.getName());
+		}
+		return n;
+	}
+
+	@Test
+	public void woodcuttingObject_resolvesToSingleElementList()
+	{
+		List<ResourceData.ResourceEntry> oak = data.forObjectId(10820); // oak tree
+		assertEquals(1, oak.size());
+		assertEquals("Oak logs", oak.get(0).getName());
+		assertEquals(Skill.WOODCUTTING, oak.get(0).getSkill());
+	}
+
+	@Test
+	public void miningObject_resolvesToSingleElementList()
+	{
+		List<ResourceData.ResourceEntry> copper = data.forObjectId(10943); // copper rock
+		assertEquals(1, copper.size());
+		assertEquals("Copper ore", copper.get(0).getName());
+		assertEquals(Skill.MINING, copper.get(0).getSkill());
+	}
+
+	@Test
+	public void fishingSpotNpc_resolvesToAllFishItOffers()
+	{
+		// 1514 is a net/bait (SALTFISH) spot — shrimp, sardine, herring, anchovies.
+		List<ResourceData.ResourceEntry> fishes = data.forNpcId(1514);
+		assertEquals(4, fishes.size());
+		Set<String> n = names(fishes);
+		assertTrue(n.contains("Raw shrimps"));
+		assertTrue(n.contains("Raw sardine"));
+		assertTrue(n.contains("Raw herring"));
+		assertTrue(n.contains("Raw anchovies"));
+		for (ResourceData.ResourceEntry e : fishes)
+		{
+			assertEquals(Skill.FISHING, e.getSkill());
+		}
+	}
+
+	@Test
+	public void multipleResources_canShareTheSameNodeId()
+	{
+		// The crux of the schema change: one node id -> many resources.
+		assertTrue(data.forNpcId(1514).size() > 1);
+	}
+
+	@Test
+	public void cageHarpoonSpot_offersTunaLobsterSwordfish()
+	{
+		List<ResourceData.ResourceEntry> fishes = data.forNpcId(1510); // RAREFISH spot
+		Set<String> n = names(fishes);
+		assertTrue(n.contains("Raw tuna"));
+		assertTrue(n.contains("Raw lobster"));
+		assertTrue(n.contains("Raw swordfish"));
+	}
+
+	@Test
+	public void unknownNode_returnsEmptyListNotNull()
+	{
+		assertTrue(data.forObjectId(999_999).isEmpty());
+		assertTrue(data.forNpcId(999_999).isEmpty());
+	}
+
+	@Test
+	public void forItemId_stillResolvesASingleResource()
+	{
+		ResourceData.ResourceEntry shrimp = data.forItemId(317); // raw shrimps
+		assertNotNull(shrimp);
+		assertEquals("Raw shrimps", shrimp.getName());
+		assertEquals(Skill.FISHING, shrimp.getSkill());
+	}
+
+	@Test
+	public void treesAndRocks_haveNoNpcIds_fishHaveNoObjectIds()
+	{
+		assertTrue(data.forObjectId(10820).get(0).getNpcIds().isEmpty()); // oak
+		assertTrue(data.forItemId(317).getObjectIds().isEmpty());         // shrimp
+		assertTrue(data.forItemId(317).getNpcIds().contains(1514));
+	}
+
+	@Test
+	public void fishCarryTheirFishingMethod()
+	{
+		assertEquals("net", data.forItemId(317).getMethod());   // raw shrimps
+		assertEquals("lure", data.forItemId(335).getMethod());  // raw trout (fly)
+		assertEquals("bait", data.forItemId(349).getMethod());  // raw pike (bait)
+		assertEquals("cage", data.forItemId(377).getMethod());  // raw lobster
+		assertEquals("harpoon", data.forItemId(371).getMethod()); // raw swordfish
+	}
+
+	@Test
+	public void nonFishingResources_haveNoMethod()
+	{
+		assertEquals(null, data.forItemId(1521).getMethod()); // oak logs
+	}
+
+	@Test
+	public void baitAndLureFish_carryRequiredSecondaries()
+	{
+		assertTrue(data.forItemId(335).getSecondaries().contains(314));      // trout -> feathers
+		assertTrue(data.forItemId(349).getSecondaries().contains(313));      // pike -> fishing bait
+		assertTrue(data.forItemId(13439).getSecondaries().contains(13431));  // anglerfish -> sandworms
+		assertTrue(data.forItemId(317).getSecondaries().isEmpty());          // shrimps (net) -> none
+	}
+}

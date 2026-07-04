@@ -1,0 +1,363 @@
+{
+  "woodcutting": {
+    "petBaseChance": 317647,
+    "resources": [
+      {
+        "name": "Logs",
+        "levelRequired": 1,
+        "xpPerAction": 25.0,
+        "itemId": 1511,
+        "objectIds": [1276, 1278, 1286, 1289, 1290, 1291, 1365, 1383, 1384, 2409, 3033, 3034, 3035, 3036, 3881, 3882, 3883],
+        "uses": ["Fletching:1", "Firemaking:1", "Construction:1"],
+        "petBaseChanceOverride": null
+      },
+      {
+        "name": "Oak logs",
+        "levelRequired": 15,
+        "xpPerAction": 37.5,
+        "itemId": 1521,
+        "objectIds": [10820],
+        "uses": ["Fletching:20", "Firemaking:15", "Construction:15"],
+        "petBaseChanceOverride": null
+      },
+      {
+        "name": "Willow logs",
+        "levelRequired": 30,
+        "xpPerAction": 67.5,
+        "itemId": 1519,
+        "objectIds": [10819, 10829, 10831, 10833],
+        "uses": ["Fletching:35", "Firemaking:30"],
+        "petBaseChanceOverride": null
+      },
+      {
+        "name": "Teak logs",
+        "levelRequired": 35,
+        "xpPerAction": 85.0,
+        "itemId": 6333,
+        "objectIds": [9036, 36686],
+        "uses": ["Fletching:35", "Firemaking:35", "Construction:35"],
+        "petBaseChanceOverride": null
+      },
+      {
+        "name": "Arctic pine logs",
+        "levelRequired": 42,
+        "xpPerAction": 40.0,
+        "itemId": 10810,
+        "objectIds": [10578, 10579],
+        "uses": ["Firemaking:42"],
+        "petBaseChanceOverride": null
+      },
+      {
+        "name": "Maple logs",
+        "levelRequired": 45,
+        "xpPerAction": 100.0,
+        "itemId": 1517,
+        "objectIds": [10832],
+        "uses": ["Fletching:50", "Firemaking:45"],
+        "petBaseChanceOverride": null
+      },
+      {
+        "name": "Mahogany logs",
+        "levelRequired": 50,
+        "xpPerAction": 125.0,
+        "itemId": 6332,
+        "objectIds": [9034, 36688],
+        "uses": ["Firemaking:50", "Construction:50"],
+        "petBaseChanceOverride": null
+      },
+      {
+        "name": "Yew logs",
+        "levelRequired": 60,
+        "xpPerAction": 175.0,
+        "itemId": 1515,
+        "objectIds": [10822],
+        "uses": ["Fletching:65", "Firemaking:60"],
+        "petBaseChanceOverride": null
+      },
+      {
+        "name": "Magic logs",
+        "levelRequired": 75,
+        "xpPerAction": 250.0,
+        "itemId": 1513,
+        "objectIds": [10834],
+        "uses": ["Fletching:80", "Firemaking:75"],
+        "petBaseChanceOverride": null
+      },
+      {
+        "name": "Sulliuscep cap",
+        "levelRequired": 65,
+        "xpPerAction": 127.0,
+        "itemId": 22448,
+        "objectIds": [30920],
+        "uses": ["Firemaking:65"],
+        "petBaseChanceOverride": 343000
+      },
+      {
+        "name": "Redwood logs",
+        "levelRequired": 90,
+        "xpPerAction": 380.0,
+        "itemId": 19669,
+        "objectIds": [29668, 29670],
+        "uses": ["Fletching:85", "Firemaking:90"],
+        "petBaseChanceOverride": 223017
+      }
+    ]
+  },
+  "mining": {
+    "petBaseChance": 741600,
+    "resources": [
+      {
+        "name": "Copper ore",
+        "levelRequired": 1,
+        "xpPerAction": 17.5,
+        "itemId": 436,
+        "objectIds": [10943, 11161],
+        "uses": ["Smithing:1"],
+        "petBaseChanceOverride": null
+      },
+      {
+        "name": "Tin ore",
+        "levelRequired": 1,
+        "xpPerAction": 17.5,
+        "itemId": 438,
+        "objectIds": [11360, 11361],
+        "uses": ["Smithing:1"],
+        "petBaseChanceOverride": null
+      },
+      {
+        "name": "Iron ore",
+        "levelRequired": 15,
+        "xpPerAction": 35.0,
+        "itemId": 440,
+        "objectIds": [11364, 11365],
+        "uses": ["Smithing:15"],
+        "petBaseChanceOverride": null
+      },
+      {
+        "name": "Silver ore",
+        "levelRequired": 20,
+        "xpPerAction": 40.0,
+        "itemId": 442,
+        "objectIds": [11368, 11369],
+        "uses": ["Smithing:20", "Crafting:16"],
+        "petBaseChanceOverride": null
+      },
+      {
+        "name": "Coal",
+        "levelRequired": 30,
+        "xpPerAction": 50.0,
+        "itemId": 453,
+        "objectIds": [11366, 11367],
+        "uses": ["Smithing:30"],
+        "petBaseChanceOverride": 290640
+      },
+      {
+        "name": "Gold ore",
+        "levelRequired": 40,
+        "xpPerAction": 65.0,
+        "itemId": 444,
+        "objectIds": [11370, 11371],
+        "uses": ["Smithing:40", "Crafting:5"],
+        "petBaseChanceOverride": 296640
+      },
+      {
+        "name": "Mithril ore",
+        "levelRequired": 55,
+        "xpPerAction": 80.0,
+        "itemId": 447,
+        "objectIds": [11372, 11373],
+        "uses": ["Smithing:50"],
+        "petBaseChanceOverride": 148320
+      },
+      {
+        "name": "Adamantite ore",
+        "levelRequired": 70,
+        "xpPerAction": 95.0,
+        "itemId": 449,
+        "objectIds": [11374, 11375],
+        "uses": ["Smithing:70"],
+        "petBaseChanceOverride": 59328
+      },
+      {
+        "name": "Runite ore",
+        "levelRequired": 85,
+        "xpPerAction": 125.0,
+        "itemId": 451,
+        "objectIds": [11376, 11377],
+        "uses": ["Smithing:85"],
+        "petBaseChanceOverride": 42377
+      },
+      {
+        "name": "Amethyst",
+        "levelRequired": 92,
+        "xpPerAction": 240.0,
+        "itemId": 21347,
+        "objectIds": [11388, 11389],
+        "uses": ["Crafting:82", "Fletching:82"],
+        "petBaseChanceOverride": 46350
+      }
+    ]
+  },
+  "fishing": {
+    "petBaseChance": 257770,
+    "resources": [
+      {
+        "name": "Raw shrimps",
+        "method": "net",
+        "levelRequired": 1,
+        "xpPerAction": 10.0,
+        "itemId": 317,
+        "npcIds": [1514, 1517, 1518, 1521, 1523, 1524, 1525, 1528, 1530, 1532, 1544, 3913],
+        "uses": ["Cooking:1"],
+        "petBaseChanceOverride": 870330
+      },
+      {
+        "name": "Raw sardine",
+        "method": "bait",
+        "levelRequired": 5,
+        "xpPerAction": 20.0,
+        "itemId": 327,
+        "secondaries": [313],
+        "npcIds": [1514, 1517, 1518, 1521, 1523, 1524, 1525, 1528, 1530, 1532, 1544, 3913],
+        "uses": ["Cooking:1"],
+        "petBaseChanceOverride": 1056000
+      },
+      {
+        "name": "Raw herring",
+        "method": "bait",
+        "levelRequired": 10,
+        "xpPerAction": 30.0,
+        "itemId": 345,
+        "secondaries": [313],
+        "npcIds": [1514, 1517, 1518, 1521, 1523, 1524, 1525, 1528, 1530, 1532, 1544, 3913],
+        "uses": ["Cooking:5"],
+        "petBaseChanceOverride": 1056000
+      },
+      {
+        "name": "Raw anchovies",
+        "method": "net",
+        "levelRequired": 15,
+        "xpPerAction": 40.0,
+        "itemId": 321,
+        "npcIds": [1514, 1517, 1518, 1521, 1523, 1524, 1525, 1528, 1530, 1532, 1544, 3913],
+        "uses": ["Cooking:1"],
+        "petBaseChanceOverride": 870330
+      },
+      {
+        "name": "Raw trout",
+        "method": "lure",
+        "levelRequired": 20,
+        "xpPerAction": 50.0,
+        "itemId": 335,
+        "secondaries": [314],
+        "npcIds": [394, 1506, 1507, 1508, 1509, 1512, 1513, 1515, 1516, 1526, 1527, 1531],
+        "uses": ["Cooking:15"],
+        "petBaseChanceOverride": 923616
+      },
+      {
+        "name": "Raw pike",
+        "method": "bait",
+        "levelRequired": 25,
+        "xpPerAction": 60.0,
+        "itemId": 349,
+        "secondaries": [313],
+        "npcIds": [394, 1506, 1507, 1508, 1509, 1512, 1513, 1515, 1516, 1526, 1527, 1531],
+        "uses": ["Cooking:20"],
+        "petBaseChanceOverride": 305792
+      },
+      {
+        "name": "Raw salmon",
+        "method": "lure",
+        "levelRequired": 30,
+        "xpPerAction": 70.0,
+        "itemId": 331,
+        "secondaries": [314],
+        "npcIds": [394, 1506, 1507, 1508, 1509, 1512, 1513, 1515, 1516, 1526, 1527, 1531],
+        "uses": ["Cooking:25"],
+        "petBaseChanceOverride": 923616
+      },
+      {
+        "name": "Raw tuna",
+        "method": "harpoon",
+        "levelRequired": 35,
+        "xpPerAction": 80.0,
+        "itemId": 359,
+        "npcIds": [1510, 1519, 1522, 1533, 2146, 3657, 3914, 7199, 7460, 7465],
+        "uses": ["Cooking:30"],
+        "petBaseChanceOverride": 257770
+      },
+      {
+        "name": "Raw lobster",
+        "method": "cage",
+        "levelRequired": 40,
+        "xpPerAction": 90.0,
+        "itemId": 377,
+        "npcIds": [1510, 1519, 1522, 1533, 2146, 3657, 3914, 7199, 7460, 7465],
+        "uses": ["Cooking:40"],
+        "petBaseChanceOverride": 116129
+      },
+      {
+        "name": "Raw bass",
+        "method": "bignet",
+        "levelRequired": 46,
+        "xpPerAction": 100.0,
+        "itemId": 363,
+        "npcIds": [1511, 1520, 1534, 3419, 3915, 4476, 4477, 5233, 5234, 7200],
+        "uses": ["Cooking:43"],
+        "petBaseChanceOverride": null
+      },
+      {
+        "name": "Raw swordfish",
+        "method": "harpoon",
+        "levelRequired": 50,
+        "xpPerAction": 100.0,
+        "itemId": 371,
+        "npcIds": [1510, 1519, 1522, 1533, 2146, 3657, 3914, 7199, 7460, 7465],
+        "uses": ["Cooking:45"],
+        "petBaseChanceOverride": 257770
+      },
+      {
+        "name": "Raw monkfish",
+        "method": "net",
+        "levelRequired": 62,
+        "xpPerAction": 120.0,
+        "itemId": 7944,
+        "npcIds": [4316],
+        "uses": ["Cooking:62"],
+        "petBaseChanceOverride": 138583
+      },
+      {
+        "name": "Raw karambwan",
+        "method": "vessel",
+        "levelRequired": 65,
+        "xpPerAction": 50.0,
+        "itemId": 3142,
+        "secondaries": [3150],
+        "npcIds": [4712, 4713],
+        "uses": ["Cooking:30"],
+        "petBaseChanceOverride": 170874
+      },
+      {
+        "name": "Raw shark",
+        "method": "harpoon",
+        "levelRequired": 76,
+        "xpPerAction": 110.0,
+        "itemId": 383,
+        "npcIds": [1511, 1520, 1534, 3419, 3915, 4476, 4477, 5233, 5234, 7200],
+        "uses": ["Cooking:80"],
+        "petBaseChanceOverride": 82243
+      },
+      {
+        "name": "Raw anglerfish",
+        "method": "bait",
+        "levelRequired": 82,
+        "xpPerAction": 120.0,
+        "itemId": 13439,
+        "secondaries": [13430, 13431, 13432],
+        "npcIds": [6825],
+        "uses": ["Cooking:84"],
+        "petBaseChanceOverride": 78649
+      }
+    ]
+  }
+}
