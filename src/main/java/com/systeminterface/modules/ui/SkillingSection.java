@@ -586,7 +586,15 @@ public class SkillingSection extends JPanel
 		SkillTracker.SkillState state = skillTracker.getSkillState(skill);
 		final Map<Integer, Long> keptItems = state != null ? state.getResourceCounts() : java.util.Collections.emptyMap();
 
+		// Node primary outputs + this skill's curated rewards (bird nest, leaves) — all trackable.
 		List<Integer> sortedIds = new java.util.ArrayList<>(nodeItemIds);
+		for (ResourceData.RewardEntry rw : resourceData.getRewards(skill))
+		{
+			if (!sortedIds.contains(rw.getItemId()))
+			{
+				sortedIds.add(rw.getItemId());
+			}
+		}
 		sortedIds.sort(java.util.Comparator.comparing(this::itemName, String.CASE_INSENSITIVE_ORDER));
 
 		// Grid of item slots (reusing the shared Combat-section item-slot builder), one per
@@ -602,8 +610,10 @@ public class SkillingSection extends JPanel
 			final String name = itemName(itemId);
 			final boolean isTracked = csvContains(currentTracked, name);
 			final long received = keptItems.getOrDefault(itemId, 0L);
+			final ResourceData.RewardEntry rw = resourceData.rewardForItemId(itemId);
+			final double rate = (rw != null && rw.getRate() != null) ? rw.getRate() : 1.0;
 			grid.add(ItemRowFactory.createItemSlot(itemManager, ITEM_SIZE, LOOT_SKILL, SELECTED_BORDER,
-				name, itemId, 1.0, (int) Math.min(received, Integer.MAX_VALUE), isTracked, () ->
+				name, itemId, rate, (int) Math.min(received, Integer.MAX_VALUE), isTracked, () ->
 				{
 					toggleTracked(name); // click to track, click again to untrack
 					refresh();
@@ -665,13 +675,18 @@ public class SkillingSection extends JPanel
 	// Item id / name resolution
 	// ---------------------------------------------------------------------
 
-	/** Display name for an item id via the curated ResourceData, falling back to the raw id. */
+	/** Display name for an item id via curated ResourceData (primary or reward), falling back to the raw id. */
 	private String itemName(int itemId)
 	{
 		ResourceData.ResourceEntry entry = resourceData.forItemId(itemId);
 		if (entry != null && entry.getName() != null && !entry.getName().isEmpty())
 		{
 			return entry.getName();
+		}
+		ResourceData.RewardEntry rw = resourceData.rewardForItemId(itemId);
+		if (rw != null && rw.getName() != null && !rw.getName().isEmpty())
+		{
+			return rw.getName();
 		}
 		return "Item " + itemId;
 	}
