@@ -20,11 +20,11 @@ public interface SystemInterfaceConfig extends Config
 
 	@ConfigItem(
 		position = 0,
-		keyName = "showSystemPanel",
-		name = "Show System Panel",
-		description = "Show the System Panel overlay when interacting with a tracked target"
+		keyName = "showActiveOverlay",
+		name = "Show Active overlay",
+		description = "Show the Active overlay (your current combat target or skilling source) on the game screen."
 	)
-	default boolean showSystemPanel()
+	default boolean showActiveOverlay()
 	{
 		return true;
 	}

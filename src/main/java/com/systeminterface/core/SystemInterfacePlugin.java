@@ -11,7 +11,7 @@ import com.systeminterface.services.portrait.PortraitService;
 import com.systeminterface.modules.ui.AnalyzeOverlay;
 import com.systeminterface.modules.ui.ItemHoverOverlay;
 import com.systeminterface.modules.ui.SkillingOverlay;
-import com.systeminterface.modules.ui.SystemPanelOverlay;
+import com.systeminterface.modules.ui.ActiveOverlay;
 import com.systeminterface.modules.ui.CollapseStateStore;
 import com.systeminterface.modules.ui.SystemInterfacePanel;
 import com.systeminterface.modules.skills.ResourceData;
@@ -85,7 +85,7 @@ public class SystemInterfacePlugin extends Plugin
 	private OverlayManager overlayManager;
 
 	@Inject
-	private SystemPanelOverlay overlay;
+	private ActiveOverlay overlay;
 
 	@Inject
 	private AnalyzeOverlay analyzeOverlay;

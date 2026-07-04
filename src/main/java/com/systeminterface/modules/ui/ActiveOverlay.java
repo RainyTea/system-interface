@@ -18,6 +18,7 @@ import java.util.List;
 import java.util.Map;
 import javax.inject.Inject;
 import javax.inject.Singleton;
+import net.runelite.api.Client;
 import net.runelite.api.NPC;
 import static net.runelite.api.MenuAction.RUNELITE_OVERLAY_CONFIG;
 import static net.runelite.client.ui.overlay.OverlayManager.OPTION_CONFIGURE;
@@ -47,7 +48,7 @@ import net.runelite.client.ui.overlay.components.TitleComponent;
  * each frame.
  */
 @Singleton
-public class SystemPanelOverlay extends OverlayPanel
+public class ActiveOverlay extends OverlayPanel
 {
 	private static final Color ACCENT = new Color(255, 152, 31);
 	private static final Color DIM = new Color(170, 170, 180);
@@ -60,6 +61,7 @@ public class SystemPanelOverlay extends OverlayPanel
 	private final LootTables lootTables;
 	private final SystemInterfaceConfig config;
 	private final ItemMembership itemMembership;
+	private final Client client;
 
 	private volatile String currentTarget;
 	private volatile NPC currentNpc;
@@ -69,19 +71,21 @@ public class SystemPanelOverlay extends OverlayPanel
 	private volatile long lastActivityAtMs;
 
 	@Inject
-	public SystemPanelOverlay(
+	public ActiveOverlay(
 		SystemInterfacePlugin plugin,
 		StateTracker stateTracker,
 		LootTables lootTables,
 		SystemInterfaceConfig config,
-		ItemMembership itemMembership)
+		ItemMembership itemMembership,
+		Client client)
 	{
 		super(plugin);
 		this.stateTracker = stateTracker;
 		this.lootTables = lootTables;
 		this.config = config;
 		this.itemMembership = itemMembership;
-		setPosition(OverlayPosition.TOP_LEFT);
+		this.client = client;
+		setPosition(OverlayPosition.DETACHED);
 		addMenuEntry(RUNELITE_OVERLAY_CONFIG, OPTION_CONFIGURE, "System Interface overlay");
 	}
 
@@ -122,9 +126,16 @@ public class SystemPanelOverlay extends OverlayPanel
 	@Override
 	public Dimension render(Graphics2D graphics)
 	{
-		if (!config.showSystemPanel())
+		if (!config.showActiveOverlay())
 		{
 			return null;
+		}
+
+		if (getPreferredLocation() == null && getBounds().getLocation().equals(new java.awt.Point(0, 0)))
+		{
+			final int vpH = client.getViewportHeight();
+			final int y = vpH > 0 ? Math.max(0, (vpH / 2) - 60) : 100;
+			setPreferredLocation(new java.awt.Point(8, y));
 		}
 
 		final String target = currentTarget;

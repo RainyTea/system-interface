@@ -25,7 +25,7 @@
  *       collection-log overlays).</li>
  * </ul>
  *
- * <p>{@link com.systeminterface.modules.ui.SystemPanelOverlay} should extend
+ * <p>{@link com.systeminterface.modules.ui.ActiveOverlay} should extend
  * {@code OverlayPanel}. Pre-compute the {@code LineComponent}s on every
  * state-tracker mutation (not in {@code render()}), then {@code render()}
  * just stamps the prepared list.

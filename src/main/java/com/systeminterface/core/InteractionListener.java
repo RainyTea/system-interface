@@ -1,6 +1,6 @@
 package com.systeminterface.core;
 
-import com.systeminterface.modules.ui.SystemPanelOverlay;
+import com.systeminterface.modules.ui.ActiveOverlay;
 import com.systeminterface.modules.skills.SkillTracker;
 import com.systeminterface.services.state.StateTracker;
 import java.util.regex.Matcher;
@@ -46,12 +46,12 @@ public final class InteractionListener
 
 	private final Client client;
 	private final StateTracker stateTracker;
-	private final SystemPanelOverlay overlay;
+	private final ActiveOverlay overlay;
 	private final NPCManager npcManager;
 	private final SkillTracker skillTracker;
 
 	@Inject
-	public InteractionListener(Client client, StateTracker stateTracker, SystemPanelOverlay overlay,
+	public InteractionListener(Client client, StateTracker stateTracker, ActiveOverlay overlay,
 		NPCManager npcManager, SkillTracker skillTracker)
 	{
 		this.client = client;
