@@ -236,6 +236,16 @@ public final class SkillTracker
 
 	private final AtomicLong generation = new AtomicLong(0);
 
+	/** Additive observer for gathered resources, for the item-gain ping overlay (spec §4). */
+	public interface GatherListener { void onGather(Skill skill, int itemId, int qty); }
+	private GatherListener gatherListener;
+
+	/** Registers (or clears with {@code null}) the additive gather-ping observer. */
+	public void setGatherListener(GatherListener l)
+	{
+		this.gatherListener = l;
+	}
+
 	private final Map<Skill, SkillState> skillStates = new HashMap<>();
 
 	private Map<Integer, Integer> lastInventory;
@@ -826,6 +836,10 @@ public final class SkillTracker
 		skillStates.computeIfAbsent(skill, SkillState::new).addResourceCount(itemId, qty);
 		liveGathered.merge(itemId, qty, Integer::sum);
 		log.debug("Gathered {}x itemId={} ({})", qty, itemId, skill);
+		if (gatherListener != null)
+		{
+			gatherListener.onGather(skill, itemId, qty);
+		}
 	}
 
 	/** True when the most recent action signal is for {@code skill} and within the tick window. */

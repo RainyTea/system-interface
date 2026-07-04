@@ -37,12 +37,22 @@ import net.runelite.client.game.ItemStack;
 @Singleton
 public final class ProfitTracker
 {
+	/** Additive observer for item gains (loot pickups), for the item-gain ping overlay (spec §4). */
+	public interface GainListener { void onGain(int itemId, int qty, long unitValue); }
+
 	private final StateTracker stateTracker;
 	private final IntToLongFunction priceFn;
 	private final AcquisitionLedger<LootSource> acquisitionLedger;
 	private final Map<Integer, SlotLot> liveSlots = new HashMap<>();
 	private final List<SlotGain> pendingSlotGains = new ArrayList<>();
 	private Map<Integer, InventorySlot> lastInventorySlots;
+	private GainListener gainListener;
+
+	/** Registers (or clears with {@code null}) the additive gain-ping observer. */
+	public void setGainListener(GainListener l)
+	{
+		this.gainListener = l;
+	}
 
 	@Inject
 	public ProfitTracker(ItemValuer valuer, StateTracker stateTracker)
@@ -189,6 +199,10 @@ public final class ProfitTracker
 				case RESTORED:
 					stateTracker.recordKeptDelta(source.target, value);
 					stateTracker.recordKeptItem(source.target, change.getItemId(), change.getQty());
+					if (gainListener != null)
+					{
+						gainListener.onGain(change.getItemId(), change.getQty(), source.unitValue);
+					}
 					break;
 				case DROPPED:
 					stateTracker.recordKeptDelta(source.target, -value);

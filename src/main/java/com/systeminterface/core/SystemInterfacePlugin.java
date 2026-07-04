@@ -9,6 +9,8 @@ import com.systeminterface.services.profit.ItemValuer;
 import com.systeminterface.services.profit.ProfitTracker;
 import com.systeminterface.services.portrait.PortraitService;
 import com.systeminterface.modules.ui.AnalyzeOverlay;
+import com.systeminterface.modules.ui.ItemGainPingOverlay;
+import com.systeminterface.modules.ui.ItemGainPings;
 import com.systeminterface.modules.ui.ItemHoverOverlay;
 import com.systeminterface.modules.ui.ActiveOverlay;
 import com.systeminterface.modules.ui.CollapseStateStore;
@@ -93,6 +95,12 @@ public class SystemInterfacePlugin extends Plugin
 	private ItemHoverOverlay itemHoverOverlay;
 
 	@Inject
+	private ItemGainPingOverlay itemGainPingOverlay;
+
+	@Inject
+	private ItemGainPings itemGainPings;
+
+	@Inject
 	private StateTracker stateTracker;
 
 	@Inject
@@ -174,8 +182,27 @@ public class SystemInterfacePlugin extends Plugin
 		overlayManager.add(overlay);
 		overlayManager.add(analyzeOverlay);
 		overlayManager.add(itemHoverOverlay);
+		overlayManager.add(itemGainPingOverlay);
 		skillTracker.setXpTrackerService(xpTrackerService);
 		mouseManager.registerMouseListener(analyzeOverlay.getMouseListener());
+
+		// Additive item-gain ping observers (spec §4): purely observational, no accounting change.
+		profitTracker.setGainListener((itemId, qty, unitValue) ->
+		{
+			final boolean tracked = isTracked(itemNameCache.name(itemId));
+			final boolean notable = ItemGainPings.isNotable(itemId, unitValue, tracked, false,
+				config.pingNotableValueThreshold());
+			itemGainPings.add(itemId, itemNameCache.name(itemId), qty, notable, System.currentTimeMillis());
+		});
+		skillTracker.setGatherListener((skill, itemId, qty) ->
+		{
+			final boolean reward = resourceData.rewardForItemId(itemId) != null;
+			final boolean tracked = isTracked(itemNameCache.name(itemId));
+			final long unitValue = 0; // skilling gathers ping regardless of value; notability via reward/tracked
+			final boolean notable = ItemGainPings.isNotable(itemId, unitValue, tracked, reward,
+				config.pingNotableValueThreshold());
+			itemGainPings.add(itemId, itemNameCache.name(itemId), qty, notable, System.currentTimeMillis());
+		});
 
 		stateTracker.setProfileListener(new StateTracker.ProfileListener()
 		{
@@ -242,6 +269,9 @@ public class SystemInterfacePlugin extends Plugin
 		overlayManager.remove(overlay);
 		overlayManager.remove(analyzeOverlay);
 		overlayManager.remove(itemHoverOverlay);
+		overlayManager.remove(itemGainPingOverlay);
+		profitTracker.setGainListener(null);
+		skillTracker.setGatherListener(null);
 		mouseManager.unregisterMouseListener(analyzeOverlay.getMouseListener());
 		chatCommandManager.unregisterCommand(APPRAISE_COMMAND);
 		chatCommandManager.unregisterCommand(STATUS_COMMAND);
@@ -893,6 +923,24 @@ public class SystemInterfacePlugin extends Plugin
 		{
 			stateTracker.setCombatLevel(name, combatLevel);
 		}
+	}
+
+	/** Whether {@code name} is in the pipe-separated tracked-item list (case-insensitive). */
+	private boolean isTracked(String name)
+	{
+		final String csv = config.trackedItem();
+		if (csv == null || name == null)
+		{
+			return false;
+		}
+		for (String s : csv.split("\\|"))
+		{
+			if (s.trim().equalsIgnoreCase(name))
+			{
+				return true;
+			}
+		}
+		return false;
 	}
 
 	/** True if the current menu already contains our Analyze entry (avoids duplicates). */

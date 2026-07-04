@@ -6,6 +6,8 @@ import java.util.Iterator;
 import java.util.LinkedHashMap;
 import java.util.List;
 import java.util.Map;
+import javax.inject.Inject;
+import javax.inject.Singleton;
 
 /**
  * Pure accumulation model for the item-gain ping channel (spec §4). Each item type keeps one live
@@ -13,9 +15,17 @@ import java.util.Map;
  * slides out after its TTL. Notable gains (curated reward/pet, tracked, or over a value threshold)
  * live longer. All timing is caller-supplied {@code nowMs} so this is deterministic and testable.
  * Single-threaded by contract (client thread) — no synchronization.
+ *
+ * <p>{@code @Singleton} so the overlay and the plugin's gain/gather callbacks share one instance.
  */
+@Singleton
 public final class ItemGainPings
 {
+	@Inject
+	public ItemGainPings()
+	{
+	}
+
 	public static final long COMMON_TTL_MS = 4000L;
 	public static final long NOTABLE_TTL_MS = 9000L;
 

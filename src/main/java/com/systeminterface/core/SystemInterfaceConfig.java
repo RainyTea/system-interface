@@ -137,6 +137,31 @@ public interface SystemInterfaceConfig extends Config
 		return true;
 	}
 
+	@ConfigItem(
+		position = 104,
+		keyName = "showItemGainPings",
+		name = "Item-gain pings",
+		description = "Show a brief accumulating toast near the chatbox for each item you gain (loot and gathers).",
+		section = FEATURES
+	)
+	default boolean showItemGainPings()
+	{
+		return true;
+	}
+
+	@ConfigItem(
+		position = 105,
+		keyName = "pingNotableValueThreshold",
+		name = "Notable ping value (GP)",
+		description = "Gains at or above this GP unit value get a distinct, longer-lived ping. 0 disables the value rule.",
+		section = FEATURES
+	)
+	@Range(min = 0, max = 100_000_000)
+	default int pingNotableValueThreshold()
+	{
+		return 20_000;
+	}
+
 	// --- Active overlay skilling row toggles (section: Active overlay rows). ---
 
 	@ConfigItem(position = 201, keyName = "showActivitySource", name = "Activity → source", description = "Show the current activity and gathering source.", section = ACTIVE_ROWS)
