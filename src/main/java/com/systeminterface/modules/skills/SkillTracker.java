@@ -433,29 +433,6 @@ public final class SkillTracker
 		this.activeFishingMethod = method;
 	}
 
-	/**
-	 * Maps a fishing spot menu-option label (e.g. "Harpoon", "Cage", "Big Net") to the data
-	 * {@code method} value, or null if the option is not a recognised fishing method.
-	 */
-	public static String fishingMethodForOption(String menuOption)
-	{
-		if (menuOption == null)
-		{
-			return null;
-		}
-		switch (menuOption.toLowerCase().trim())
-		{
-			case "harpoon":   return "harpoon";
-			case "cage":      return "cage";
-			case "big net":   return "bignet";
-			case "net":
-			case "small net": return "net";
-			case "bait":      return "bait";
-			case "lure":      return "lure";
-			default:          return null;
-		}
-	}
-
 	/** Whether the given NPC id is a known fishing spot in the curated data. */
 	public boolean isFishingSpot(int npcId)
 	{

@@ -511,21 +511,6 @@ public class SkillTrackerTest
 	}
 
 	@Test
-	public void fishingMethodForOptionMapsKnownOptions()
-	{
-		assertEquals("harpoon", SkillTracker.fishingMethodForOption("Harpoon"));
-		assertEquals("cage", SkillTracker.fishingMethodForOption("Cage"));
-		assertEquals("bignet", SkillTracker.fishingMethodForOption("Big Net"));
-		assertEquals("net", SkillTracker.fishingMethodForOption("Net"));
-		assertEquals("net", SkillTracker.fishingMethodForOption("Small Net"));
-		assertEquals("bait", SkillTracker.fishingMethodForOption("Bait"));
-		assertEquals("lure", SkillTracker.fishingMethodForOption("Lure"));
-		assertEquals("harpoon", SkillTracker.fishingMethodForOption("harpoon")); // case-insensitive
-		assertNull(SkillTracker.fishingMethodForOption("Examine"));
-		assertNull(SkillTracker.fishingMethodForOption(null));
-	}
-
-	@Test
 	public void setActiveFishingMethodRecordsAndBumpsOnChange()
 	{
 		ResourceData data = ResourceData.load(new Gson());

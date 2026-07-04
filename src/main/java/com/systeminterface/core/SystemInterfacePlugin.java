@@ -525,10 +525,14 @@ public class SystemInterfacePlugin extends Plugin
 			|| action == MenuAction.NPC_FOURTH_OPTION
 			|| action == MenuAction.NPC_FIFTH_OPTION)
 		{
-			final String method = SkillTracker.fishingMethodForOption(event.getMenuOption());
-			if (method != null)
+			final NPC npc = event.getMenuEntry().getNpc();
+			if (npc != null)
 			{
-				skillTracker.setActiveFishingMethod(method);
+				final String method = resourceData.resolveFishingMethod(npc.getId(), event.getMenuOption());
+				if (method != null)
+				{
+					skillTracker.setActiveFishingMethod(method);
+				}
 			}
 		}
 

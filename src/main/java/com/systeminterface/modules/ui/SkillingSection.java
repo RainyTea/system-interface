@@ -552,7 +552,10 @@ public class SkillingSection extends JPanel
 		{
 			for (ResourceData.ResourceEntry e : resourceData.forNpcIdAndMethod(spotId, skillTracker.getActiveFishingMethod()))
 			{
-				ids.add(e.getItemId());
+				if (ResourceData.isTrackableMethod(e.getMethod()))
+				{
+					ids.add(e.getItemId());
+				}
 			}
 		}
 		return ids;
