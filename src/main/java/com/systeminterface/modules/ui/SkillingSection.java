@@ -595,7 +595,6 @@ public class SkillingSection extends JPanel
 				sortedIds.add(rw.getItemId());
 			}
 		}
-		sortedIds.sort(java.util.Comparator.comparing(this::itemName, String.CASE_INSENSITIVE_ORDER));
 
 		// Grid of item slots (reusing the shared Combat-section item-slot builder), one per
 		// gatherable resource for this skill. Gathering has no drop "rate" the way combat loot

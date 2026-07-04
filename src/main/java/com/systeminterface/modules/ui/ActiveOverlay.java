@@ -451,19 +451,21 @@ public class ActiveOverlay extends OverlayPanel
 		final int hi = net.runelite.api.Experience.getXpForLevel(level + 1);
 		final int xp = client.getSkillExperience(active);
 		final double frac = Math.max(0.0, Math.min(1.0, (double) (xp - lo) / Math.max(1, hi - lo)));
-		final int barChars = compact ? 8 : HP_BAR_CHARS;
+		final int barChars = compact ? HP_BAR_CHARS_COMPACT : HP_BAR_CHARS;
 		final int filled = (int) Math.round(frac * barChars);
 		final StringBuilder bar = new StringBuilder(barChars);
 		for (int i = 0; i < barChars; i++) { bar.append(i < filled ? BAR_FILLED : BAR_EMPTY); }
 		panelComponent.getChildren().add(LineComponent.builder().left(" ").build()); // spacer so text above doesn't crowd the bar
 		panelComponent.getChildren().add(LineComponent.builder()
 			.left(bar.toString()).leftColor(ACCENT_SKILL).right(formatPercent(frac)).build());
+		panelComponent.getChildren().add(LineComponent.builder().left(" ").build()); // space below the XP bar
 	}
 
 	/**
-	 * Output chips as text rows — ONLY items the player has chosen to track (via the side-panel
-	 * tracking table): the engaged node's tracked primary outputs and any tracked applicable reward.
-	 * Track-driven so nothing is shown until selected. Text-only (no ItemManager on the render thread).
+	 * Output for tracked items only (track-driven). Guaranteed primaries show name + session count.
+	 * Rate-based rewards (bird nest, leaves) reuse the combat overlay's rich block — rate, chance-seen,
+	 * progress bar, deviation, luck — driven by the XP-tracker session action count as the sample size
+	 * (session-scoped, mirroring how combat falls back to KC when there are no drops). Text-only.
 	 */
 	private void buildOutputChips(Skill active)
 	{
@@ -473,7 +475,9 @@ public class ActiveOverlay extends OverlayPanel
 			return;
 		}
 		final SkillTracker.SkillState state = skillTracker.getSkillState(active);
+		final boolean compact = config.compactOverlay();
 
+		// Guaranteed primaries — every action yields them, so no rate/luck: name + session count.
 		for (ResourceData.ResourceEntry e : currentNodePrimaries(active))
 		{
 			if (!containsIgnoreCase(tracked, e.getName()))
@@ -487,6 +491,8 @@ public class ActiveOverlay extends OverlayPanel
 				.build());
 		}
 
+		// Rate-based rewards — the full combat-style stats block (or a plain count if a reward has no rate).
+		final int actions = skillTracker.getActions(active); // session actions ≈ sample size
 		for (ResourceData.RewardEntry rw : skillTracker.getResourceData()
 			.getApplicableRewards(active, heldItemCache.heldIds()))
 		{
@@ -494,11 +500,21 @@ public class ActiveOverlay extends OverlayPanel
 			{
 				continue;
 			}
+			final Double rate = rw.getRate();
 			final long count = state != null ? state.getResourceCount(rw.getItemId()) : 0;
-			panelComponent.getChildren().add(LineComponent.builder()
-				.left(rw.getName() + "  [reward]").leftColor(OSRS_GOLD)
-				.right(count > 0 ? "x" + formatInt(count) : "")
-				.build());
+			if (rate != null && rate > 0.0)
+			{
+				final long denom = Math.max(1L, Math.round(1.0 / rate));
+				buildProgressSection(rw.getName(), rate, denom, actions,
+					(int) Math.min(count, Integer.MAX_VALUE), actions, compact);
+			}
+			else
+			{
+				panelComponent.getChildren().add(LineComponent.builder()
+					.left(rw.getName()).leftColor(OSRS_GOLD)
+					.right(count > 0 ? "x" + formatInt(count) : "")
+					.build());
+			}
 		}
 	}
 
@@ -607,6 +623,7 @@ public class ActiveOverlay extends OverlayPanel
 		}
 		final Color barColor = dead ? HP_RED : HP_GREEN;
 
+		panelComponent.getChildren().add(LineComponent.builder().left(" ").build()); // space above the HP bar
 		panelComponent.getChildren().add(LineComponent.builder()
 			//.left(formatPercent(fraction) + " " + bar.toString())
             .left(bar.toString())

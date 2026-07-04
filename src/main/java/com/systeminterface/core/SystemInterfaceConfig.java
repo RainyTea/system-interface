@@ -177,7 +177,7 @@ public interface SystemInterfaceConfig extends Config
 
 	// --- Active overlay skilling row toggles (section: Active overlay rows). ---
 
-	@ConfigItem(position = 201, keyName = "showActivitySource", name = "Activity → source", description = "Show the current activity and gathering source.", section = ACTIVE_ROWS)
+	@ConfigItem(position = 201, keyName = "showActivitySource", name = "Activity", description = "Show the current activity and gathering source.", section = ACTIVE_ROWS)
 	default boolean showActivitySource() { return true; }
 
 	@ConfigItem(position = 202, keyName = "showLevelRow", name = "Level", description = "Show the current skill level.", section = ACTIVE_ROWS)
