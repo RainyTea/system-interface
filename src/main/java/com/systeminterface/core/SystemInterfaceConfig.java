@@ -179,13 +179,16 @@ public interface SystemInterfaceConfig extends Config
 	@ConfigItem(position = 205, keyName = "showPetOddsRow", name = "Pet odds", description = "Show pet odds at your level (skills with a pet).", section = ACTIVE_ROWS)
 	default boolean showPetOddsRow() { return true; }
 
-	@ConfigItem(position = 206, keyName = "showNextLevelRow", name = "Next level (+ bar)", description = "Show time-to-next-level and an XP progress bar.", section = ACTIVE_ROWS)
-	default boolean showNextLevelRow() { return true; }
+	@ConfigItem(position = 206, keyName = "showTimeToLevel", name = "Time to next level", description = "Show the estimated time to the next level.", section = ACTIVE_ROWS)
+	default boolean showTimeToLevel() { return true; }
 
-	@ConfigItem(position = 207, keyName = "showActionsRow", name = "Actions", description = "Show the session action count.", section = ACTIVE_ROWS)
+	@ConfigItem(position = 207, keyName = "showXpBar", name = "XP progress bar", description = "Show a thin XP progress bar toward the next level.", section = ACTIVE_ROWS)
+	default boolean showXpBar() { return true; }
+
+	@ConfigItem(position = 208, keyName = "showActionsRow", name = "Actions", description = "Show the session action count.", section = ACTIVE_ROWS)
 	default boolean showActionsRow() { return false; }
 
-	@ConfigItem(position = 208, keyName = "showGpHrRow", name = "GP / hr", description = "Show the value rate of gathered output.", section = ACTIVE_ROWS)
+	@ConfigItem(position = 209, keyName = "showGpHrRow", name = "GP / hr", description = "Show the value rate of gathered output.", section = ACTIVE_ROWS)
 	default boolean showGpHrRow() { return false; }
 
 	// Hidden config keys — managed by the side panel, not shown in plugin settings.

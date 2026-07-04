@@ -144,51 +144,89 @@ public class ActiveOverlay extends OverlayPanel
 		{
 			return null;
 		}
-		seedDefaultLocation(); // the middle-left computation extracted from B1 Step 1
+		seedDefaultLocation();
 
-		// One context at a time, skilling precedence (fishing spots are NPCs → skilling, not combat).
-		final Skill skilling = resolveSkillingContext();
-		if (skilling != null)
+		// One context at a time. ACTIVE skilling takes precedence (fishing spots are NPCs, so an
+		// actively-fishing player must not read as combat). A merely LINGERING skill display, though,
+		// must yield to a live combat target — and vice versa: the more-recent activity wins.
+		final Skill active = skillTracker.getActiveSkill();
+		if (active != null)
 		{
-			return renderSkilling(graphics, skilling);
+			return renderSkilling(graphics, active);
 		}
-		return renderCombat(graphics);
+		final boolean combatLive = hasCombatContext();
+		final Skill lingering = resolveLingeringSkill();
+		if (combatLive && lingering != null)
+		{
+			return skillingMoreRecentThanCombat()
+				? renderSkilling(graphics, lingering)
+				: renderCombat(graphics);
+		}
+		if (combatLive)
+		{
+			return renderCombat(graphics);
+		}
+		if (lingering != null)
+		{
+			return renderSkilling(graphics, lingering);
+		}
+		return renderCombat(graphics); // no target → renderCombat returns null (overlay hidden)
 	}
 
-	/** Seeds the middle-left default once, only if the user hasn't dragged/saved a location. */
+	/** True when a combat target is set and still within its auto-hide window. Read-only (does not clear). */
+	private boolean hasCombatContext()
+	{
+		if (currentTarget == null)
+		{
+			return false;
+		}
+		final int timeoutSecs = config.hideAfterSeconds();
+		if (timeoutSecs <= 0)
+		{
+			return true; // 0 = stay until the target changes
+		}
+		return System.currentTimeMillis() - lastActivityAtMs <= timeoutSecs * 1000L;
+	}
+
+	/** The lingering display skill within the auto-hide window (when NOT actively skilling), or null. */
+	private Skill resolveLingeringSkill()
+	{
+		final long sinceActivity = skillTracker.getMillisSinceActivity();
+		if (sinceActivity == Long.MAX_VALUE)
+		{
+			return null;
+		}
+		final int hideSeconds = config.hideAfterSeconds();
+		if (hideSeconds == 0 || sinceActivity <= hideSeconds * 1000L)
+		{
+			return skillTracker.getDisplaySkill();
+		}
+		return null;
+	}
+
+	/** Whether the last skilling action is at least as recent as the last combat activity. */
+	private boolean skillingMoreRecentThanCombat()
+	{
+		final long combatAgeMs = System.currentTimeMillis() - lastActivityAtMs;
+		return skillTracker.getMillisSinceActivity() <= combatAgeMs;
+	}
+
+	/** Seeds the middle-left default once bounds are known, unless the user has dragged/saved a location. */
 	private void seedDefaultLocation()
 	{
-		if (defaultLocationSeeded)
+		if (defaultLocationSeeded || getPreferredLocation() != null)
 		{
 			return;
 		}
+		final int vpH = client.getViewportHeight();
+		final int overlayH = getBounds().height;
+		if (vpH <= 0 || overlayH <= 0)
+		{
+			return; // wait until the viewport + overlay have real dimensions, then center exactly next frame
+		}
 		defaultLocationSeeded = true;
-		if (getPreferredLocation() == null)
-		{
-			final int vpH = client.getViewportHeight();
-			final int y = vpH > 0 ? Math.max(0, (vpH / 2) - 60) : 100;
-			setPreferredLocation(new java.awt.Point(8, y));
-		}
-	}
-
-	/** The skill to show, or null when not skilling (combat/idle handled elsewhere). */
-	private Skill resolveSkillingContext()
-	{
-		Skill active = skillTracker.getActiveSkill();
-		if (active != null)
-		{
-			return active;
-		}
-		final long sinceActivity = skillTracker.getMillisSinceActivity();
-		if (sinceActivity != Long.MAX_VALUE)
-		{
-			final int hideSeconds = config.hideAfterSeconds();
-			if (hideSeconds == 0 || sinceActivity <= hideSeconds * 1000L)
-			{
-				return skillTracker.getDisplaySkill();
-			}
-		}
-		return null;
+		final int y = Math.max(0, (vpH - overlayH) / 2);
+		setPreferredLocation(new java.awt.Point(8, y));
 	}
 
 	private Dimension renderCombat(Graphics2D graphics)
@@ -349,15 +387,18 @@ public class ActiveOverlay extends OverlayPanel
 			panelComponent.getChildren().add(LineComponent.builder()
 				.left("GP / hr").right(com.systeminterface.modules.ui.PanelFormat.gp(keptGp)).build());
 		}
-		if (config.showNextLevelRow())
+		if (config.showTimeToLevel())
 		{
 			final String timeToNext = skillTracker.getTimeToNextLevel(active);
 			if (timeToNext != null)
 			{
 				panelComponent.getChildren().add(LineComponent.builder()
 					.left(compact ? "Next lvl" : "Time to next lvl").right(timeToNext).rightColor(DIM).build());
-				buildXpBar(active, level, width, compact);
 			}
+		}
+		if (config.showXpBar())
+		{
+			buildXpBar(active, level, width, compact);
 		}
 
 		appendSkillSpecificRows(active);
@@ -414,40 +455,48 @@ public class ActiveOverlay extends OverlayPanel
 		final int filled = (int) Math.round(frac * barChars);
 		final StringBuilder bar = new StringBuilder(barChars);
 		for (int i = 0; i < barChars; i++) { bar.append(i < filled ? BAR_FILLED : BAR_EMPTY); }
+		panelComponent.getChildren().add(LineComponent.builder().left(" ").build()); // spacer so text above doesn't crowd the bar
 		panelComponent.getChildren().add(LineComponent.builder()
 			.left(bar.toString()).leftColor(ACCENT_SKILL).right(formatPercent(frac)).build());
 	}
 
 	/**
-	 * Output chips as text rows: each engaged-node primary output (gold when tracked) and each
-	 * applicable secondary/conditional reward (blue, with a "reward" tag), with the session count.
-	 * Text-only (no icons) so nothing touches ItemManager on the render thread.
+	 * Output chips as text rows — ONLY items the player has chosen to track (via the side-panel
+	 * tracking table): the engaged node's tracked primary outputs and any tracked applicable reward.
+	 * Track-driven so nothing is shown until selected. Text-only (no ItemManager on the render thread).
 	 */
 	private void buildOutputChips(Skill active)
 	{
-		final SkillTracker.SkillState state = skillTracker.getSkillState(active);
 		final java.util.Set<String> tracked = parseTracked(config.trackedItem());
+		if (tracked.isEmpty())
+		{
+			return;
+		}
+		final SkillTracker.SkillState state = skillTracker.getSkillState(active);
 
-		// Primary: outputs of the engaged node (object or non-bignet fishing method).
 		for (ResourceData.ResourceEntry e : currentNodePrimaries(active))
 		{
+			if (!containsIgnoreCase(tracked, e.getName()))
+			{
+				continue;
+			}
 			final long count = state != null ? state.getResourceCount(e.getItemId()) : 0;
-			final boolean isTracked = containsIgnoreCase(tracked, e.getName());
 			panelComponent.getChildren().add(LineComponent.builder()
-				.left(e.getName())
-				.leftColor(isTracked ? OSRS_GOLD : ACCENT_SKILL)
+				.left(e.getName()).leftColor(OSRS_GOLD)
 				.right(count > 0 ? "x" + formatInt(count) : "")
 				.build());
 		}
 
-		// Rewards: skill-wide secondary always; conditional only when its kit is held.
 		for (ResourceData.RewardEntry rw : skillTracker.getResourceData()
 			.getApplicableRewards(active, heldItemCache.heldIds()))
 		{
+			if (!containsIgnoreCase(tracked, rw.getName()))
+			{
+				continue;
+			}
 			final long count = state != null ? state.getResourceCount(rw.getItemId()) : 0;
 			panelComponent.getChildren().add(LineComponent.builder()
-				.left(rw.getName() + "  [reward]")
-				.leftColor(DIM)
+				.left(rw.getName() + "  [reward]").leftColor(OSRS_GOLD)
 				.right(count > 0 ? "x" + formatInt(count) : "")
 				.build());
 		}
