@@ -5,6 +5,7 @@ import java.util.Collections;
 import java.util.EnumSet;
 import java.util.HashMap;
 import java.util.Map;
+import java.util.Objects;
 import java.util.Set;
 import java.util.concurrent.atomic.AtomicLong;
 import java.util.function.IntToLongFunction;
@@ -186,6 +187,9 @@ public final class SkillTracker
 
 	// Gathering context. The gathering object (tree/rock) the player last engaged (for Appraise).
 	private volatile int activeObjectId = -1;
+
+	// The fishing method the player last engaged (harpoon/cage/net/bait/lure/bignet/...), or null.
+	private volatile String activeFishingMethod = null;
 
 	// --- Kept-vs-finalized ledger ---
 	// Kept deliberately cohesive: a later step extracts this into a shared AcquisitionLedger.
@@ -404,12 +408,52 @@ public final class SkillTracker
 	/** Records the engaged gathering object; clears any active fishing spot (single active node). */
 	public void setActiveObject(int objectId)
 	{
-		if (this.activeObjectId != objectId || this.activeFishingSpotId != -1)
+		if (this.activeObjectId != objectId || this.activeFishingSpotId != -1 || this.activeFishingMethod != null)
 		{
 			generation.incrementAndGet();
 		}
 		this.activeObjectId = objectId;
 		this.activeFishingSpotId = -1;
+		this.activeFishingMethod = null;
+	}
+
+	/** The fishing method the player last engaged (harpoon/cage/net/bait/lure/bignet/...), or null. */
+	public String getActiveFishingMethod()
+	{
+		return activeFishingMethod;
+	}
+
+	/** Records the active fishing method; bumps the generation only on an actual change. */
+	public void setActiveFishingMethod(String method)
+	{
+		if (!Objects.equals(this.activeFishingMethod, method))
+		{
+			generation.incrementAndGet();
+		}
+		this.activeFishingMethod = method;
+	}
+
+	/**
+	 * Maps a fishing spot menu-option label (e.g. "Harpoon", "Cage", "Big Net") to the data
+	 * {@code method} value, or null if the option is not a recognised fishing method.
+	 */
+	public static String fishingMethodForOption(String menuOption)
+	{
+		if (menuOption == null)
+		{
+			return null;
+		}
+		switch (menuOption.toLowerCase().trim())
+		{
+			case "harpoon":   return "harpoon";
+			case "cage":      return "cage";
+			case "big net":   return "bignet";
+			case "net":
+			case "small net": return "net";
+			case "bait":      return "bait";
+			case "lure":      return "lure";
+			default:          return null;
+		}
 	}
 
 	/** Whether the given NPC id is a known fishing spot in the curated data. */
@@ -647,6 +691,7 @@ public final class SkillTracker
 				setActiveSkill(null);
 				activeFishingSpotId = -1;
 				activeObjectId = -1;
+				activeFishingMethod = null;
 			}
 		}
 	}
@@ -1071,6 +1116,7 @@ public final class SkillTracker
 		lastActiveSkill = null;
 		activeFishingSpotId = -1;
 		activeObjectId = -1;
+		activeFishingMethod = null;
 		// Kept-vs-finalized ledger: live set + outstanding ground drops + per-tick reconciliation
 		// buffers are all session-scoped, so clear them for a fresh login.
 		liveGathered.clear();

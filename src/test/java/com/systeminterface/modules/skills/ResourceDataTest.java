@@ -9,6 +9,7 @@ import org.junit.Before;
 import org.junit.Test;
 
 import static org.junit.Assert.assertEquals;
+import static org.junit.Assert.assertFalse;
 import static org.junit.Assert.assertNotNull;
 import static org.junit.Assert.assertTrue;
 
@@ -136,5 +137,32 @@ public class ResourceDataTest
 		assertTrue(data.forItemId(349).getSecondaries().contains(313));      // pike -> fishing bait
 		assertTrue(data.forItemId(13439).getSecondaries().contains(13431));  // anglerfish -> sandworms
 		assertTrue(data.forItemId(317).getSecondaries().isEmpty());          // shrimps (net) -> none
+	}
+
+	@Test
+	public void forNpcIdAndMethodFiltersMultiMethodSpotByMethod()
+	{
+		// NPC 1510: tuna+swordfish (harpoon) + lobster (cage).
+		Set<String> harpoonNames = names(data.forNpcIdAndMethod(1510, "harpoon"));
+		assertTrue(harpoonNames.contains("Raw tuna"));
+		assertTrue(harpoonNames.contains("Raw swordfish"));
+		assertFalse(harpoonNames.contains("Raw lobster"));   // cage fish excluded
+
+		Set<String> cageNames = names(data.forNpcIdAndMethod(1510, "cage"));
+		assertTrue(cageNames.contains("Raw lobster"));
+		assertFalse(cageNames.contains("Raw tuna"));
+	}
+
+	@Test
+	public void forNpcIdAndMethodNullMethodReturnsAll()
+	{
+		assertEquals(data.forNpcId(1510).size(), data.forNpcIdAndMethod(1510, null).size());
+	}
+
+	@Test
+	public void forNpcIdAndMethodUnknownMethodFallsBackToAll()
+	{
+		// No entry at 1510 uses "net" -> fallback shows all rather than empty.
+		assertEquals(data.forNpcId(1510).size(), data.forNpcIdAndMethod(1510, "net").size());
 	}
 }

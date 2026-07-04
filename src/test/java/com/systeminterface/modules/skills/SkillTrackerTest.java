@@ -12,6 +12,7 @@ import org.junit.Test;
 
 import static org.junit.Assert.assertEquals;
 import static org.junit.Assert.assertFalse;
+import static org.junit.Assert.assertNull;
 import static org.junit.Assert.assertTrue;
 
 /**
@@ -507,5 +508,54 @@ public class SkillTrackerTest
 		t.setActiveObject(1511);
 		t.onProfileChanged();               // logout / profile switch
 		assertEquals(-1, t.getActiveObjectId());
+	}
+
+	@Test
+	public void fishingMethodForOptionMapsKnownOptions()
+	{
+		assertEquals("harpoon", SkillTracker.fishingMethodForOption("Harpoon"));
+		assertEquals("cage", SkillTracker.fishingMethodForOption("Cage"));
+		assertEquals("bignet", SkillTracker.fishingMethodForOption("Big Net"));
+		assertEquals("net", SkillTracker.fishingMethodForOption("Net"));
+		assertEquals("net", SkillTracker.fishingMethodForOption("Small Net"));
+		assertEquals("bait", SkillTracker.fishingMethodForOption("Bait"));
+		assertEquals("lure", SkillTracker.fishingMethodForOption("Lure"));
+		assertEquals("harpoon", SkillTracker.fishingMethodForOption("harpoon")); // case-insensitive
+		assertNull(SkillTracker.fishingMethodForOption("Examine"));
+		assertNull(SkillTracker.fishingMethodForOption(null));
+	}
+
+	@Test
+	public void setActiveFishingMethodRecordsAndBumpsOnChange()
+	{
+		ResourceData data = ResourceData.load(new Gson());
+		SkillTracker t = new SkillTracker(data, PRICES);
+		long g0 = t.getGeneration();
+		t.setActiveFishingMethod("harpoon");
+		assertEquals("harpoon", t.getActiveFishingMethod());
+		assertTrue(t.getGeneration() > g0);           // changed -> refresh
+		long g1 = t.getGeneration();
+		t.setActiveFishingMethod("harpoon");           // same method re-clicked
+		assertEquals(g1, t.getGeneration());          // no churn
+	}
+
+	@Test
+	public void setActiveObjectClearsFishingMethod()
+	{
+		ResourceData data = ResourceData.load(new Gson());
+		SkillTracker t = new SkillTracker(data, PRICES);
+		t.setActiveFishingMethod("harpoon");
+		t.setActiveObject(1511);                       // switch to a tree/rock
+		assertNull(t.getActiveFishingMethod());
+	}
+
+	@Test
+	public void profileChangeClearsFishingMethod()
+	{
+		ResourceData data = ResourceData.load(new Gson());
+		SkillTracker t = new SkillTracker(data, PRICES);
+		t.setActiveFishingMethod("harpoon");
+		t.onProfileChanged();
+		assertNull(t.getActiveFishingMethod());
 	}
 }

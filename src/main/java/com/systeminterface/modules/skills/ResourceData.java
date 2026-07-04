@@ -181,6 +181,29 @@ public final class ResourceData
 		return list == null ? Collections.emptyList() : Collections.unmodifiableList(list);
 	}
 
+	/**
+	 * Fish offered by a spot for a specific gathering method. Falls back to ALL of the spot's fish
+	 * when {@code method} is null or no entry matches it, so single-method spots and unrecognised
+	 * methods still show their catch (never hides a spot's fish).
+	 */
+	public List<ResourceEntry> forNpcIdAndMethod(int npcId, String method)
+	{
+		List<ResourceEntry> all = forNpcId(npcId);
+		if (method == null || all.isEmpty())
+		{
+			return all;
+		}
+		List<ResourceEntry> filtered = new ArrayList<>();
+		for (ResourceEntry e : all)
+		{
+			if (method.equals(e.getMethod()))
+			{
+				filtered.add(e);
+			}
+		}
+		return filtered.isEmpty() ? all : Collections.unmodifiableList(filtered);
+	}
+
 	public ResourceEntry forItemId(int itemId)
 	{
 		return byItemId.get(itemId);
