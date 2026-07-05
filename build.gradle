@@ -27,6 +27,22 @@ dependencies {
 	testImplementation group: 'net.runelite', name:'jshell', version: runeLiteVersion
 }
 
+sourceSets {
+	tools {
+		java.srcDir 'src/tools/java'
+		compileClasspath += sourceSets.main.output
+		runtimeClasspath += sourceSets.main.output
+	}
+}
+
+dependencies {
+	toolsImplementation group: 'net.runelite', name: 'client', version: runeLiteVersion
+	toolsCompileOnly 'org.projectlombok:lombok:1.18.30'
+	toolsAnnotationProcessor 'org.projectlombok:lombok:1.18.30'
+
+	testImplementation sourceSets.tools.output
+}
+
 group = 'com.systeminterface'
 
 tasks.withType(JavaCompile).configureEach {
@@ -52,9 +68,10 @@ tasks.register('shadowJar', Jar) {
 	from sourceSets.main.output
 	from sourceSets.test.output
 	from {
-		configurations.testRuntimeClasspath.collect { file ->
-			file.isDirectory() ? file : zipTree(file)
-		}
+		def toolsOutputDirs = sourceSets.tools.output.files
+		configurations.testRuntimeClasspath.files
+			.findAll { it.exists() && !toolsOutputDirs.contains(it) }
+			.collect { file -> file.isDirectory() ? file : zipTree(file) }
 	}
 
 	exclude 'META-INF/INDEX.LIST'
