@@ -24,7 +24,6 @@ import javax.inject.Inject;
 import javax.inject.Singleton;
 import lombok.extern.slf4j.Slf4j;
 import net.runelite.client.RuneLite;
-import okhttp3.OkHttpClient;
 
 /**
  * Registry of {@link DropTable}s, keyed by canonical target name.
@@ -73,7 +72,6 @@ public final class LootTables
 	// ---------------------------------------------------------------------
 
 	private final Gson gson;
-	private final OkHttpClient okHttpClient;
 	private final SystemInterfaceConfig config;
 	private final StateTracker stateTracker;
 	private final BucketClient bucketClient;
@@ -87,13 +85,11 @@ public final class LootTables
 	@Inject
 	public LootTables(
 		Gson gson,
-		OkHttpClient okHttpClient,
 		SystemInterfaceConfig config,
 		StateTracker stateTracker,
 		BucketClient bucketClient)
 	{
 		this.gson = gson;
-		this.okHttpClient = okHttpClient;
 		this.config = config;
 		this.stateTracker = stateTracker;
 		this.bucketClient = bucketClient;

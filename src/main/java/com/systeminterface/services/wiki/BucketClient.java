@@ -90,6 +90,11 @@ public final class BucketClient
 					log.debug("Bucket read error", e);
 					onError.run();
 				}
+				catch (RuntimeException e)
+				{
+					log.debug("Bucket response handling error", e);
+					onError.run();
+				}
 			}
 		});
 	}
