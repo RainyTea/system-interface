@@ -260,4 +260,29 @@ public class ResourceDataTest
 		assertTrue(data.getRewards(Skill.AGILITY).isEmpty());
 		assertNull(data.rewardForItemId(999_999));
 	}
+
+	@Test
+	public void loadsNestedProvenanceSchema()
+	{
+		// A resource in the nested {mainAction, extraRolls} form flattens to the same ResourceEntry.
+		String json = "{\"woodcutting\":{\"petBaseChance\":317647,\"resources\":[{"
+			+ "\"mainAction\":{\"name\":\"Yew logs\",\"itemId\":1515,\"levelRequired\":60,"
+			+ "\"xpPerAction\":175.0,\"objectIds\":[10822],\"npcIds\":[],\"method\":null,\"secondaries\":[]},"
+			+ "\"extraRolls\":{\"uses\":[\"Fletching:65\"],\"petBaseChanceOverride\":null,\"rate\":null}"
+			+ "}]}}";
+		ResourceData nested = loadJson(json);
+		ResourceData.ResourceEntry yew = nested.forItemId(1515);
+		assertNotNull(yew);
+		assertEquals("Yew logs", yew.getName());
+		assertEquals(60, yew.getLevelRequired());
+		assertEquals(175.0, yew.getXpPerAction(), 1e-9);
+		assertTrue(yew.getObjectIds().contains(10822));
+		assertEquals("Fletching:65", yew.getUses().get(0));
+		assertEquals(Skill.WOODCUTTING, yew.getSkill());
+	}
+
+	private static ResourceData loadJson(String json)
+	{
+		return ResourceData.load(new java.io.StringReader(json), new com.google.gson.Gson());
+	}
 }

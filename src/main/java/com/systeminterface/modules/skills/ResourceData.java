@@ -5,6 +5,7 @@ import com.google.gson.JsonElement;
 import com.google.gson.JsonObject;
 import java.io.InputStream;
 import java.io.InputStreamReader;
+import java.io.Reader;
 import java.nio.charset.StandardCharsets;
 import java.util.ArrayList;
 import java.util.Collections;
@@ -77,8 +78,20 @@ public final class ResourceData
 				log.debug("ResourceData.json not found on classpath");
 				return empty();
 			}
-			JsonObject root = gson.fromJson(
-				new InputStreamReader(is, StandardCharsets.UTF_8), JsonObject.class);
+			return load(new InputStreamReader(is, StandardCharsets.UTF_8), gson);
+		}
+		catch (Exception e)
+		{
+			log.debug("Failed to load ResourceData.json", e);
+			return empty();
+		}
+	}
+
+	static ResourceData load(Reader reader, Gson gson)
+	{
+		try
+		{
+			JsonObject root = gson.fromJson(reader, JsonObject.class);
 
 			Map<Skill, SkillData> skills = new HashMap<>();
 			// LinkedHashMap: preserves JSON declaration order so that when the same reward item id
@@ -100,61 +113,32 @@ public final class ResourceData
 				for (JsonElement resEl : skillObj.getAsJsonArray("resources"))
 				{
 					JsonObject r = resEl.getAsJsonObject();
-					String name = r.get("name").getAsString();
-					int levelRequired = r.get("levelRequired").getAsInt();
-					double xpPerAction = r.get("xpPerAction").getAsDouble();
-					int itemId = r.get("itemId").getAsInt();
+					// Provenance-structured (nested) or legacy-flat: generated fields come from
+					// mainAction, curated fields from extraRolls; a flat resource object supplies both.
+					JsonObject action = r.has("mainAction") && r.get("mainAction").isJsonObject()
+						? r.getAsJsonObject("mainAction") : r;
+					JsonObject extra = r.has("extraRolls") && r.get("extraRolls").isJsonObject()
+						? r.getAsJsonObject("extraRolls") : r;
 
-					List<Integer> objectIds = new ArrayList<>();
-					if (r.has("objectIds"))
-					{
-						for (JsonElement oid : r.getAsJsonArray("objectIds"))
-						{
-							objectIds.add(oid.getAsInt());
-						}
-					}
+					String name = action.get("name").getAsString();
+					int levelRequired = action.get("levelRequired").getAsInt();
+					double xpPerAction = action.get("xpPerAction").getAsDouble();
+					int itemId = action.get("itemId").getAsInt();
 
+					List<Integer> objectIds = intList(action, "objectIds");
 					// New in Phase 4: NPC-based nodes (fishing spots are NPCs, not objects).
 					// Optional — trees/rocks omit it.
-					List<Integer> npcIds = new ArrayList<>();
-					if (r.has("npcIds"))
-					{
-						for (JsonElement nid : r.getAsJsonArray("npcIds"))
-						{
-							npcIds.add(nid.getAsInt());
-						}
-					}
-
-					List<String> uses = new ArrayList<>();
-					if (r.has("uses"))
-					{
-						for (JsonElement u : r.getAsJsonArray("uses"))
-						{
-							uses.add(u.getAsString());
-						}
-					}
-
-					Integer petOverride = !r.has("petBaseChanceOverride") || r.get("petBaseChanceOverride").isJsonNull()
-						? null : r.get("petBaseChanceOverride").getAsInt();
-
-					// Optional catch/success rate (e.g. for future Hunter/Thieving), or null.
-					Double rate = r.has("rate") && !r.get("rate").isJsonNull()
-						? r.get("rate").getAsDouble() : null;
-
+					List<Integer> npcIds = intList(action, "npcIds");
 					// Optional gathering method (fishing: net/bait/lure/cage/harpoon/...), or null.
-					String method = r.has("method") && !r.get("method").isJsonNull()
-						? r.get("method").getAsString() : null;
-
+					String method = optString(action, "method");
 					// Optional secondary/consumable item ids required to perform the action
 					// (fishing: feathers for lure, bait for bait fishing, sandworms, etc.).
-					List<Integer> secondaries = new ArrayList<>();
-					if (r.has("secondaries"))
-					{
-						for (JsonElement sid : r.getAsJsonArray("secondaries"))
-						{
-							secondaries.add(sid.getAsInt());
-						}
-					}
+					List<Integer> secondaries = intList(action, "secondaries");
+
+					List<String> uses = stringList(extra, "uses");
+					Integer petOverride = optInt(extra, "petBaseChanceOverride");
+					// Optional catch/success rate (e.g. for future Hunter/Thieving), or null.
+					Double rate = optDouble(extra, "rate");
 
 					resources.add(new ResourceEntry(name, skill, levelRequired, xpPerAction,
 						itemId, objectIds, npcIds, uses, petOverride, rate, method, secondaries));
@@ -207,6 +191,52 @@ public final class ResourceData
 		{
 			return null;
 		}
+	}
+
+	/** Optional int array field, or an empty list when absent. */
+	private static List<Integer> intList(JsonObject obj, String field)
+	{
+		List<Integer> out = new ArrayList<>();
+		if (obj.has(field) && obj.get(field).isJsonArray())
+		{
+			for (JsonElement el : obj.getAsJsonArray(field))
+			{
+				out.add(el.getAsInt());
+			}
+		}
+		return out;
+	}
+
+	/** Optional string array field, or an empty list when absent. */
+	private static List<String> stringList(JsonObject obj, String field)
+	{
+		List<String> out = new ArrayList<>();
+		if (obj.has(field) && obj.get(field).isJsonArray())
+		{
+			for (JsonElement el : obj.getAsJsonArray(field))
+			{
+				out.add(el.getAsString());
+			}
+		}
+		return out;
+	}
+
+	/** Optional string scalar field, or {@code null} when absent/JSON null. */
+	private static String optString(JsonObject obj, String field)
+	{
+		return obj.has(field) && !obj.get(field).isJsonNull() ? obj.get(field).getAsString() : null;
+	}
+
+	/** Optional int scalar field, or {@code null} when absent/JSON null. */
+	private static Integer optInt(JsonObject obj, String field)
+	{
+		return obj.has(field) && !obj.get(field).isJsonNull() ? obj.get(field).getAsInt() : null;
+	}
+
+	/** Optional double scalar field, or {@code null} when absent/JSON null. */
+	private static Double optDouble(JsonObject obj, String field)
+	{
+		return obj.has(field) && !obj.get(field).isJsonNull() ? obj.get(field).getAsDouble() : null;
 	}
 
 	public SkillData getSkillData(Skill skill)
