@@ -4,6 +4,7 @@ import com.systeminterface.core.SystemInterfaceConfig;
 import com.systeminterface.modules.skills.PetDisplay;
 import com.systeminterface.modules.skills.ResourceData;
 import com.systeminterface.modules.skills.SkillTracker;
+import com.systeminterface.services.lookup.HeldItemCache;
 import java.awt.BorderLayout;
 import java.awt.Color;
 import java.awt.Cursor;
@@ -68,6 +69,7 @@ public class SkillingSection extends JPanel
 	private final CollapseStateStore collapseStateStore;
 	private final ConfigManager configManager;
 	private final SystemInterfaceConfig config;
+	private final HeldItemCache heldItemCache;
 	private final Runnable onManualSectionToggle;
 	private final Runnable onContentEngaged;
 
@@ -111,6 +113,7 @@ public class SkillingSection extends JPanel
 		CollapseStateStore collapseStateStore,
 		ConfigManager configManager,
 		SystemInterfaceConfig config,
+		HeldItemCache heldItemCache,
 		Runnable onManualSectionToggle,
 		Runnable onContentEngaged)
 	{
@@ -121,6 +124,7 @@ public class SkillingSection extends JPanel
 		this.collapseStateStore = collapseStateStore;
 		this.configManager = configManager;
 		this.config = config;
+		this.heldItemCache = heldItemCache;
 		this.onManualSectionToggle = onManualSectionToggle;
 		this.onContentEngaged = onContentEngaged;
 
@@ -586,9 +590,13 @@ public class SkillingSection extends JPanel
 		SkillTracker.SkillState state = skillTracker.getSkillState(skill);
 		final Map<Integer, Long> keptItems = state != null ? state.getResourceCounts() : java.util.Collections.emptyMap();
 
-		// Node primary outputs + this skill's curated rewards (bird nest, leaves) — all trackable.
+		// Node primary outputs + this skill's applicable rewards (bird nest skill-wide; leaves only
+		// at their own tree) — filtered to the currently engaged node so per-node rewards don't leak
+		// into the table at the wrong source.
+		final int objId = skillTracker.getActiveObjectId();
+		final Integer engagedNode = objId != -1 ? objId : null;
 		List<Integer> sortedIds = new java.util.ArrayList<>(nodeItemIds);
-		for (ResourceData.RewardEntry rw : resourceData.getRewards(skill))
+		for (ResourceData.RewardEntry rw : resourceData.getApplicableRewards(skill, heldItemCache.heldIds(), engagedNode))
 		{
 			if (!sortedIds.contains(rw.getItemId()))
 			{

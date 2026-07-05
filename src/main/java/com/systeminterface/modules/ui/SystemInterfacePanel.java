@@ -2,6 +2,7 @@ package com.systeminterface.modules.ui;
 
 import com.systeminterface.core.SystemInterfaceConfig;
 import com.systeminterface.services.drops.LootTables;
+import com.systeminterface.services.lookup.HeldItemCache;
 import com.systeminterface.services.lookup.ItemMembership;
 import com.systeminterface.services.lookup.ItemNameCache;
 import com.systeminterface.services.portrait.PortraitService;
@@ -70,7 +71,8 @@ public class SystemInterfacePanel extends PluginPanel
 		ResourceData resourceData,
 		SessionTotals sessionTotals,
 		ClientThread clientThread,
-		SystemInterfaceConfig config)
+		SystemInterfaceConfig config,
+		HeldItemCache heldItemCache)
 	{
 		super();
 		this.stateTracker = stateTracker;
@@ -89,7 +91,7 @@ public class SystemInterfacePanel extends PluginPanel
 			() -> { activityFocus.manualSectionToggle(ActivityFocus.Mode.COMBAT); applyFocus(); },
 			() -> { activityFocus.pinSectionOpen(ActivityFocus.Mode.COMBAT); applyFocus(); });
 		this.skilling = new SkillingSection(skillTracker, resourceData, itemManager,
-			collapseStateStore, configManager, config,
+			collapseStateStore, configManager, config, heldItemCache,
 			() -> { activityFocus.manualSectionToggle(ActivityFocus.Mode.SKILLING); applyFocus(); },
 			() -> { activityFocus.pinSectionOpen(ActivityFocus.Mode.SKILLING); applyFocus(); });
 

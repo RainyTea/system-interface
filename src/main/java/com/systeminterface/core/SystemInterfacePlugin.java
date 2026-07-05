@@ -227,7 +227,7 @@ public class SystemInterfacePlugin extends Plugin
 		});
 
 		CollapseStateStore collapseStateStore = new CollapseStateStore(gson, configManager, SystemInterfaceConfig.GROUP);
-		panel = new SystemInterfacePanel(stateTracker, lootTables, itemManager, configManager, portraitService, itemMembership, itemNameCache, collapseStateStore, skillTracker, resourceData, sessionTotals, clientThread, config);
+		panel = new SystemInterfacePanel(stateTracker, lootTables, itemManager, configManager, portraitService, itemMembership, itemNameCache, collapseStateStore, skillTracker, resourceData, sessionTotals, clientThread, config, heldItemCache);
 		// Re-render once the members index is ready, so the F2P filter can apply.
 		itemMembership.setOnReady(() -> panel.refresh());
 		BufferedImage icon;

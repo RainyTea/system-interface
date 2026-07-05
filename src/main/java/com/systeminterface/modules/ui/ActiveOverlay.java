@@ -477,9 +477,11 @@ public class ActiveOverlay extends OverlayPanel
 		final SkillTracker.SkillState state = skillTracker.getSkillState(active);
 		final boolean compact = config.compactOverlay();
 		final int actions = skillTracker.getActions(active); // session actions ≈ sample size
+		final int objId = skillTracker.getActiveObjectId();
+		final Integer engagedNode = objId != -1 ? objId : null;
 
 		for (ResourceData.RewardEntry rw : skillTracker.getResourceData()
-			.getApplicableRewards(active, heldItemCache.heldIds()))
+			.getApplicableRewards(active, heldItemCache.heldIds(), engagedNode))
 		{
 			final Double rate = rw.getRate();
 			if (rate == null || rate <= 0.0 || !containsIgnoreCase(tracked, rw.getName()))
