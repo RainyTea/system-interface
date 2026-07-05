@@ -2,9 +2,11 @@ package com.systeminterface.services.drops;
 
 import com.google.gson.Gson;
 import com.google.gson.JsonSyntaxException;
-import com.google.gson.annotations.SerializedName;
 import com.systeminterface.core.SystemInterfaceConfig;
 import com.systeminterface.services.state.StateTracker;
+import com.systeminterface.services.wiki.BucketClient;
+import com.systeminterface.services.wiki.BucketQuery;
+import com.systeminterface.services.wiki.BucketRow;
 import java.io.IOException;
 import java.io.InputStream;
 import java.io.InputStreamReader;
@@ -22,13 +24,7 @@ import javax.inject.Inject;
 import javax.inject.Singleton;
 import lombok.extern.slf4j.Slf4j;
 import net.runelite.client.RuneLite;
-import okhttp3.Call;
-import okhttp3.Callback;
-import okhttp3.HttpUrl;
 import okhttp3.OkHttpClient;
-import okhttp3.Request;
-import okhttp3.Response;
-import okhttp3.ResponseBody;
 
 /**
  * Registry of {@link DropTable}s, keyed by canonical target name.
@@ -43,11 +39,11 @@ import okhttp3.ResponseBody;
  *       eagerly on startup so they're available offline.</li>
  *   <li><b>User overrides.</b> {@code ~/.runelite/system-interface/loot-tables/*.json}.
  *       Same shape as bundled; user files always win on collision.</li>
- *   <li><b>Live wiki fetch.</b> On a cache miss for an NPC the player just
- *       interacted with, fetch the wiki page wikitext via the MediaWiki API
- *       ({@code api.php?action=parse&prop=wikitext}), parse the
- *       {@code {{DropsLine|...}}} templates, save as JSON in the wiki cache.
- *       Opt-in (default off) per the AGENTS.md third-party-server rule.</li>
+ *   <li><b>Live Bucket fetch.</b> On a cache miss for an NPC the player just
+ *       interacted with, query the OSRS-Wiki Bucket API ({@code action=bucket})
+ *       for {@code dropsline} rows, enrich with an {@code infobox_monster} row,
+ *       and save the mapped table as JSON in the wiki cache. Opt-in (default
+ *       off) per the AGENTS.md third-party-server rule.</li>
  * </ol>
  *
  * <p>Subtable handling note: the OSRS Wiki pre-multiplies effective rates on
@@ -72,9 +68,6 @@ public final class LootTables
 	private static final Path USER_OVERRIDE_DIR = STATE_DIR.resolve("loot-tables");
 	private static final Path WIKI_CACHE_DIR = STATE_DIR.resolve("wiki-cache");
 
-	private static final String WIKI_API_BASE = "https://oldschool.runescape.wiki/api.php";
-	private static final String USER_AGENT = "system-interface-plugin (RuneLite hub plugin)";
-
 	// ---------------------------------------------------------------------
 	// Collaborators
 	// ---------------------------------------------------------------------
@@ -83,6 +76,7 @@ public final class LootTables
 	private final OkHttpClient okHttpClient;
 	private final SystemInterfaceConfig config;
 	private final StateTracker stateTracker;
+	private final BucketClient bucketClient;
 
 	private final Map<String, DropTable> tablesByTarget = new ConcurrentHashMap<>();
 	/** Targets we've already kicked off a fetch for in this session. */
@@ -95,12 +89,14 @@ public final class LootTables
 		Gson gson,
 		OkHttpClient okHttpClient,
 		SystemInterfaceConfig config,
-		StateTracker stateTracker)
+		StateTracker stateTracker,
+		BucketClient bucketClient)
 	{
 		this.gson = gson;
 		this.okHttpClient = okHttpClient;
 		this.config = config;
 		this.stateTracker = stateTracker;
+		this.bucketClient = bucketClient;
 
 		loadBundled();
 		loadWikiCache();
@@ -130,7 +126,7 @@ public final class LootTables
 		// authoritative and never re-fetched.
 		final boolean staleWiki = table != null
 			&& table.getOrigin() != null && table.getOrigin().startsWith("wiki")
-			&& table.getSchema() < WikiDropTableParser.CURRENT_SCHEMA;
+			&& table.getSchema() < DropslineMapper.CURRENT_SCHEMA;
 		if ((table == null || staleWiki) && config.enableWikiLookup()
 			&& !inFlight.contains(targetName)
 			&& !missingFromWiki.contains(targetName))
@@ -270,92 +266,61 @@ public final class LootTables
 		{
 			return;
 		}
-		final HttpUrl base = HttpUrl.parse(WIKI_API_BASE);
-		if (base == null)
+		final String page = PageNameOverrides.resolve(targetName);
+
+		final BucketQuery dropsQuery = new BucketQuery("dropsline")
+			.select("item_name", "drop_json", "rare_drop_table")
+			.where("page_name", page)
+			.limit(500);
+
+		bucketClient.query(dropsQuery, dropRows ->
 		{
-			inFlight.remove(targetName);
-			missingFromWiki.add(targetName);
-			return;
-		}
-		final HttpUrl url = base.newBuilder()
-			.addQueryParameter("action", "parse")
-			.addQueryParameter("page", targetName)
-			.addQueryParameter("prop", "wikitext|text")
-			.addQueryParameter("format", "json")
-			.addQueryParameter("formatversion", "2")
-			.addQueryParameter("redirects", "true")
-			.build();
-
-		final Request request = new Request.Builder()
-			.url(url)
-			.header("User-Agent", USER_AGENT)
-			.header("Accept", "application/json")
-			.build();
-
-		log.debug("Wiki fetch starting for '{}': {}", targetName, url);
-
-		okHttpClient.newCall(request).enqueue(new Callback()
-		{
-			@Override
-			public void onFailure(Call call, IOException e)
+			final DropTable table = DropslineMapper.newTable(targetName);
+			for (BucketRow row : dropRows)
 			{
-				log.debug("Wiki fetch failed for '{}'", targetName, e);
-				// Don't mark as permanently missing — network errors should be retried next time.
+				final DropTable.Entry entry = DropslineMapper.mapDrop(row, gson);
+				if (entry != null)
+				{
+					table.drops.add(entry);
+				}
+			}
+			if (table.getDrops().isEmpty())
+			{
+				log.debug("Bucket returned no parseable drops for '{}'", targetName);
+				missingFromWiki.add(targetName);
 				inFlight.remove(targetName);
+				return;
 			}
-
-			@Override
-			public void onResponse(Call call, Response response)
+			// Enrich with monster stats, then register+cache regardless of whether that second query succeeds.
+			final BucketQuery monsterQuery = new BucketQuery("infobox_monster")
+				.select("name", "combat_level", "hitpoints", "is_members_only", "examine",
+					"max_hit", "attack_style", "elemental_weakness", "slayer_level", "image")
+				.where("name", page)
+				.limit(3);
+			bucketClient.query(monsterQuery, monsterRows ->
 			{
-				try (ResponseBody body = response.body())
+				if (!monsterRows.isEmpty())
 				{
-					if (!response.isSuccessful() || body == null)
-					{
-						log.debug("Wiki fetch unsuccessful for '{}': {}", targetName, response.code());
-						missingFromWiki.add(targetName);
-						return;
-					}
-					final String json = body.string();
-					final DropTable parsed = parseApiResponse(targetName, json);
-					if (parsed == null || parsed.getDrops().isEmpty())
-					{
-						log.debug("Wiki returned no parseable drops for '{}'", targetName);
-						missingFromWiki.add(targetName);
-						return;
-					}
-					register(parsed, "wiki:" + targetName);
-					saveWikiCache(parsed);
-					stateTracker.bumpGeneration();
-					log.debug("Wiki fetch complete for '{}': {} drop(s) cached.", targetName, parsed.getDrops().size());
+					DropslineMapper.applyMonster(table, monsterRows.get(0));
 				}
-				catch (IOException e)
-				{
-					log.debug("Wiki fetch I/O error for '{}'", targetName, e);
-				}
-				finally
-				{
-					inFlight.remove(targetName);
-				}
-			}
+				finishFetch(targetName, table);
+			}, () -> finishFetch(targetName, table));
+		}, () ->
+		{
+			log.debug("Bucket dropsline fetch failed for '{}'", targetName);
+			// Network/error: don't mark permanently missing — allow a retry next time.
+			inFlight.remove(targetName);
 		});
 	}
 
-	private DropTable parseApiResponse(String targetName, String jsonBody)
+	/** Registers + caches a freshly-fetched table and clears the in-flight flag. */
+	private void finishFetch(String targetName, DropTable table)
 	{
-		try
-		{
-			WikiApiResponse resp = gson.fromJson(jsonBody, WikiApiResponse.class);
-			if (resp == null || resp.parse == null || resp.parse.wikitext == null)
-			{
-				return null;
-			}
-			return WikiDropTableParser.parseWikiPage(targetName, resp.parse.wikitext, resp.parse.text);
-		}
-		catch (JsonSyntaxException e)
-		{
-			log.debug("Bad JSON from wiki for '{}'", targetName, e);
-			return null;
-		}
+		register(table, "bucket:" + targetName);
+		saveWikiCache(table);
+		stateTracker.bumpGeneration();
+		inFlight.remove(targetName);
+		log.debug("Bucket fetch complete for '{}': {} drop(s) cached.", targetName, table.getDrops().size());
 	}
 
 	private void saveWikiCache(DropTable table)
@@ -405,27 +370,6 @@ public final class LootTables
 	private static final class Manifest
 	{
 		List<String> tables;
-	}
-
-	/** Shape of the {@code action=parse&formatversion=2} response we care about. */
-	private static final class WikiApiResponse
-	{
-		@SerializedName("parse")
-		ParseBlock parse;
-	}
-
-	private static final class ParseBlock
-	{
-		@SerializedName("title")
-		String title;
-
-		/** With formatversion=2 the wikitext is a plain string (not the legacy {@code "*": "..."} wrapper). */
-		@SerializedName("wikitext")
-		String wikitext;
-
-		/** Rendered page HTML (formatversion=2 → plain string). Holds the fully-expanded drop tables. */
-		@SerializedName("text")
-		String text;
 	}
 }
 
