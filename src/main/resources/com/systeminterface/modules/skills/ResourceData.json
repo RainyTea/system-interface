@@ -104,7 +104,11 @@
     ],
     "rewards": [
       { "name": "Bird nest", "type": "secondary", "itemId": 5073, "rate": 0.00390625 },
-      { "name": "Leaves", "type": "conditional", "itemId": 6020, "requiredItemIds": [28136] }
+      { "name": "Oak leaves", "type": "secondary", "itemId": 6022, "rate": 0.25, "objectIds": [10820] },
+      { "name": "Willow leaves", "type": "secondary", "itemId": 6024, "rate": 0.25, "objectIds": [10819, 10829, 10831, 10833] },
+      { "name": "Maple leaves", "type": "secondary", "itemId": 6028, "rate": 0.25, "objectIds": [10832] },
+      { "name": "Yew leaves", "type": "secondary", "itemId": 6026, "rate": 0.25, "objectIds": [10822] },
+      { "name": "Magic leaves", "type": "secondary", "itemId": 6030, "rate": 0.25, "objectIds": [10834] }
     ]
   },
   "mining": {

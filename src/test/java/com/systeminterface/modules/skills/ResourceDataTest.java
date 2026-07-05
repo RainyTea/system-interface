@@ -216,13 +216,17 @@ public class ResourceDataTest
 	}
 
 	@Test
-	public void woodcuttingHasBirdNestSecondaryAndForestryConditional()
+	public void woodcuttingHasBirdNestAndPerTreeForestryLeaves()
 	{
 		List<ResourceData.RewardEntry> rewards = data.getRewards(Skill.WOODCUTTING);
 		Set<String> names = new HashSet<>();
 		for (ResourceData.RewardEntry r : rewards) { names.add(r.getName()); }
 		assertTrue(names.contains("Bird nest"));
-		assertTrue(names.contains("Leaves"));
+		assertTrue(names.contains("Oak leaves"));
+		assertTrue(names.contains("Willow leaves"));
+		assertTrue(names.contains("Maple leaves"));
+		assertTrue(names.contains("Yew leaves"));
+		assertTrue(names.contains("Magic leaves"));
 	}
 
 	@Test
@@ -237,28 +241,33 @@ public class ResourceDataTest
 	}
 
 	@Test
-	public void leavesIsConditionalGatedOnForestryKit()
+	public void oakLeavesIsSecondaryPerNodeReward()
 	{
-		ResourceData.RewardEntry leaves = data.rewardForItemId(6020);
+		ResourceData.RewardEntry leaves = data.rewardForItemId(6022); // Oak leaves
 		assertNotNull(leaves);
-		assertEquals(ResourceData.RewardType.CONDITIONAL, leaves.getType());
-		assertTrue(leaves.getRequiredItemIds().contains(28136)); // Forestry kit
+		assertEquals(ResourceData.RewardType.SECONDARY, leaves.getType());
+		assertEquals(Skill.WOODCUTTING, leaves.getSkill());
+		assertTrue(leaves.getRequiredItemIds().isEmpty()); // Secondary, not gated
+		assertTrue(leaves.getObjectIds().contains(10820)); // Oak tree only
 	}
 
 	@Test
-	public void applicableRewards_secondaryAlways_conditionalOnlyWhenHeld()
+	public void applicableRewards_secondaryExcludesPerNodeWithoutNodeContext()
 	{
 		Set<Integer> none = java.util.Collections.emptySet();
-		Set<String> withoutKit = new HashSet<>();
-		for (ResourceData.RewardEntry r : data.getApplicableRewards(Skill.WOODCUTTING, none)) { withoutKit.add(r.getName()); }
-		assertTrue(withoutKit.contains("Bird nest"));   // secondary always
-		assertFalse(withoutKit.contains("Leaves"));     // conditional gated out
+		Set<String> withoutNode = new HashSet<>();
+		for (ResourceData.RewardEntry r : data.getApplicableRewards(Skill.WOODCUTTING, none)) { withoutNode.add(r.getName()); }
+		assertTrue(withoutNode.contains("Bird nest"));     // secondary, skill-wide (no objectIds)
+		// Per-node secondary leaves (oak/willow/etc) excluded from 2-arg form (no node context)
+		assertFalse(withoutNode.contains("Oak leaves"));
+		assertFalse(withoutNode.contains("Willow leaves"));
 
-		Set<Integer> withKit = new HashSet<>(java.util.Arrays.asList(28136));
-		Set<String> withKitNames = new HashSet<>();
-		for (ResourceData.RewardEntry r : data.getApplicableRewards(Skill.WOODCUTTING, withKit)) { withKitNames.add(r.getName()); }
-		assertTrue(withKitNames.contains("Bird nest"));
-		assertTrue(withKitNames.contains("Leaves"));     // conditional now applies
+		// With 3-arg form + oak node, oak leaves apply
+		Set<String> atOak = new HashSet<>();
+		for (ResourceData.RewardEntry r : data.getApplicableRewards(Skill.WOODCUTTING, none, 10820)) { atOak.add(r.getName()); }
+		assertTrue(atOak.contains("Bird nest"));
+		assertTrue(atOak.contains("Oak leaves"));
+		assertFalse(atOak.contains("Willow leaves")); // per-node, not at oak
 	}
 
 	@Test
@@ -314,5 +323,18 @@ public class ResourceDataTest
 		Set<String> noNode = rewardNames(d.getApplicableRewards(Skill.WOODCUTTING, none)); // 2-arg overload
 		assertTrue(noNode.contains("Bird nest"));
 		assertFalse(noNode.contains("Oak leaves"));     // per-node excluded with no node context
+	}
+
+	@Test
+	public void bundledForestryLeaves_arePerTree()
+	{
+		Set<Integer> none = java.util.Collections.emptySet();
+		Set<String> atOak = new HashSet<>();
+		for (ResourceData.RewardEntry r : data.getApplicableRewards(Skill.WOODCUTTING, none, 10820)) { atOak.add(r.getName()); }
+		assertTrue(atOak.contains("Oak leaves"));
+		Set<String> atYew = new HashSet<>();
+		for (ResourceData.RewardEntry r : data.getApplicableRewards(Skill.WOODCUTTING, none, 10822)) { atYew.add(r.getName()); }
+		assertTrue(atYew.contains("Yew leaves"));
+		assertFalse(atYew.contains("Oak leaves"));
 	}
 }
