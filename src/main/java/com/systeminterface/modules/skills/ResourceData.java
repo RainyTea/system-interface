@@ -162,7 +162,8 @@ public final class ResourceData
 						{
 							for (JsonElement rid : rw.getAsJsonArray("requiredItemIds")) { req.add(rid.getAsInt()); }
 						}
-						rewardList.add(new RewardEntry(rName, rItemId, rType, skill, rRate, req));
+						List<Integer> rObjectIds = intList(rw, "objectIds");
+						rewardList.add(new RewardEntry(rName, rItemId, rType, skill, rRate, req, rObjectIds));
 					}
 				}
 				rewards.put(skill, Collections.unmodifiableList(rewardList));
@@ -357,12 +358,31 @@ public final class ResourceData
 	 * Reward entries that currently apply for {@code skill}: every {@code SECONDARY}, plus each
 	 * {@code CONDITIONAL} whose required held/worn item is present in {@code heldItemIds}. Pure —
 	 * the held set is supplied by the caller (client-thread {@code HeldItemCache} in production).
+	 * Per-node rewards (non-empty {@code objectIds}) are excluded since no node context is provided.
 	 */
 	public List<RewardEntry> getApplicableRewards(Skill skill, Set<Integer> heldItemIds)
+	{
+		return getApplicableRewards(skill, heldItemIds, null);
+	}
+
+	/**
+	 * Reward entries that currently apply for {@code skill} at a specific engaged node.
+	 * Returns: every {@code SECONDARY} and {@code CONDITIONAL} (as per the 2-arg overload),
+	 * filtered by node applicability: per-node rewards (non-empty {@code objectIds}) apply
+	 * only when {@code engagedObjectId} is in their list; skill-wide rewards (empty {@code objectIds})
+	 * apply everywhere.
+	 */
+	public List<RewardEntry> getApplicableRewards(Skill skill, Set<Integer> heldItemIds, Integer engagedObjectId)
 	{
 		List<RewardEntry> out = new ArrayList<>();
 		for (RewardEntry re : getRewards(skill))
 		{
+			final boolean nodeOk = re.getObjectIds().isEmpty()
+				|| (engagedObjectId != null && re.getObjectIds().contains(engagedObjectId));
+			if (!nodeOk)
+			{
+				continue;
+			}
 			if (re.getType() == RewardType.SECONDARY)
 			{
 				out.add(re);
@@ -465,8 +485,9 @@ public final class ResourceData
 		private final Skill skill;
 		private final Double rate;
 		private final List<Integer> requiredItemIds;
+		private final List<Integer> objectIds;
 
-		RewardEntry(String name, int itemId, RewardType type, Skill skill, Double rate, List<Integer> requiredItemIds)
+		RewardEntry(String name, int itemId, RewardType type, Skill skill, Double rate, List<Integer> requiredItemIds, List<Integer> objectIds)
 		{
 			this.name = name;
 			this.itemId = itemId;
@@ -474,6 +495,7 @@ public final class ResourceData
 			this.skill = skill;
 			this.rate = rate;
 			this.requiredItemIds = Collections.unmodifiableList(requiredItemIds);
+			this.objectIds = Collections.unmodifiableList(objectIds);
 		}
 
 		public String getName() { return name; }
@@ -484,5 +506,7 @@ public final class ResourceData
 		public Double getRate() { return rate; }
 		/** Held/worn item ids gating a conditional reward (any one suffices). Empty for non-conditional. */
 		public List<Integer> getRequiredItemIds() { return requiredItemIds; }
+		/** Node object ids a per-node reward applies at (e.g. a specific tree). Empty = skill-wide. */
+		public List<Integer> getObjectIds() { return objectIds; }
 	}
 }

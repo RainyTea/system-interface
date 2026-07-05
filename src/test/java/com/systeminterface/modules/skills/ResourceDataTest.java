@@ -39,6 +39,13 @@ public class ResourceDataTest
 		return n;
 	}
 
+	private static Set<String> rewardNames(List<ResourceData.RewardEntry> rewards)
+	{
+		Set<String> n = new HashSet<>();
+		for (ResourceData.RewardEntry r : rewards) { n.add(r.getName()); }
+		return n;
+	}
+
 	@Test
 	public void woodcuttingObject_resolvesToSingleElementList()
 	{
@@ -284,5 +291,28 @@ public class ResourceDataTest
 	private static ResourceData loadJson(String json)
 	{
 		return ResourceData.load(new java.io.StringReader(json), new com.google.gson.Gson());
+	}
+
+	@Test
+	public void perNodeReward_appliesOnlyAtItsNode()
+	{
+		String json = "{\"woodcutting\":{\"petBaseChance\":317647,\"resources\":[],\"rewards\":["
+			+ "{\"name\":\"Bird nest\",\"type\":\"secondary\",\"itemId\":5073,\"rate\":0.0039},"
+			+ "{\"name\":\"Oak leaves\",\"type\":\"secondary\",\"itemId\":100,\"rate\":0.25,\"objectIds\":[10820]}"
+			+ "]}}";
+		ResourceData d = loadJson(json);
+		Set<Integer> none = java.util.Collections.emptySet();
+
+		Set<String> atOak = rewardNames(d.getApplicableRewards(Skill.WOODCUTTING, none, 10820));
+		assertTrue(atOak.contains("Bird nest"));
+		assertTrue(atOak.contains("Oak leaves"));
+
+		Set<String> atOther = rewardNames(d.getApplicableRewards(Skill.WOODCUTTING, none, 99999));
+		assertTrue(atOther.contains("Bird nest"));      // skill-wide applies everywhere
+		assertFalse(atOther.contains("Oak leaves"));    // per-node excluded off its node
+
+		Set<String> noNode = rewardNames(d.getApplicableRewards(Skill.WOODCUTTING, none)); // 2-arg overload
+		assertTrue(noNode.contains("Bird nest"));
+		assertFalse(noNode.contains("Oak leaves"));     // per-node excluded with no node context
 	}
 }
