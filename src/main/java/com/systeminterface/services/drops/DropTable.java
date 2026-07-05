@@ -103,6 +103,11 @@ public final class DropTable
 	{
 		String name;
 		double rate;
+		int quantityLow;
+		int quantityHigh;
+		int rolls;
+		int dropValue;
+		String region;
 
 		public String getName()
 		{
@@ -112,6 +117,32 @@ public final class DropTable
 		public double getRate()
 		{
 			return rate;
+		}
+
+		public int getQuantityLow()
+		{
+			return quantityLow;
+		}
+
+		public int getQuantityHigh()
+		{
+			return quantityHigh;
+		}
+
+		public int getRolls()
+		{
+			return rolls;
+		}
+
+		public int getDropValue()
+		{
+			return dropValue;
+		}
+
+		/** League/region restriction from the wiki, or null. */
+		public String getRegion()
+		{
+			return region;
 		}
 	}
 }
