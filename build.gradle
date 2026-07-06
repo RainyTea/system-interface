@@ -58,6 +58,13 @@ tasks.register('run', JavaExec) {
 	args "--developer-mode", "--debug"
 }
 
+tasks.register('generateResourceData', JavaExec) {
+	group = 'tools'
+	description = 'Regenerate the bundled ResourceData.json skilling data from the OSRS Wiki Bucket API (dev-only).'
+	classpath = sourceSets.tools.runtimeClasspath
+	mainClass = 'com.systeminterface.tools.SkillingDataGenerator'
+}
+
 tasks.register('shadowJar', Jar) {
 	dependsOn configurations.testRuntimeClasspath
 	manifest {

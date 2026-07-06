@@ -69,4 +69,27 @@ public final class BucketRow
 		}
 		return el;
 	}
+
+	/** All elements of an array field as ints (or a singleton for a scalar; empty if absent/unparseable). */
+	public java.util.List<Integer> ints(String field)
+	{
+		final java.util.List<Integer> out = new java.util.ArrayList<>();
+		if (obj == null || !obj.has(field) || obj.get(field).isJsonNull())
+		{
+			return out;
+		}
+		final com.google.gson.JsonElement el = obj.get(field);
+		if (el.isJsonArray())
+		{
+			for (com.google.gson.JsonElement e : el.getAsJsonArray())
+			{
+				try { out.add(e.getAsInt()); } catch (RuntimeException ignored) { }
+			}
+		}
+		else
+		{
+			try { out.add(el.getAsInt()); } catch (RuntimeException ignored) { }
+		}
+		return out;
+	}
 }
