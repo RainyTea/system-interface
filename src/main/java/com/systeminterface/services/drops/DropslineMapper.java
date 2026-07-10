@@ -69,6 +69,9 @@ public final class DropslineMapper
 		final String dropType = str(dj, "Drop type");
 		if (dropType != null && !dropType.isEmpty() && !"combat".equalsIgnoreCase(dropType))
 		{
+			// Logged so QA can spot a genuine combat drop wrongly skipped if the wiki ever
+			// introduces a new combat-flavored type value (watch-item from the final review).
+			log.debug("Skipping non-combat drop '{}' (Drop type '{}')", name, dropType);
 			return null;
 		}
 		// Conditional drops (clue-step keys etc.) carry no machine-readable flag — curated exclusion
