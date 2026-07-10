@@ -90,4 +90,37 @@ public class DropslineMapperTest
 		assertEquals(1, t.getSlayerLevel());
 		assertEquals("General Graardor.png", t.getImageFile());
 	}
+
+	@Test
+	public void nonCombatDropType_isSkipped()
+	{
+		// Man's pickpocket coins arrive in dropsline as Drop type "thieving" — not combat loot.
+		String r = "{\"item_name\":\"Coins\",\"drop_json\":\"{\\\"Rarity\\\":\\\"Always\\\","
+			+ "\\\"Drop type\\\":\\\"thieving\\\",\\\"Quantity Low\\\":15,\\\"Quantity High\\\":15}\"}";
+		assertNull(DropslineMapper.mapDrop(row(r), GSON));
+	}
+
+	@Test
+	public void missingDropType_isTreatedAsCombat()
+	{
+		String r = "{\"item_name\":\"Bones\",\"drop_json\":\"{\\\"Rarity\\\":\\\"Always\\\"}\"}";
+		DropTable.Entry e = DropslineMapper.mapDrop(row(r), GSON);
+		assertEquals("Bones", e.getName());
+	}
+
+	@Test
+	public void curatedConditionalDrop_isSkipped()
+	{
+		// Clue-step key: Drop type "combat", Rarity "Always" — only the curated list catches it.
+		String r = "{\"item_name\":\"Key (medium)\",\"drop_json\":\"{\\\"Rarity\\\":\\\"Always\\\","
+			+ "\\\"Drop type\\\":\\\"combat\\\"}\"}";
+		assertNull(DropslineMapper.mapDrop(row(r), GSON));
+	}
+
+	@Test
+	public void schemaIsBumpedToEight()
+	{
+		assertEquals(8, DropslineMapper.CURRENT_SCHEMA);
+		assertEquals(8, DropslineMapper.newTable("x").getSchema());
+	}
 }

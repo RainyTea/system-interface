@@ -21,7 +21,7 @@ public final class DropslineMapper
 	}
 
 	/** Bumped when the Bucket producer changes; older cached tables auto-refetch (see {@link LootTables}). */
-	public static final int CURRENT_SCHEMA = 7;
+	public static final int CURRENT_SCHEMA = 8;
 
 	private static final Pattern MULTI_ROLL = Pattern.compile("^(\\d+)\\s*[\\u00d7x]\\s*(.+)$");
 
@@ -61,6 +61,19 @@ public final class DropslineMapper
 			return null;
 		}
 		if (dj == null)
+		{
+			return null;
+		}
+		// Non-combat rows (e.g. pickpocket loot arrives as Drop type "thieving") don't belong in the
+		// combat drop table. Missing/empty type is treated as combat — never over-filter.
+		final String dropType = str(dj, "Drop type");
+		if (dropType != null && !dropType.isEmpty() && !"combat".equalsIgnoreCase(dropType))
+		{
+			return null;
+		}
+		// Conditional drops (clue-step keys etc.) carry no machine-readable flag — curated exclusion
+		// restores the old wikitext parser's quest-only filter.
+		if (ConditionalDrops.isConditional(name))
 		{
 			return null;
 		}
