@@ -3,206 +3,1076 @@
     "petBaseChance": 317647,
     "resources": [
       {
-        "name": "Logs",
-        "levelRequired": 1,
-        "xpPerAction": 25.0,
-        "itemId": 1511,
-        "objectIds": [1276, 1278, 1286, 1289, 1290, 1291, 1365, 1383, 1384, 2409, 3033, 3034, 3035, 3036, 3881, 3882, 3883],
-        "uses": ["Fletching:1", "Firemaking:1", "Construction:1"],
-        "petBaseChanceOverride": null
+        "extraRolls": {
+          "uses": [
+            "Fletching:1",
+            "Firemaking:1",
+            "Construction:1"
+          ]
+        },
+        "mainAction": {
+          "source": "recipe",
+          "name": "Logs",
+          "itemId": 1511,
+          "levelRequired": 1,
+          "xpPerAction": 25.0,
+          "objectIds": [
+            1276,
+            1278,
+            1286,
+            1289,
+            1290,
+            1291,
+            1365,
+            1383,
+            1384,
+            2409,
+            3033,
+            3034,
+            3035,
+            3036,
+            3881,
+            3882,
+            3883,
+            52823,
+            1279,
+            58540
+          ]
+        }
       },
       {
-        "name": "Oak logs",
-        "levelRequired": 15,
-        "xpPerAction": 37.5,
-        "itemId": 1521,
-        "objectIds": [10820],
-        "uses": ["Fletching:20", "Firemaking:15", "Construction:15"],
-        "petBaseChanceOverride": null
+        "extraRolls": {
+          "uses": [
+            "Fletching:20",
+            "Firemaking:15",
+            "Construction:15"
+          ]
+        },
+        "mainAction": {
+          "source": "recipe",
+          "name": "Oak logs",
+          "itemId": 1521,
+          "levelRequired": 15,
+          "xpPerAction": 37.5,
+          "objectIds": [
+            10820,
+            51772,
+            42395
+          ]
+        }
       },
       {
-        "name": "Willow logs",
-        "levelRequired": 30,
-        "xpPerAction": 67.5,
-        "itemId": 1519,
-        "objectIds": [10819, 10829, 10831, 10833],
-        "uses": ["Fletching:35", "Firemaking:30"],
-        "petBaseChanceOverride": null
+        "extraRolls": {
+          "uses": [
+            "Fletching:35",
+            "Firemaking:30"
+          ]
+        },
+        "mainAction": {
+          "source": "recipe",
+          "name": "Willow logs",
+          "itemId": 1519,
+          "levelRequired": 30,
+          "xpPerAction": 67.5,
+          "objectIds": [
+            10819,
+            10829,
+            10831,
+            10833
+          ]
+        }
       },
       {
-        "name": "Teak logs",
-        "levelRequired": 35,
-        "xpPerAction": 85.0,
-        "itemId": 6333,
-        "objectIds": [9036, 36686],
-        "uses": ["Fletching:35", "Firemaking:35", "Construction:35"],
-        "petBaseChanceOverride": null
+        "extraRolls": {
+          "uses": [
+            "Fletching:35",
+            "Firemaking:35",
+            "Construction:35"
+          ]
+        },
+        "mainAction": {
+          "source": "recipe",
+          "name": "Teak logs",
+          "itemId": 6333,
+          "levelRequired": 35,
+          "xpPerAction": 85.0,
+          "objectIds": [
+            9036,
+            36686
+          ]
+        }
       },
       {
-        "name": "Arctic pine logs",
-        "levelRequired": 42,
-        "xpPerAction": 40.0,
-        "itemId": 10810,
-        "objectIds": [10578, 10579],
-        "uses": ["Firemaking:42"],
-        "petBaseChanceOverride": null
+        "extraRolls": {
+          "uses": [
+            "Firemaking:42"
+          ]
+        },
+        "mainAction": {
+          "source": "recipe",
+          "name": "Arctic pine logs",
+          "itemId": 10810,
+          "levelRequired": 54,
+          "xpPerAction": 40.0,
+          "objectIds": [
+            10578,
+            10579,
+            3037
+          ]
+        }
       },
       {
-        "name": "Maple logs",
-        "levelRequired": 45,
-        "xpPerAction": 100.0,
-        "itemId": 1517,
-        "objectIds": [10832],
-        "uses": ["Fletching:50", "Firemaking:45"],
-        "petBaseChanceOverride": null
+        "extraRolls": {
+          "uses": [
+            "Fletching:50",
+            "Firemaking:45"
+          ]
+        },
+        "mainAction": {
+          "source": "recipe",
+          "name": "Maple logs",
+          "itemId": 1517,
+          "levelRequired": 45,
+          "xpPerAction": 110.0,
+          "objectIds": [
+            10832,
+            36681,
+            40754
+          ]
+        }
       },
       {
-        "name": "Mahogany logs",
-        "levelRequired": 50,
-        "xpPerAction": 125.0,
-        "itemId": 6332,
-        "objectIds": [9034, 36688],
-        "uses": ["Firemaking:50", "Construction:50"],
-        "petBaseChanceOverride": null
+        "extraRolls": {
+          "uses": [
+            "Firemaking:50",
+            "Construction:50"
+          ]
+        },
+        "mainAction": {
+          "source": "recipe",
+          "name": "Mahogany logs",
+          "itemId": 6332,
+          "levelRequired": 50,
+          "xpPerAction": 125.0,
+          "objectIds": [
+            9034,
+            36688
+          ]
+        }
       },
       {
-        "name": "Yew logs",
-        "levelRequired": 60,
-        "xpPerAction": 175.0,
-        "itemId": 1515,
-        "objectIds": [10822],
-        "uses": ["Fletching:65", "Firemaking:60"],
-        "petBaseChanceOverride": null
+        "extraRolls": {
+          "uses": [
+            "Fletching:65",
+            "Firemaking:60"
+          ]
+        },
+        "mainAction": {
+          "source": "recipe",
+          "name": "Yew logs",
+          "itemId": 1515,
+          "levelRequired": 60,
+          "xpPerAction": 175.0,
+          "objectIds": [
+            10822,
+            36683,
+            40756,
+            42391,
+            57790
+          ]
+        }
       },
       {
-        "name": "Magic logs",
-        "levelRequired": 75,
-        "xpPerAction": 250.0,
-        "itemId": 1513,
-        "objectIds": [10834],
-        "uses": ["Fletching:80", "Firemaking:75"],
-        "petBaseChanceOverride": null
+        "extraRolls": {
+          "uses": [
+            "Fletching:80",
+            "Firemaking:75"
+          ]
+        },
+        "mainAction": {
+          "source": "recipe",
+          "name": "Magic logs",
+          "itemId": 1513,
+          "levelRequired": 75,
+          "xpPerAction": 250.0,
+          "objectIds": [
+            10834
+          ]
+        }
       },
       {
         "name": "Sulliuscep cap",
         "levelRequired": 65,
         "xpPerAction": 127.0,
         "itemId": 22448,
-        "objectIds": [30920],
-        "uses": ["Firemaking:65"],
+        "objectIds": [
+          30920
+        ],
+        "uses": [
+          "Firemaking:65"
+        ],
         "petBaseChanceOverride": 343000
       },
       {
-        "name": "Redwood logs",
-        "levelRequired": 90,
-        "xpPerAction": 380.0,
-        "itemId": 19669,
-        "objectIds": [29668, 29670],
-        "uses": ["Fletching:85", "Firemaking:90"],
-        "petBaseChanceOverride": 223017
+        "extraRolls": {
+          "uses": [
+            "Fletching:85",
+            "Firemaking:90"
+          ],
+          "petBaseChanceOverride": 223017
+        },
+        "mainAction": {
+          "source": "recipe",
+          "name": "Redwood logs",
+          "itemId": 19669,
+          "levelRequired": 90,
+          "xpPerAction": 380.0,
+          "objectIds": [
+            29668,
+            29670,
+            29681,
+            29682,
+            29669,
+            29671
+          ]
+        }
+      },
+      {
+        "mainAction": {
+          "source": "recipe",
+          "name": "Achey tree logs",
+          "itemId": 2862,
+          "levelRequired": 1,
+          "xpPerAction": 25.0,
+          "objectIds": [
+            2023
+          ]
+        },
+        "extraRolls": {}
+      },
+      {
+        "mainAction": {
+          "source": "recipe",
+          "name": "Neitiznot shield",
+          "itemId": 10826,
+          "levelRequired": 56,
+          "xpPerAction": 0.0,
+          "objectIds": [
+            21305
+          ],
+          "secondaries": [
+            10810,
+            4819,
+            954
+          ]
+        },
+        "extraRolls": {}
+      },
+      {
+        "mainAction": {
+          "source": "recipe",
+          "name": "Bark",
+          "itemId": 3239,
+          "levelRequired": 45,
+          "xpPerAction": 82.5,
+          "objectIds": [
+            10821,
+            10830
+          ]
+        },
+        "extraRolls": {}
+      },
+      {
+        "mainAction": {
+          "source": "recipe",
+          "name": "Windswept logs",
+          "itemId": 11035,
+          "levelRequired": 50,
+          "xpPerAction": 0.0,
+          "objectIds": [
+            18137
+          ]
+        },
+        "extraRolls": {}
+      },
+      {
+        "mainAction": {
+          "source": "recipe",
+          "name": "Split log",
+          "itemId": 10812,
+          "levelRequired": 56,
+          "xpPerAction": 5.0,
+          "objectIds": [
+            21305
+          ],
+          "secondaries": [
+            10810
+          ]
+        },
+        "extraRolls": {}
+      },
+      {
+        "mainAction": {
+          "source": "recipe",
+          "name": "Scrapey tree logs",
+          "itemId": 8934,
+          "levelRequired": 1,
+          "xpPerAction": 25.0,
+          "objectIds": [
+            15971,
+            15970
+          ]
+        },
+        "extraRolls": {}
+      },
+      {
+        "mainAction": {
+          "source": "recipe",
+          "name": "Thatch spar dense",
+          "itemId": 6285,
+          "levelRequired": 35,
+          "xpPerAction": 80.0,
+          "objectIds": [
+            9023,
+            9021,
+            9022,
+            9020,
+            9024
+          ]
+        },
+        "extraRolls": {}
+      },
+      {
+        "mainAction": {
+          "source": "recipe",
+          "name": "Thatch spar light",
+          "itemId": 6281,
+          "levelRequired": 10,
+          "xpPerAction": 32.0,
+          "objectIds": [
+            9013,
+            9011,
+            9012,
+            9010,
+            9014
+          ]
+        },
+        "extraRolls": {}
+      },
+      {
+        "mainAction": {
+          "source": "recipe",
+          "name": "Thatch spar med",
+          "itemId": 6283,
+          "levelRequired": 20,
+          "xpPerAction": 55.0,
+          "objectIds": [
+            9018,
+            9016,
+            9017,
+            9015,
+            9019
+          ]
+        },
+        "extraRolls": {}
+      },
+      {
+        "mainAction": {
+          "source": "recipe",
+          "name": "Juniper logs",
+          "itemId": 13355,
+          "levelRequired": 42,
+          "xpPerAction": 35.0,
+          "objectIds": [
+            27499
+          ]
+        },
+        "extraRolls": {}
+      },
+      {
+        "mainAction": {
+          "source": "recipe",
+          "name": "Kindling (Chambers of Xeric)",
+          "itemId": 20799,
+          "levelRequired": 1,
+          "xpPerAction": 0.0,
+          "objectIds": [
+            29764,
+            29763
+          ]
+        },
+        "extraRolls": {}
+      },
+      {
+        "mainAction": {
+          "source": "recipe",
+          "name": "Phren bark",
+          "itemId": 23878,
+          "levelRequired": 1,
+          "xpPerAction": 10.0,
+          "objectIds": [
+            36066,
+            36067
+          ]
+        },
+        "extraRolls": {}
+      },
+      {
+        "mainAction": {
+          "source": "recipe",
+          "name": "Phren bark (corrupted)",
+          "itemId": 23838,
+          "levelRequired": 1,
+          "xpPerAction": 10.0,
+          "objectIds": [
+            35969,
+            35970
+          ]
+        },
+        "extraRolls": {}
+      },
+      {
+        "mainAction": {
+          "source": "recipe",
+          "name": "Blisterwood logs",
+          "itemId": 24691,
+          "levelRequired": 62,
+          "xpPerAction": 76.0,
+          "objectIds": [
+            37989
+          ]
+        },
+        "extraRolls": {}
+      },
+      {
+        "mainAction": {
+          "source": "recipe",
+          "name": "Rosewood logs",
+          "itemId": 32910,
+          "levelRequired": 92,
+          "xpPerAction": 212.5,
+          "objectIds": [
+            58562,
+            58561
+          ]
+        },
+        "extraRolls": {}
+      },
+      {
+        "mainAction": {
+          "source": "recipe",
+          "name": "Jatoba logs",
+          "itemId": 32902,
+          "levelRequired": 40,
+          "xpPerAction": 92.0,
+          "objectIds": [
+            58556,
+            58555
+          ]
+        },
+        "extraRolls": {}
+      },
+      {
+        "mainAction": {
+          "source": "recipe",
+          "name": "Camphor logs",
+          "itemId": 32904,
+          "levelRequired": 66,
+          "xpPerAction": 143.5,
+          "objectIds": [
+            58558,
+            58557
+          ]
+        },
+        "extraRolls": {}
+      },
+      {
+        "mainAction": {
+          "source": "recipe",
+          "name": "Ironwood logs",
+          "itemId": 32907,
+          "levelRequired": 80,
+          "xpPerAction": 175.0,
+          "objectIds": [
+            58560,
+            58559
+          ]
+        },
+        "extraRolls": {}
       }
     ],
     "rewards": [
-      { "name": "Bird nest", "type": "secondary", "itemId": 5073, "rate": 0.00390625 },
-      { "name": "Oak leaves", "type": "secondary", "itemId": 6022, "rate": 0.25, "objectIds": [10820] },
-      { "name": "Willow leaves", "type": "secondary", "itemId": 6024, "rate": 0.25, "objectIds": [10819, 10829, 10831, 10833] },
-      { "name": "Maple leaves", "type": "secondary", "itemId": 6028, "rate": 0.25, "objectIds": [10832] },
-      { "name": "Yew leaves", "type": "secondary", "itemId": 6026, "rate": 0.25, "objectIds": [10822] },
-      { "name": "Magic leaves", "type": "secondary", "itemId": 6030, "rate": 0.25, "objectIds": [10834] }
+      {
+        "name": "Bird nest",
+        "type": "secondary",
+        "itemId": 5073,
+        "rate": 0.00390625
+      },
+      {
+        "name": "Oak leaves",
+        "type": "secondary",
+        "itemId": 6022,
+        "rate": 0.25,
+        "objectIds": [
+          10820
+        ]
+      },
+      {
+        "name": "Willow leaves",
+        "type": "secondary",
+        "itemId": 6024,
+        "rate": 0.25,
+        "objectIds": [
+          10819,
+          10829,
+          10831,
+          10833
+        ]
+      },
+      {
+        "name": "Maple leaves",
+        "type": "secondary",
+        "itemId": 6028,
+        "rate": 0.25,
+        "objectIds": [
+          10832
+        ]
+      },
+      {
+        "name": "Yew leaves",
+        "type": "secondary",
+        "itemId": 6026,
+        "rate": 0.25,
+        "objectIds": [
+          10822
+        ]
+      },
+      {
+        "name": "Magic leaves",
+        "type": "secondary",
+        "itemId": 6030,
+        "rate": 0.25,
+        "objectIds": [
+          10834
+        ]
+      }
     ]
   },
   "mining": {
     "petBaseChance": 741600,
     "resources": [
       {
-        "name": "Copper ore",
-        "levelRequired": 1,
-        "xpPerAction": 17.5,
-        "itemId": 436,
-        "objectIds": [10943, 11161],
-        "uses": ["Smithing:1"],
-        "petBaseChanceOverride": null
+        "extraRolls": {
+          "uses": [
+            "Smithing:1"
+          ]
+        },
+        "mainAction": {
+          "source": "recipe",
+          "name": "Copper ore",
+          "itemId": 436,
+          "levelRequired": 1,
+          "xpPerAction": 17.5,
+          "objectIds": [
+            10943,
+            11161,
+            10079,
+            37944
+          ]
+        }
       },
       {
-        "name": "Tin ore",
-        "levelRequired": 1,
-        "xpPerAction": 17.5,
-        "itemId": 438,
-        "objectIds": [11360, 11361],
-        "uses": ["Smithing:1"],
-        "petBaseChanceOverride": null
+        "extraRolls": {
+          "uses": [
+            "Smithing:1"
+          ]
+        },
+        "mainAction": {
+          "source": "recipe",
+          "name": "Tin ore",
+          "itemId": 438,
+          "levelRequired": 1,
+          "xpPerAction": 17.5,
+          "objectIds": [
+            11360,
+            11361,
+            10080,
+            37945
+          ]
+        }
       },
       {
-        "name": "Iron ore",
-        "levelRequired": 15,
-        "xpPerAction": 35.0,
-        "itemId": 440,
-        "objectIds": [11364, 11365],
-        "uses": ["Smithing:15"],
-        "petBaseChanceOverride": null
+        "extraRolls": {
+          "uses": [
+            "Smithing:15"
+          ]
+        },
+        "mainAction": {
+          "source": "recipe",
+          "name": "Iron ore",
+          "itemId": 440,
+          "levelRequired": 15,
+          "xpPerAction": 35.0,
+          "objectIds": [
+            11364,
+            11365,
+            36203,
+            42833
+          ]
+        }
       },
       {
-        "name": "Silver ore",
-        "levelRequired": 20,
-        "xpPerAction": 40.0,
-        "itemId": 442,
-        "objectIds": [11368, 11369],
-        "uses": ["Smithing:20", "Crafting:16"],
-        "petBaseChanceOverride": null
+        "extraRolls": {
+          "uses": [
+            "Smithing:20",
+            "Crafting:16"
+          ]
+        },
+        "mainAction": {
+          "source": "recipe",
+          "name": "Silver ore",
+          "itemId": 442,
+          "levelRequired": 20,
+          "xpPerAction": 40.0,
+          "objectIds": [
+            11368,
+            11369,
+            36205
+          ]
+        }
       },
       {
-        "name": "Coal",
-        "levelRequired": 30,
-        "xpPerAction": 50.0,
-        "itemId": 453,
-        "objectIds": [11366, 11367],
-        "uses": ["Smithing:30"],
-        "petBaseChanceOverride": 290640
+        "extraRolls": {
+          "uses": [
+            "Smithing:30"
+          ],
+          "petBaseChanceOverride": 290640
+        },
+        "mainAction": {
+          "source": "recipe",
+          "name": "Coal",
+          "itemId": 453,
+          "levelRequired": 30,
+          "xpPerAction": 50.0,
+          "objectIds": [
+            11366,
+            11367,
+            36204
+          ]
+        }
       },
       {
-        "name": "Gold ore",
-        "levelRequired": 40,
-        "xpPerAction": 65.0,
-        "itemId": 444,
-        "objectIds": [11370, 11371],
-        "uses": ["Smithing:40", "Crafting:5"],
-        "petBaseChanceOverride": 296640
+        "extraRolls": {
+          "uses": [
+            "Smithing:40",
+            "Crafting:5"
+          ],
+          "petBaseChanceOverride": 296640
+        },
+        "mainAction": {
+          "source": "recipe",
+          "name": "Gold ore",
+          "itemId": 444,
+          "levelRequired": 40,
+          "xpPerAction": 65.0,
+          "objectIds": [
+            11370,
+            11371,
+            36206
+          ]
+        }
       },
       {
-        "name": "Mithril ore",
-        "levelRequired": 55,
-        "xpPerAction": 80.0,
-        "itemId": 447,
-        "objectIds": [11372, 11373],
-        "uses": ["Smithing:50"],
-        "petBaseChanceOverride": 148320
+        "extraRolls": {
+          "uses": [
+            "Smithing:50"
+          ],
+          "petBaseChanceOverride": 148320
+        },
+        "mainAction": {
+          "source": "recipe",
+          "name": "Mithril ore",
+          "itemId": 447,
+          "levelRequired": 55,
+          "xpPerAction": 80.0,
+          "objectIds": [
+            11372,
+            11373,
+            36207
+          ]
+        }
       },
       {
-        "name": "Adamantite ore",
-        "levelRequired": 70,
-        "xpPerAction": 95.0,
-        "itemId": 449,
-        "objectIds": [11374, 11375],
-        "uses": ["Smithing:70"],
-        "petBaseChanceOverride": 59328
+        "extraRolls": {
+          "uses": [
+            "Smithing:70"
+          ],
+          "petBaseChanceOverride": 59328
+        },
+        "mainAction": {
+          "source": "recipe",
+          "name": "Adamantite ore",
+          "itemId": 449,
+          "levelRequired": 70,
+          "xpPerAction": 95.0,
+          "objectIds": [
+            11374,
+            11375,
+            36208
+          ]
+        }
       },
       {
-        "name": "Runite ore",
-        "levelRequired": 85,
-        "xpPerAction": 125.0,
-        "itemId": 451,
-        "objectIds": [11376, 11377],
-        "uses": ["Smithing:85"],
-        "petBaseChanceOverride": 42377
+        "extraRolls": {
+          "uses": [
+            "Smithing:85"
+          ],
+          "petBaseChanceOverride": 42377
+        },
+        "mainAction": {
+          "source": "recipe",
+          "name": "Runite ore",
+          "itemId": 451,
+          "levelRequired": 85,
+          "xpPerAction": 125.0,
+          "objectIds": [
+            11376,
+            11377,
+            36209
+          ]
+        }
       },
       {
         "name": "Amethyst",
         "levelRequired": 92,
         "xpPerAction": 240.0,
         "itemId": 21347,
-        "objectIds": [11388, 11389],
-        "uses": ["Crafting:82", "Fletching:82"],
+        "objectIds": [
+          11388,
+          11389
+        ],
+        "uses": [
+          "Crafting:82",
+          "Fletching:82"
+        ],
         "petBaseChanceOverride": 46350
+      },
+      {
+        "mainAction": {
+          "source": "recipe",
+          "name": "Rune essence",
+          "itemId": 1436,
+          "levelRequired": 1,
+          "xpPerAction": 5.0,
+          "objectIds": [
+            34773
+          ]
+        },
+        "extraRolls": {}
+      },
+      {
+        "mainAction": {
+          "source": "recipe",
+          "name": "Pure essence",
+          "itemId": 7936,
+          "levelRequired": 64,
+          "xpPerAction": 0.0,
+          "objectIds": [
+            49920
+          ],
+          "secondaries": [
+            28591
+          ]
+        },
+        "extraRolls": {}
+      },
+      {
+        "mainAction": {
+          "source": "recipe",
+          "name": "Clay",
+          "itemId": 434,
+          "levelRequired": 1,
+          "xpPerAction": 5.0,
+          "objectIds": [
+            11362,
+            11363
+          ]
+        },
+        "extraRolls": {}
+      },
+      {
+        "mainAction": {
+          "source": "recipe",
+          "name": "Granite",
+          "itemId": 6981,
+          "levelRequired": 45,
+          "xpPerAction": 75.0,
+          "objectIds": [
+            11387
+          ]
+        },
+        "extraRolls": {}
+      },
+      {
+        "mainAction": {
+          "source": "recipe",
+          "name": "Blurite ore",
+          "itemId": 668,
+          "levelRequired": 10,
+          "xpPerAction": 17.5,
+          "objectIds": [
+            11378,
+            11379
+          ]
+        },
+        "extraRolls": {}
+      },
+      {
+        "mainAction": {
+          "source": "recipe",
+          "name": "Panning tray",
+          "itemId": 679,
+          "levelRequired": 1,
+          "xpPerAction": 2.0,
+          "objectIds": [
+            2363
+          ]
+        },
+        "extraRolls": {}
+      },
+      {
+        "mainAction": {
+          "source": "recipe",
+          "name": "Limestone",
+          "itemId": 3211,
+          "levelRequired": 10,
+          "xpPerAction": 26.5,
+          "objectIds": [
+            11383,
+            11385,
+            11382,
+            11384
+          ]
+        },
+        "extraRolls": {}
+      },
+      {
+        "mainAction": {
+          "source": "recipe",
+          "name": "Daeyalt ore",
+          "itemId": 9632,
+          "levelRequired": 20,
+          "xpPerAction": 17.5,
+          "objectIds": [
+            17962,
+            17963,
+            17964,
+            17965
+          ]
+        },
+        "extraRolls": {}
+      },
+      {
+        "mainAction": {
+          "source": "recipe",
+          "name": "Lunar ore",
+          "itemId": 9076,
+          "levelRequired": 60,
+          "xpPerAction": 0.0
+        },
+        "extraRolls": {}
+      },
+      {
+        "mainAction": {
+          "source": "recipe",
+          "name": "Magic stone (Tears of Guthix)",
+          "itemId": 4703,
+          "levelRequired": 20,
+          "xpPerAction": 0.0,
+          "objectIds": [
+            6669,
+            6671,
+            6670
+          ]
+        },
+        "extraRolls": {}
+      },
+      {
+        "mainAction": {
+          "source": "recipe",
+          "name": "Pay-dirt",
+          "itemId": 12011,
+          "levelRequired": 30,
+          "xpPerAction": 60.0,
+          "objectIds": [
+            26664,
+            26661,
+            26662,
+            26663
+          ]
+        },
+        "extraRolls": {}
+      },
+      {
+        "mainAction": {
+          "source": "recipe",
+          "name": "Lovakite ore",
+          "itemId": 13356,
+          "levelRequired": 65,
+          "xpPerAction": 60.0,
+          "objectIds": [
+            28596,
+            28597
+          ]
+        },
+        "extraRolls": {}
+      },
+      {
+        "mainAction": {
+          "source": "recipe",
+          "name": "Volcanic sulphur",
+          "itemId": 13571,
+          "levelRequired": 42,
+          "xpPerAction": 35.0,
+          "objectIds": [
+            28496,
+            28497,
+            28498
+          ]
+        },
+        "extraRolls": {}
+      },
+      {
+        "mainAction": {
+          "source": "recipe",
+          "name": "Volcanic ash",
+          "itemId": 21622,
+          "levelRequired": 22,
+          "xpPerAction": 10.0,
+          "objectIds": [
+            30986,
+            30985
+          ]
+        },
+        "extraRolls": {}
+      },
+      {
+        "mainAction": {
+          "source": "recipe",
+          "name": "Tephra",
+          "itemId": 23905,
+          "levelRequired": 1,
+          "xpPerAction": 35.2
+        },
+        "extraRolls": {}
+      },
+      {
+        "mainAction": {
+          "source": "recipe",
+          "name": "Corrupted ore",
+          "itemId": 23837,
+          "levelRequired": 1,
+          "xpPerAction": 10.0,
+          "objectIds": [
+            35967
+          ]
+        },
+        "extraRolls": {}
+      },
+      {
+        "mainAction": {
+          "source": "recipe",
+          "name": "Crystal ore",
+          "itemId": 23877,
+          "levelRequired": 1,
+          "xpPerAction": 10.0,
+          "objectIds": [
+            36064
+          ]
+        },
+        "extraRolls": {}
+      },
+      {
+        "mainAction": {
+          "source": "recipe",
+          "name": "Daeyalt shard",
+          "itemId": 24706,
+          "levelRequired": 60,
+          "xpPerAction": 5.0,
+          "objectIds": [
+            39094,
+            39095
+          ]
+        },
+        "extraRolls": {}
+      },
+      {
+        "mainAction": {
+          "source": "recipe",
+          "name": "Barronite shards",
+          "itemId": 25676,
+          "levelRequired": 14,
+          "xpPerAction": 16.0
+        },
+        "extraRolls": {}
+      },
+      {
+        "mainAction": {
+          "source": "recipe",
+          "name": "Barronite deposit",
+          "itemId": 25684,
+          "levelRequired": 14,
+          "xpPerAction": 32.0
+        },
+        "extraRolls": {}
+      },
+      {
+        "mainAction": {
+          "source": "recipe",
+          "name": "Guardian fragments",
+          "itemId": 26878,
+          "levelRequired": 1,
+          "xpPerAction": 5.0
+        },
+        "extraRolls": {}
+      },
+      {
+        "mainAction": {
+          "source": "recipe",
+          "name": "Guardian essence",
+          "itemId": 26879,
+          "levelRequired": 1,
+          "xpPerAction": 5.0
+        },
+        "extraRolls": {}
+      },
+      {
+        "mainAction": {
+          "source": "recipe",
+          "name": "Lead ore",
+          "itemId": 31716,
+          "levelRequired": 25,
+          "xpPerAction": 40.5,
+          "objectIds": [
+            58917,
+            58918
+          ]
+        },
+        "extraRolls": {}
+      },
+      {
+        "mainAction": {
+          "source": "recipe",
+          "name": "Nickel ore",
+          "itemId": 31719,
+          "levelRequired": 74,
+          "xpPerAction": 80.5,
+          "objectIds": [
+            58924,
+            58923
+          ]
+        },
+        "extraRolls": {}
       }
     ]
   },
@@ -210,57 +1080,224 @@
     "petBaseChance": 257770,
     "resources": [
       {
-        "name": "Raw shrimps",
-        "method": "net",
-        "levelRequired": 1,
-        "xpPerAction": 10.0,
-        "itemId": 317,
-        "npcIds": [1514, 1517, 1518, 1521, 1523, 1524, 1525, 1528, 1530, 1532, 1544, 3913],
-        "uses": ["Cooking:1"],
-        "petBaseChanceOverride": 870330
+        "extraRolls": {
+          "uses": [
+            "Cooking:1"
+          ],
+          "petBaseChanceOverride": 870330
+        },
+        "mainAction": {
+          "source": "recipe",
+          "name": "Raw shrimps",
+          "itemId": 317,
+          "levelRequired": 1,
+          "xpPerAction": 10.0,
+          "npcIds": [
+            1514,
+            1517,
+            1518,
+            1521,
+            1523,
+            1524,
+            1525,
+            1528,
+            1530,
+            1532,
+            1544,
+            3913,
+            7155,
+            7459,
+            7462,
+            7467,
+            7469,
+            7947,
+            14038,
+            14040,
+            14041,
+            14524,
+            15066
+          ],
+          "method": "net"
+        }
       },
       {
-        "name": "Raw sardine",
-        "method": "bait",
-        "levelRequired": 5,
-        "xpPerAction": 20.0,
-        "itemId": 327,
-        "secondaries": [313],
-        "npcIds": [1514, 1517, 1518, 1521, 1523, 1524, 1525, 1528, 1530, 1532, 1544, 3913],
-        "uses": ["Cooking:1"],
-        "petBaseChanceOverride": 1056000
+        "extraRolls": {
+          "uses": [
+            "Cooking:1"
+          ],
+          "petBaseChanceOverride": 1056000
+        },
+        "mainAction": {
+          "source": "recipe",
+          "name": "Raw sardine",
+          "itemId": 327,
+          "levelRequired": 5,
+          "xpPerAction": 20.0,
+          "npcIds": [
+            1514,
+            1517,
+            1518,
+            1521,
+            1523,
+            1524,
+            1525,
+            1528,
+            1530,
+            1532,
+            1544,
+            3913,
+            7155,
+            7459,
+            7462,
+            7467,
+            7469,
+            7947,
+            14038,
+            14040,
+            14041,
+            14524,
+            15066
+          ],
+          "method": "bait",
+          "secondaries": [
+            313
+          ]
+        }
       },
       {
-        "name": "Raw herring",
-        "method": "bait",
-        "levelRequired": 10,
-        "xpPerAction": 30.0,
-        "itemId": 345,
-        "secondaries": [313],
-        "npcIds": [1514, 1517, 1518, 1521, 1523, 1524, 1525, 1528, 1530, 1532, 1544, 3913],
-        "uses": ["Cooking:5"],
-        "petBaseChanceOverride": 1056000
+        "extraRolls": {
+          "uses": [
+            "Cooking:5"
+          ],
+          "petBaseChanceOverride": 1056000
+        },
+        "mainAction": {
+          "source": "recipe",
+          "name": "Raw herring",
+          "itemId": 345,
+          "levelRequired": 10,
+          "xpPerAction": 30.0,
+          "npcIds": [
+            1514,
+            1517,
+            1518,
+            1521,
+            1523,
+            1524,
+            1525,
+            1528,
+            1530,
+            1532,
+            1544,
+            3913,
+            7155,
+            7459,
+            7462,
+            7467,
+            7469,
+            7947,
+            14038,
+            14040,
+            14041,
+            14524,
+            15066
+          ],
+          "method": "bait",
+          "secondaries": [
+            313
+          ]
+        }
       },
       {
-        "name": "Raw anchovies",
-        "method": "net",
-        "levelRequired": 15,
-        "xpPerAction": 40.0,
-        "itemId": 321,
-        "npcIds": [1514, 1517, 1518, 1521, 1523, 1524, 1525, 1528, 1530, 1532, 1544, 3913],
-        "uses": ["Cooking:1"],
-        "petBaseChanceOverride": 870330
+        "extraRolls": {
+          "uses": [
+            "Cooking:1"
+          ],
+          "petBaseChanceOverride": 870330
+        },
+        "mainAction": {
+          "source": "recipe",
+          "name": "Raw anchovies",
+          "itemId": 321,
+          "levelRequired": 15,
+          "xpPerAction": 40.0,
+          "npcIds": [
+            1514,
+            1517,
+            1518,
+            1521,
+            1523,
+            1524,
+            1525,
+            1528,
+            1530,
+            1532,
+            1544,
+            3913,
+            7155,
+            7459,
+            7462,
+            7467,
+            7469,
+            7947,
+            14038,
+            14040,
+            14041,
+            14524,
+            15066
+          ],
+          "method": "net"
+        }
       },
       {
-        "name": "Raw trout",
-        "method": "lure",
-        "levelRequired": 20,
-        "xpPerAction": 50.0,
-        "itemId": 335,
-        "secondaries": [314],
-        "npcIds": [394, 1506, 1507, 1508, 1509, 1512, 1513, 1515, 1516, 1526, 1527, 1531],
-        "uses": ["Cooking:15"],
-        "petBaseChanceOverride": 923616
+        "extraRolls": {
+          "uses": [
+            "Cooking:15"
+          ],
+          "petBaseChanceOverride": 923616
+        },
+        "mainAction": {
+          "source": "recipe",
+          "name": "Raw trout",
+          "itemId": 335,
+          "levelRequired": 20,
+          "xpPerAction": 50.0,
+          "npcIds": [
+            394,
+            1506,
+            1507,
+            1508,
+            1509,
+            1512,
+            1513,
+            1515,
+            1516,
+            1526,
+            1527,
+            1531,
+            1529,
+            3417,
+            3418,
+            7463,
+            7464,
+            7468,
+            8524,
+            12774,
+            14036,
+            14521,
+            14522,
+            14525,
+            14526,
+            14527,
+            14528,
+            15072,
+            15073
+          ],
+          "method": "lure",
+          "secondaries": [
+            314
+          ]
+        }
       },
       {
         "name": "Raw pike",
@@ -268,41 +1305,163 @@
         "levelRequired": 25,
         "xpPerAction": 60.0,
         "itemId": 349,
-        "secondaries": [313],
-        "npcIds": [394, 1506, 1507, 1508, 1509, 1512, 1513, 1515, 1516, 1526, 1527, 1531],
-        "uses": ["Cooking:20"],
+        "secondaries": [
+          313
+        ],
+        "npcIds": [
+          394,
+          1506,
+          1507,
+          1508,
+          1509,
+          1512,
+          1513,
+          1515,
+          1516,
+          1526,
+          1527,
+          1531
+        ],
+        "uses": [
+          "Cooking:20"
+        ],
         "petBaseChanceOverride": 305792
       },
       {
-        "name": "Raw salmon",
-        "method": "lure",
-        "levelRequired": 30,
-        "xpPerAction": 70.0,
-        "itemId": 331,
-        "secondaries": [314],
-        "npcIds": [394, 1506, 1507, 1508, 1509, 1512, 1513, 1515, 1516, 1526, 1527, 1531],
-        "uses": ["Cooking:25"],
-        "petBaseChanceOverride": 923616
+        "extraRolls": {
+          "uses": [
+            "Cooking:25"
+          ],
+          "petBaseChanceOverride": 923616
+        },
+        "mainAction": {
+          "source": "recipe",
+          "name": "Raw salmon",
+          "itemId": 331,
+          "levelRequired": 30,
+          "xpPerAction": 70.0,
+          "npcIds": [
+            394,
+            1506,
+            1507,
+            1508,
+            1509,
+            1512,
+            1513,
+            1515,
+            1516,
+            1526,
+            1527,
+            1531,
+            1529,
+            3417,
+            3418,
+            7463,
+            7464,
+            7468,
+            8524,
+            12774,
+            14036,
+            14521,
+            14522,
+            14525,
+            14526,
+            14527,
+            14528,
+            15072,
+            15073
+          ],
+          "method": "lure",
+          "secondaries": [
+            314
+          ]
+        }
       },
       {
-        "name": "Raw tuna",
-        "method": "harpoon",
-        "levelRequired": 35,
-        "xpPerAction": 80.0,
-        "itemId": 359,
-        "npcIds": [1510, 1519, 1522, 1533, 2146, 3657, 3914, 7199, 7460, 7465],
-        "uses": ["Cooking:30"],
-        "petBaseChanceOverride": 257770
+        "extraRolls": {
+          "uses": [
+            "Cooking:30"
+          ],
+          "petBaseChanceOverride": 257770
+        },
+        "mainAction": {
+          "source": "recipe",
+          "name": "Raw tuna",
+          "itemId": 359,
+          "levelRequired": 35,
+          "xpPerAction": 80.0,
+          "npcIds": [
+            1510,
+            1519,
+            1522,
+            1533,
+            2146,
+            3657,
+            3914,
+            7199,
+            7460,
+            7465,
+            5820,
+            7470,
+            7946,
+            9173,
+            9174,
+            10515,
+            12777,
+            14039,
+            15075,
+            15076,
+            15070,
+            15071,
+            15079,
+            15084,
+            15086
+          ],
+          "method": "harpoon"
+        }
       },
       {
-        "name": "Raw lobster",
-        "method": "cage",
-        "levelRequired": 40,
-        "xpPerAction": 90.0,
-        "itemId": 377,
-        "npcIds": [1510, 1519, 1522, 1533, 2146, 3657, 3914, 7199, 7460, 7465],
-        "uses": ["Cooking:40"],
-        "petBaseChanceOverride": 116129
+        "extraRolls": {
+          "uses": [
+            "Cooking:40"
+          ],
+          "petBaseChanceOverride": 116129
+        },
+        "mainAction": {
+          "source": "recipe",
+          "name": "Raw lobster",
+          "itemId": 377,
+          "levelRequired": 40,
+          "xpPerAction": 90.0,
+          "npcIds": [
+            1510,
+            1519,
+            1522,
+            1533,
+            2146,
+            3657,
+            3914,
+            7199,
+            7460,
+            7465,
+            5820,
+            7470,
+            7946,
+            9173,
+            9174,
+            10515,
+            12777,
+            14039,
+            15075,
+            15076,
+            15070,
+            15071,
+            15079,
+            15084,
+            15086
+          ],
+          "method": "cage"
+        }
       },
       {
         "name": "Raw bass",
@@ -310,9 +1469,21 @@
         "levelRequired": 46,
         "xpPerAction": 100.0,
         "itemId": 363,
-        "npcIds": [1511, 1520, 1534, 3419, 3915, 4476, 4477, 5233, 5234, 7200],
-        "uses": ["Cooking:43"],
-        "petBaseChanceOverride": null
+        "npcIds": [
+          1511,
+          1520,
+          1534,
+          3419,
+          3915,
+          4476,
+          4477,
+          5233,
+          5234,
+          7200
+        ],
+        "uses": [
+          "Cooking:43"
+        ]
       },
       {
         "name": "Raw swordfish",
@@ -320,8 +1491,21 @@
         "levelRequired": 50,
         "xpPerAction": 100.0,
         "itemId": 371,
-        "npcIds": [1510, 1519, 1522, 1533, 2146, 3657, 3914, 7199, 7460, 7465],
-        "uses": ["Cooking:45"],
+        "npcIds": [
+          1510,
+          1519,
+          1522,
+          1533,
+          2146,
+          3657,
+          3914,
+          7199,
+          7460,
+          7465
+        ],
+        "uses": [
+          "Cooking:45"
+        ],
         "petBaseChanceOverride": 257770
       },
       {
@@ -330,8 +1514,12 @@
         "levelRequired": 62,
         "xpPerAction": 120.0,
         "itemId": 7944,
-        "npcIds": [4316],
-        "uses": ["Cooking:62"],
+        "npcIds": [
+          4316
+        ],
+        "uses": [
+          "Cooking:62"
+        ],
         "petBaseChanceOverride": 138583
       },
       {
@@ -340,9 +1528,16 @@
         "levelRequired": 65,
         "xpPerAction": 50.0,
         "itemId": 3142,
-        "secondaries": [3150],
-        "npcIds": [4712, 4713],
-        "uses": ["Cooking:30"],
+        "secondaries": [
+          3150
+        ],
+        "npcIds": [
+          4712,
+          4713
+        ],
+        "uses": [
+          "Cooking:30"
+        ],
         "petBaseChanceOverride": 170874
       },
       {
@@ -351,8 +1546,21 @@
         "levelRequired": 76,
         "xpPerAction": 110.0,
         "itemId": 383,
-        "npcIds": [1511, 1520, 1534, 3419, 3915, 4476, 4477, 5233, 5234, 7200],
-        "uses": ["Cooking:80"],
+        "npcIds": [
+          1511,
+          1520,
+          1534,
+          3419,
+          3915,
+          4476,
+          4477,
+          5233,
+          5234,
+          7200
+        ],
+        "uses": [
+          "Cooking:80"
+        ],
         "petBaseChanceOverride": 82243
       },
       {
@@ -361,10 +1569,125 @@
         "levelRequired": 82,
         "xpPerAction": 120.0,
         "itemId": 13439,
-        "secondaries": [13430, 13431, 13432],
-        "npcIds": [6825],
-        "uses": ["Cooking:84"],
+        "secondaries": [
+          13430,
+          13431,
+          13432
+        ],
+        "npcIds": [
+          6825
+        ],
+        "uses": [
+          "Cooking:84"
+        ],
         "petBaseChanceOverride": 78649
+      },
+      {
+        "mainAction": {
+          "source": "recipe",
+          "name": "Raw rainbow fish",
+          "itemId": 10138,
+          "levelRequired": 38,
+          "xpPerAction": 80.0,
+          "npcIds": [
+            394,
+            1506,
+            1507,
+            1508,
+            1509,
+            1512,
+            1513,
+            1515,
+            1516,
+            1526,
+            1527,
+            1529,
+            3417,
+            3418,
+            7463,
+            7464,
+            7468,
+            8524,
+            12774,
+            14036,
+            14521,
+            14522,
+            14525,
+            14526,
+            14527,
+            14528,
+            15072,
+            15073
+          ],
+          "method": "lure",
+          "secondaries": [
+            10087
+          ]
+        },
+        "extraRolls": {}
+      },
+      {
+        "mainAction": {
+          "source": "recipe",
+          "name": "Raw cave eel",
+          "itemId": 5001,
+          "levelRequired": 38,
+          "xpPerAction": 80.0,
+          "npcIds": [
+            1497,
+            1498,
+            1499,
+            1500,
+            10653
+          ],
+          "method": "bait",
+          "secondaries": [
+            313
+          ]
+        },
+        "extraRolls": {}
+      },
+      {
+        "mainAction": {
+          "source": "recipe",
+          "name": "Raw mackerel",
+          "itemId": 353,
+          "levelRequired": 16,
+          "xpPerAction": 20.0,
+          "npcIds": [
+            1511,
+            1520,
+            3419,
+            3915,
+            4476,
+            4477,
+            5233,
+            5234,
+            5821,
+            7200,
+            7461,
+            7466,
+            8525,
+            8526,
+            8527,
+            9171,
+            9172,
+            10514,
+            12775,
+            12776,
+            14037,
+            14523,
+            15077,
+            15067,
+            15068,
+            15069,
+            15080,
+            15082,
+            15083,
+            15087
+          ]
+        },
+        "extraRolls": {}
       }
     ]
   }
