@@ -59,18 +59,25 @@ public final class SkillingDataGenerator
 				final int itemId = resolveItemId(outputName);
 				if (itemId <= 0) { notes.add("UNRESOLVED item id: " + outputName); continue; }
 
+				// Match the existing resource FIRST so curated ids can be unioned in — the wiki
+				// under-resolves generic facilities (e.g. "Logs" → [[Tree]] misses most tree variants),
+				// so wiki-resolved ids must never replace curated ones, only extend them.
+				final JsonObject existing = findByItemId(resources, itemId);
+
 				final JsonObject mainAction = new JsonObject();
 				mainAction.addProperty("source", "recipe");
 				mainAction.addProperty("name", outputName);
 				mainAction.addProperty("itemId", itemId);
 				mainAction.addProperty("levelRequired", g.level);
 				mainAction.addProperty("xpPerAction", g.xp);
-				addIds(mainAction, "objectIds", resolveNodeIds(g.facilityName, false));
-				addIds(mainAction, "npcIds", resolveNodeIds(g.facilityName, true));
+				addIds(mainAction, "objectIds",
+					unionIds(existingIds(existing, "objectIds"), resolveNodeIds(g.facilityName, false)));
+				addIds(mainAction, "npcIds",
+					unionIds(existingIds(existing, "npcIds"), resolveNodeIds(g.facilityName, true)));
 				if (g.method != null) { mainAction.addProperty("method", g.method); }
-				addIds(mainAction, "secondaries", resolveSecondaryIds(g.secondaryNames));
+				addIds(mainAction, "secondaries",
+					unionIds(existingIds(existing, "secondaries"), resolveSecondaryIds(g.secondaryNames)));
 
-				final JsonObject existing = findByItemId(resources, itemId);
 				if (existing != null)
 				{
 					SkillingMainActionMerge.apply(existing, mainAction);
@@ -152,5 +159,29 @@ public final class SkillingDataGenerator
 		final JsonArray arr = new JsonArray();
 		ids.forEach(arr::add);
 		o.add(key, arr);
+	}
+
+	/** Ids already on the matched resource (nested {@code mainAction} or legacy-flat), or empty. */
+	static List<Integer> existingIds(JsonObject resource, String key)
+	{
+		final List<Integer> out = new ArrayList<>();
+		if (resource == null) { return out; }
+		final JsonObject action = resource.has("mainAction") ? resource.getAsJsonObject("mainAction") : resource;
+		if (action.has(key) && action.get(key).isJsonArray())
+		{
+			for (com.google.gson.JsonElement e : action.getAsJsonArray(key))
+			{
+				try { out.add(e.getAsInt()); } catch (RuntimeException ignored) { }
+			}
+		}
+		return out;
+	}
+
+	/** Union preserving curated data: existing ids first (order kept), new resolved ids appended, deduped. */
+	static List<Integer> unionIds(List<Integer> existing, List<Integer> resolved)
+	{
+		final java.util.LinkedHashSet<Integer> set = new java.util.LinkedHashSet<>(existing);
+		set.addAll(resolved);
+		return new ArrayList<>(set);
 	}
 }
