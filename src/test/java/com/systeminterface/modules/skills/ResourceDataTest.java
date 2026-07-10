@@ -326,6 +326,19 @@ public class ResourceDataTest
 	}
 
 	@Test
+	public void conditionalReward_appliesOnlyWhenRequiredItemHeld()
+	{
+		String json = "{\"woodcutting\":{\"petBaseChance\":317647,\"resources\":[],\"rewards\":["
+			+ "{\"name\":\"Kit reward\",\"type\":\"conditional\",\"itemId\":200,\"rate\":0.1,\"requiredItemIds\":[28136]}"
+			+ "]}}";
+		ResourceData d = loadJson(json);
+		java.util.Set<Integer> without = java.util.Collections.emptySet();
+		java.util.Set<Integer> withKit = new HashSet<>(java.util.Arrays.asList(28136));
+		assertFalse(rewardNames(d.getApplicableRewards(Skill.WOODCUTTING, without)).contains("Kit reward"));
+		assertTrue(rewardNames(d.getApplicableRewards(Skill.WOODCUTTING, withKit)).contains("Kit reward"));
+	}
+
+	@Test
 	public void bundledForestryLeaves_arePerTree()
 	{
 		Set<Integer> none = java.util.Collections.emptySet();
