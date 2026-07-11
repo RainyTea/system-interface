@@ -590,4 +590,138 @@ public class SkillTrackerTest
 		assertNotNull(rate);
 		assertEquals(0.5, rate, 1e-9);
 	}
+
+	private static final int OAK_LEAVES = 6022;
+	private static final int WILLOW_LEAVES = 6024;
+
+	private SkillTracker.RewardSample sample(Skill skill, int itemId)
+	{
+		SkillTracker.SkillState st = tracker.getSkillState(skill);
+		return st == null ? null : st.getRewardSample(itemId);
+	}
+
+	private long sampleActions(Skill skill, int itemId)
+	{
+		SkillTracker.RewardSample s = sample(skill, itemId);
+		return s == null ? 0L : s.getActions();
+	}
+
+	/** Skill-wide reward (bird nest, empty objectIds): every WC action counts, node or not. */
+	@Test
+	public void skillWideRewardSamplesEveryskillAction()
+	{
+		tracker.recordActionSample(Skill.WOODCUTTING);          // no node engaged
+		tracker.recordActionSample(Skill.WOODCUTTING);
+		assertEquals(2L, sampleActions(Skill.WOODCUTTING, BIRD_NEST));
+	}
+
+	/** Per-node reward (oak leaves): only actions at one of ITS nodes count. */
+	@Test
+	public void perNodeRewardSamplesOnlyItsOwnNodeActions()
+	{
+		ResourceData data = ResourceData.load(new Gson());
+		ResourceData.RewardEntry oakLeaves = data.rewardForItemId(OAK_LEAVES);
+		ResourceData.RewardEntry willowLeaves = data.rewardForItemId(WILLOW_LEAVES);
+		assertNotNull(oakLeaves);
+		assertNotNull(willowLeaves);
+		int oakNode = oakLeaves.getObjectIds().get(0);
+		int willowNode = willowLeaves.getObjectIds().get(0);
+		assertFalse(oakLeaves.getObjectIds().contains(willowNode)); // fixture sanity
+
+		tracker.setActiveObject(oakNode);
+		tracker.recordActionSample(Skill.WOODCUTTING);
+		tracker.setActiveObject(willowNode);
+		tracker.recordActionSample(Skill.WOODCUTTING);
+
+		assertEquals(1L, sampleActions(Skill.WOODCUTTING, OAK_LEAVES));
+		assertEquals(1L, sampleActions(Skill.WOODCUTTING, WILLOW_LEAVES));
+		assertEquals(2L, sampleActions(Skill.WOODCUTTING, BIRD_NEST)); // skill-wide saw both
+	}
+
+	/** Another skill's action never touches this skill's samples. */
+	@Test
+	public void otherSkillActionDoesNotAccrueSamples()
+	{
+		tracker.recordActionSample(Skill.MINING);
+		assertEquals(0L, sampleActions(Skill.WOODCUTTING, BIRD_NEST));
+	}
+
+	/** A gated reward credit increments drops and resets the dry streak. */
+	@Test
+	public void rewardCreditIncrementsDropsAndResetsDryStreak()
+	{
+		tracker.recordActionSample(Skill.WOODCUTTING);
+		tracker.recordActionSample(Skill.WOODCUTTING);
+		tracker.recordActionSample(Skill.WOODCUTTING);
+
+		tracker.applyInventoryDiff(inv(), 0);
+		tracker.recordGatherSignal(Skill.WOODCUTTING, 1);
+		tracker.applyInventoryDiff(inv(BIRD_NEST, 1), 1);   // nest credits through the gate
+
+		SkillTracker.RewardSample s = sample(Skill.WOODCUTTING, BIRD_NEST);
+		assertNotNull(s);
+		assertEquals(1L, s.getDrops());
+		assertEquals(3L, s.getActions());
+		assertEquals(3L, s.getActionsAtLastDrop());        // dry streak = actions - this = 0
+	}
+
+	/** A primary (non-reward) credit never creates a sample. */
+	@Test
+	public void primaryCreditDoesNotTouchSamples()
+	{
+		tracker.applyInventoryDiff(inv(), 0);
+		tracker.recordGatherSignal(Skill.FISHING, 1);
+		tracker.applyInventoryDiff(inv(SALMON, 1), 1);
+		SkillTracker.SkillState st = tracker.getSkillState(Skill.FISHING);
+		assertNotNull(st);
+		assertNull(st.getRewardSample(SALMON));
+	}
+
+	/** Samples survive a persistence round-trip. */
+	@Test
+	public void rewardSamplesPersistRoundTrip()
+	{
+		tracker.recordActionSample(Skill.WOODCUTTING);
+		tracker.recordActionSample(Skill.WOODCUTTING);
+		tracker.applyInventoryDiff(inv(), 0);
+		tracker.recordGatherSignal(Skill.WOODCUTTING, 1);
+		tracker.applyInventoryDiff(inv(BIRD_NEST, 1), 1);
+
+		Map<String, SkillTracker.SkillPersistence> persisted = tracker.toPersistence();
+		SkillTracker restored = new SkillTracker(ResourceData.load(new Gson()), PRICES);
+		restored.loadFromState(persisted);
+
+		SkillTracker.RewardSample s =
+			restored.getSkillState(Skill.WOODCUTTING).getRewardSample(BIRD_NEST);
+		assertNotNull(s);
+		assertEquals(2L, s.getActions());
+		assertEquals(1L, s.getDrops());
+		assertEquals(2L, s.getActionsAtLastDrop());
+	}
+
+	/** Old saves without rewardSamples load cleanly with zeroed samples (migration). */
+	@Test
+	public void loadStateWithoutRewardSamplesStartsAtZero()
+	{
+		SkillTracker.SkillPersistence p = new SkillTracker.SkillPersistence();
+		p.resourceCounts = new HashMap<>();
+		p.resourceCounts.put(BIRD_NEST, 4L);               // pre-existing lifetime count
+		Map<String, SkillTracker.SkillPersistence> persisted = new HashMap<>();
+		persisted.put("woodcutting", p);
+
+		tracker.loadFromState(persisted);
+
+		SkillTracker.SkillState st = tracker.getSkillState(Skill.WOODCUTTING);
+		assertEquals(4L, st.getResourceCount(BIRD_NEST));  // display counts untouched
+		assertNull(st.getRewardSample(BIRD_NEST));         // sample counting starts now
+	}
+
+	/** Reset all-time leaves no samples behind. */
+	@Test
+	public void resetAllTimeClearsRewardSamples()
+	{
+		tracker.recordActionSample(Skill.WOODCUTTING);
+		tracker.resetAllTimeSkilling();
+		assertNull(tracker.getSkillState(Skill.WOODCUTTING));
+	}
 }

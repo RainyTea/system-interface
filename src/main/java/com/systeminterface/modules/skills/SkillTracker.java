@@ -4,6 +4,7 @@ import com.systeminterface.services.state.SessionTotals;
 import java.util.Collections;
 import java.util.EnumSet;
 import java.util.HashMap;
+import java.util.List;
 import java.util.Map;
 import java.util.Objects;
 import java.util.Set;
@@ -834,6 +835,14 @@ public final class SkillTracker
 	private void creditGather(Skill skill, int itemId, int qty)
 	{
 		skillStates.computeIfAbsent(skill, SkillState::new).addResourceCount(itemId, qty);
+		final ResourceData.RewardEntry rw = resourceData.rewardForItemId(itemId);
+		if (rw != null && rw.getSkill() == skill)
+		{
+			final RewardSample s = skillStates.get(skill).rewardSamples
+				.computeIfAbsent(itemId, k -> new RewardSample());
+			s.drops += qty;
+			s.actionsAtLastDrop = s.actions;
+		}
 		liveGathered.merge(itemId, qty, Integer::sum);
 		log.debug("Gathered {}x itemId={} ({})", qty, itemId, skill);
 		if (gatherListener != null)
@@ -863,6 +872,31 @@ public final class SkillTracker
 		lastGatherSignalSkill = skill;
 		lastGatherSignalTick = tick;
 		flushPendingGains(skill, tick);
+	}
+
+	/**
+	 * Counts one gathering action (a tracked-skill XP drop) into the all-time luck sample of
+	 * every reward of {@code skill} that could roll on it: skill-wide rewards (empty objectIds)
+	 * always; per-node rewards only while their node is the engaged object. Held/kit gating is
+	 * deliberately ignored (no conditional reward ships — spec §3). Client thread only.
+	 */
+	void recordActionSample(Skill skill)
+	{
+		final List<ResourceData.RewardEntry> rewards = resourceData.getRewards(skill);
+		if (rewards.isEmpty())
+		{
+			return;
+		}
+		final int node = activeObjectId;
+		final SkillState state = skillStates.computeIfAbsent(skill, SkillState::new);
+		for (ResourceData.RewardEntry rw : rewards)
+		{
+			final List<Integer> nodes = rw.getObjectIds();
+			if (nodes.isEmpty() || (node != -1 && nodes.contains(node)))
+			{
+				state.rewardSamples.computeIfAbsent(rw.getItemId(), k -> new RewardSample()).actions++;
+			}
+		}
 	}
 
 	/** Credits buffered gains of {@code signalSkill}'s resources once the matching signal lands. */
@@ -1130,6 +1164,7 @@ public final class SkillTracker
 		sessionStartXp.putIfAbsent(skill, event.getXp());
 		if (isXpGain(skill, event.getXp()))
 		{
+			recordActionSample(skill);
 			recordGatherSignal(skill, client.getTickCount());
 		}
 	}
@@ -1252,6 +1287,22 @@ public final class SkillTracker
 					// lifetime-gathered total equals the kept count. New gathers track both.
 					state.grossResourceCounts.putAll(state.resourceCounts);
 				}
+				if (p.rewardSamples != null)
+				{
+					for (Map.Entry<Integer, RewardSamplePersistence> se : p.rewardSamples.entrySet())
+					{
+						RewardSamplePersistence d = se.getValue();
+						if (d == null)
+						{
+							continue;
+						}
+						RewardSample s = new RewardSample();
+						s.actions = d.actions;
+						s.drops = d.drops;
+						s.actionsAtLastDrop = d.actionsAtLastDrop;
+						state.rewardSamples.put(se.getKey(), s);
+					}
+				}
 				skillStates.put(skill, state);
 				// Surface the persisted skill in the panel log immediately on load.
 				lastActiveSkill = skill;
@@ -1276,6 +1327,19 @@ public final class SkillTracker
 			SkillPersistence p = new SkillPersistence();
 			p.resourceCounts = new HashMap<>(s.resourceCounts);
 			p.grossResourceCounts = new HashMap<>(s.grossResourceCounts);
+			if (!s.rewardSamples.isEmpty())
+			{
+				Map<Integer, RewardSamplePersistence> rs = new HashMap<>();
+				for (Map.Entry<Integer, RewardSample> se : s.rewardSamples.entrySet())
+				{
+					RewardSamplePersistence d = new RewardSamplePersistence();
+					d.actions = se.getValue().actions;
+					d.drops = se.getValue().drops;
+					d.actionsAtLastDrop = se.getValue().actionsAtLastDrop;
+					rs.put(se.getKey(), d);
+				}
+				p.rewardSamples = rs;
+			}
 			result.put(entry.getKey().name().toLowerCase(), p);
 		}
 		return result;
@@ -1330,6 +1394,12 @@ public final class SkillTracker
 		 */
 		private final Map<Integer, Long> sessionKeptCounts = new HashMap<>();
 		private final Map<Integer, Long> sessionGrossCounts = new HashMap<>();
+		/**
+		 * All-time reward-luck samples by reward item id: paired {actions, drops} counters that
+		 * both started at the same moment (feature ship / reset), so the overlay's luck block is
+		 * statistically honest. Actions count only "eligible" actions — see recordActionSample.
+		 */
+		private final Map<Integer, RewardSample> rewardSamples = new HashMap<>();
 
 		SkillState(Skill skill)
 		{
@@ -1347,6 +1417,12 @@ public final class SkillTracker
 		public Map<Integer, Long> getResourceCounts()
 		{
 			return Collections.unmodifiableMap(resourceCounts);
+		}
+
+		/** All-time luck sample for a reward item, or {@code null} if none accrued yet. */
+		public RewardSample getRewardSample(int itemId)
+		{
+			return rewardSamples.get(itemId);
 		}
 
 		/** Read-only view of lifetime-gathered (gross) resource counts — the "total". */
@@ -1418,10 +1494,38 @@ public final class SkillTracker
 		}
 	}
 
+	/**
+	 * Paired all-time luck-sample counters for one reward item. Mutated only on the client
+	 * thread; fields are volatile so EDT/render-thread reads never tear a long.
+	 */
+	public static final class RewardSample
+	{
+		volatile long actions;
+		volatile long drops;
+		volatile long actionsAtLastDrop;
+
+		public long getActions() { return actions; }
+		public long getDrops() { return drops; }
+		public long getActionsAtLastDrop() { return actionsAtLastDrop; }
+	}
+
 	public static final class SkillPersistence
 	{
 		public Map<Integer, Long> resourceCounts;
 		/** Lifetime-gathered totals. Absent in pre-Phase-3.1 saves — see {@code loadFromState}. */
 		public Map<Integer, Long> grossResourceCounts;
+		/**
+		 * All-time reward-luck samples by reward item id. Absent in saves predating the
+		 * skilling-reward hardening — loadFromState then starts every sample at zero
+		 * ("counting begins now"), the additive-only migration policy (DECISIONS.md).
+		 */
+		public Map<Integer, RewardSamplePersistence> rewardSamples;
+	}
+
+	public static final class RewardSamplePersistence
+	{
+		public long actions;
+		public long drops;
+		public long actionsAtLastDrop;
 	}
 }
