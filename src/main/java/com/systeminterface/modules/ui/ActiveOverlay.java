@@ -463,8 +463,8 @@ public class ActiveOverlay extends OverlayPanel
 
 	/**
 	 * Output for tracked, rate-based rewards only (bird nest, leaves) — the combat overlay's rich block
-	 * (rate, chance-seen, progress bar, deviation, luck), driven by the XP-tracker session action count
-	 * as the sample size. Guaranteed primaries are NOT shown here (the gathered node is already named in
+	 * (rate, chance-seen, progress bar, deviation, luck), driven by the persisted all-time eligible-action sample (SkillTracker.RewardSample).
+	 * Guaranteed primaries are NOT shown here (the gathered node is already named in
 	 * the Activity row). Track-driven and text-only (no ItemManager on the render thread).
 	 */
 	private void buildOutputChips(Skill active)
@@ -476,7 +476,6 @@ public class ActiveOverlay extends OverlayPanel
 		}
 		final SkillTracker.SkillState state = skillTracker.getSkillState(active);
 		final boolean compact = config.compactOverlay();
-		final int actions = skillTracker.getActions(active); // session actions ≈ sample size
 		final int objId = skillTracker.getActiveObjectId();
 		final Integer engagedNode = objId != -1 ? objId : null;
 
@@ -488,10 +487,18 @@ public class ActiveOverlay extends OverlayPanel
 			{
 				continue;
 			}
-			final long count = state != null ? state.getResourceCount(rw.getItemId()) : 0;
+			// All-time paired luck sample (persisted; counts only actions where this reward
+			// could roll). Null until the first eligible action after the feature shipped.
+			final SkillTracker.RewardSample sample =
+				state != null ? state.getRewardSample(rw.getItemId()) : null;
+			final long actions = sample != null ? sample.getActions() : 0L;
+			final long drops = sample != null ? sample.getDrops() : 0L;
+			final long dryStreak = sample != null ? actions - sample.getActionsAtLastDrop() : 0L;
 			final long denom = Math.max(1L, Math.round(1.0 / rate));
-			buildProgressSection(rw.getName(), rate, denom, actions,
-				(int) Math.min(count, Integer.MAX_VALUE), actions, compact);
+			buildProgressSection(rw.getName(), rate, denom,
+				(int) Math.min(dryStreak, Integer.MAX_VALUE),
+				(int) Math.min(drops, Integer.MAX_VALUE),
+				(int) Math.min(actions, Integer.MAX_VALUE), compact);
 		}
 	}
 
