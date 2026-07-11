@@ -111,7 +111,7 @@ public class SessionSummaryPanel extends JPanel
 	private void confirmResetAllTime()
 	{
 		final int choice = JOptionPane.showConfirmDialog(this,
-			"Reset all-time totals? This zeroes both your all-time combat and skilling totals and cannot be undone.",
+			"Reset all-time totals? This zeroes your all-time combat and skilling totals and today's bucket, and cannot be undone.",
 			"Reset all-time", JOptionPane.OK_CANCEL_OPTION, JOptionPane.WARNING_MESSAGE);
 		if (choice == JOptionPane.OK_OPTION)
 		{

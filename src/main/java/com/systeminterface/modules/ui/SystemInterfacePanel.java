@@ -310,8 +310,8 @@ public class SystemInterfacePanel extends PluginPanel
 
 	/**
 	 * Destructive all-time reset (confirmed by SessionSummaryPanel before this runs): zeroes BOTH the
-	 * combat all-time aggregate and the skilling lifetime kept, so the displayed All-time figure
-	 * (combat all-time + skilling kept) truly goes to zero.
+	 * combat all-time aggregate and the skilling lifetime kept — and today's Session Summary bucket — so the displayed All-time figure
+	 * (combat all-time + skilling kept) truly goes to zero and Today goes with it.
 	 *
 	 * <p>Both resets are marshalled onto the client thread in order: skilling first (mutating
 	 * {@code skillStates}, which only the client thread may touch), then combat — {@code
@@ -325,7 +325,8 @@ public class SystemInterfacePanel extends PluginPanel
 		clientThread.invoke(() ->
 		{
 			skillTracker.resetAllTimeSkilling();      // clear skilling first
-			stateTracker.resetAllTimeProfit();        // then combat — schedules the profile flush that persists the now-empty skilling state
+			sessionTotals.resetToday();               // Today must never exceed a zeroed All-time
+			stateTracker.resetAllTimeProfit();        // then combat — schedules the profile flush that persists the now-empty skilling state and the zeroed Today bucket
 			SwingUtilities.invokeLater(() -> sessionSummary.update(aggregateAllTimeRewards()));
 		});
 	}
