@@ -932,7 +932,7 @@ public class AnalyzeOverlay extends OverlayPanel implements MouseListener
 			for (ValuableDrop drop : cachedValuableLoot)
 			{
 				panelComponent.getChildren().add(LineComponent.builder()
-					.left(drop.name)
+					.left(drop.name + (drop.rdt ? " (RDT)" : ""))
 					.leftColor(OSRS_PARCHMENT)
 					.right(drop.valueText)
 					.rightColor(drop.unique ? UNIQUE : OSRS_GOLD)
@@ -985,12 +985,12 @@ public class AnalyzeOverlay extends OverlayPanel implements MouseListener
 			final boolean untradeableUnique = price == 0 && denom >= RARE_UNIQUE_DENOM;
 			if (untradeableUnique)
 			{
-				out.add(new ValuableDrop(itemName, "Unique", true, price, denom));
+				out.add(new ValuableDrop(itemName, "Unique", true, price, denom, entry.isRareDropTable()));
 			}
 			else if (tradeableValuable)
 			{
 				out.add(new ValuableDrop(itemName, QuantityFormatter.quantityToRSDecimalStack(price),
-					false, price, denom));
+					false, price, denom, entry.isRareDropTable()));
 			}
 		}
 		// Uniques first (rarest first), then tradeables by value (highest first).
@@ -1036,14 +1036,17 @@ public class AnalyzeOverlay extends OverlayPanel implements MouseListener
 		private final boolean unique;
 		private final long price;
 		private final long denom;
+		private final boolean rdt;
 
-		private ValuableDrop(String name, String valueText, boolean unique, long price, long denom)
+		private ValuableDrop(String name, String valueText, boolean unique, long price, long denom,
+			boolean rdt)
 		{
 			this.name = name;
 			this.valueText = valueText;
 			this.unique = unique;
 			this.price = price;
 			this.denom = denom;
+			this.rdt = rdt;
 		}
 	}
 

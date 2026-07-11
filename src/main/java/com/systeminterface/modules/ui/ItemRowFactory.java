@@ -88,7 +88,7 @@ public final class ItemRowFactory
 	 */
 	public static JPanel createItemSlot(ItemManager itemManager, Dimension itemSize, Color tierColor,
 		Color selectedBorderColor, String itemName, int itemId, double rate, int received,
-		boolean isTracked, Runnable onClick)
+		boolean isTracked, boolean rareTable, Runnable onClick)
 	{
 		JPanel slot = new JPanel(new BorderLayout());
 		slot.setBackground(ColorScheme.DARKER_GRAY_COLOR);
@@ -138,7 +138,8 @@ public final class ItemRowFactory
 		rateLabel.setBackground(new Color(0, 0, 0, 200));
 		slot.add(rateLabel, BorderLayout.SOUTH);
 
-		String tip = "<html><b>" + itemName + "</b><br>" + rateStr;
+		String tip = "<html><b>" + itemName + "</b>"
+			+ (rareTable ? " <font color='#999999'>(RDT)</font>" : "") + "<br>" + rateStr;
 		if (received > 0) tip += "<br>Received: " + received + "x";
 		tip += isTracked ? "<br>Tracked — click to untrack" : "<br>Click to track";
 		tip += "</html>";

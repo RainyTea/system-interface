@@ -620,7 +620,7 @@ public class SkillingSection extends JPanel
 			final ResourceData.RewardEntry rw = resourceData.rewardForItemId(itemId);
 			final double rate = (rw != null && rw.getRate() != null) ? rw.getRate() : 1.0;
 			grid.add(ItemRowFactory.createItemSlot(itemManager, ITEM_SIZE, LOOT_SKILL, SELECTED_BORDER,
-				name, itemId, rate, (int) Math.min(received, Integer.MAX_VALUE), isTracked, () ->
+				name, itemId, rate, (int) Math.min(received, Integer.MAX_VALUE), isTracked, false, () ->
 				{
 					toggleTracked(name); // click to track, click again to untrack
 					refresh();

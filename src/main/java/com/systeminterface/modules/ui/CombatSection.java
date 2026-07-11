@@ -675,7 +675,8 @@ public class CombatSection extends JPanel
 			final boolean isTracked = csvContains(currentTracked, itemName);
 			final int drops = state != null ? state.countOf(itemName) : 0;
 			grid.add(ItemRowFactory.createItemSlot(itemManager, ITEM_SIZE, color, SELECTED_BORDER,
-				itemName, resolveItemId(itemName), entry.getRate(), drops, isTracked, () ->
+				itemName, resolveItemId(itemName), entry.getRate(), drops, isTracked,
+				entry.isRareDropTable(), () ->
 				{
 					toggleTracked(itemName); // click to track, click again to untrack
 					refresh();
