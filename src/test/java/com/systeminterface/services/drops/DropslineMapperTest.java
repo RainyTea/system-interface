@@ -118,9 +118,56 @@ public class DropslineMapperTest
 	}
 
 	@Test
-	public void schemaIsBumpedToEight()
+	public void mapDrop_rareDropTableFlag_presentEmptyString_setsFlag()
 	{
-		assertEquals(8, DropslineMapper.CURRENT_SCHEMA);
-		assertEquals(8, DropslineMapper.newTable("x").getSchema());
+		// Bucket serializes boolean true as "" — presence of the field means flagged.
+		// Shield left half on Mithril dragon: wiki pre-multiplied effective rate.
+		String r = "{\"item_name\":\"Shield left half\",\"rare_drop_table\":\"\","
+			+ "\"drop_json\":\"{\\\"Rarity\\\":\\\"1/27,369.03\\\",\\\"Drop type\\\":\\\"combat\\\","
+			+ "\\\"Quantity Low\\\":1,\\\"Quantity High\\\":1,\\\"Rolls\\\":1,\\\"Drop Value\\\":66000}\"}";
+		DropTable.Entry e = DropslineMapper.mapDrop(row(r), GSON);
+		assertTrue(e.isRareDropTable());
+		assertEquals(1.0 / 27369.03, e.getRate(), EPS);
+	}
+
+	@Test
+	public void mapDrop_noRareDropTableField_flagFalse()
+	{
+		String r = "{\"item_name\":\"Dragon bones\",\"drop_json\":\"{\\\"Rarity\\\":\\\"Always\\\","
+			+ "\\\"Quantity Low\\\":1,\\\"Quantity High\\\":1}\"}";
+		DropTable.Entry e = DropslineMapper.mapDrop(row(r), GSON);
+		assertEquals(false, e.isRareDropTable());
+	}
+
+	@Test
+	public void mapDrop_flaggedNonCombatRow_stillSkipped()
+	{
+		// The flag never bypasses the Drop-type gate.
+		String r = "{\"item_name\":\"Coins\",\"rare_drop_table\":\"\","
+			+ "\"drop_json\":\"{\\\"Rarity\\\":\\\"1/128\\\",\\\"Drop type\\\":\\\"thieving\\\"}\"}";
+		assertNull(DropslineMapper.mapDrop(row(r), GSON));
+	}
+
+	@Test
+	public void parseRarity_commaAndDecimalDenominator()
+	{
+		assertEquals(1.0 / 27369.03, DropslineMapper.parseRarity("1/27,369.03"), EPS);
+	}
+
+	@Test
+	public void schemaIsNine()
+	{
+		assertEquals(9, DropslineMapper.CURRENT_SCHEMA);
+		assertEquals(9, DropslineMapper.newTable("X").getSchema());
+	}
+
+	@Test
+	public void entryLoadedFromLegacyJson_flagDefaultsFalse()
+	{
+		// Old cached/bundled/user tables predate the field — Gson leaves it at the boolean default.
+		DropTable t = GSON.fromJson(
+			"{\"target\":\"Man\",\"schema\":8,\"drops\":[{\"name\":\"Bones\",\"rate\":1.0}]}",
+			DropTable.class);
+		assertEquals(false, t.getDrops().get(0).isRareDropTable());
 	}
 }

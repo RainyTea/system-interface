@@ -108,6 +108,7 @@ public final class DropTable
 		int rolls;
 		int dropValue;
 		String region;
+		boolean rareDropTable;
 
 		public String getName()
 		{
@@ -143,6 +144,12 @@ public final class DropTable
 		public String getRegion()
 		{
 			return region;
+		}
+
+		/** True when the wiki flags this row as coming from a shared rare-drop table. */
+		public boolean isRareDropTable()
+		{
+			return rareDropTable;
 		}
 	}
 }

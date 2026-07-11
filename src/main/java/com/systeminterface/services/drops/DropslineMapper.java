@@ -21,7 +21,7 @@ public final class DropslineMapper
 	}
 
 	/** Bumped when the Bucket producer changes; older cached tables auto-refetch (see {@link LootTables}). */
-	public static final int CURRENT_SCHEMA = 8;
+	public static final int CURRENT_SCHEMA = 9;
 
 	private static final Pattern MULTI_ROLL = Pattern.compile("^(\\d+)\\s*[\\u00d7x]\\s*(.+)$");
 
@@ -93,6 +93,9 @@ public final class DropslineMapper
 		e.rolls = intVal(dj, "Rolls");
 		e.dropValue = intVal(dj, "Drop Value");
 		e.region = str(dj, "League region");
+		// Bucket serializes this boolean as "" when true and omits it when false, so detect by
+		// presence — BucketRow.bool would mis-parse "" as false.
+		e.rareDropTable = row.str("rare_drop_table") != null;
 		return e;
 	}
 
