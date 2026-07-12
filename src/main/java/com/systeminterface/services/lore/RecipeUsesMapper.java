@@ -82,38 +82,6 @@ public final class RecipeUsesMapper
 		return new UseEntry(output, facility, skill, level, xp);
 	}
 
-	/**
-	 * The single most-direct use: lowest required level wins; entries without a skill rank after
-	 * every skilled entry; ties keep the first-listed. Null for no uses.
-	 */
-	public static UseEntry bestUse(List<UseEntry> uses)
-	{
-		if (uses == null || uses.isEmpty())
-		{
-			return null;
-		}
-		UseEntry best = null;
-		for (UseEntry u : uses)
-		{
-			if (u == null)
-			{
-				continue;
-			}
-			if (best == null)
-			{
-				best = u;
-				continue;
-			}
-			final boolean uSkilled = u.getLevel() != null;
-			final boolean bestSkilled = best.getLevel() != null;
-			if (uSkilled && (!bestSkilled || u.getLevel() < best.getLevel()))
-			{
-				best = u;
-			}
-		}
-		return best;
-	}
-
 	private static String strVal(JsonObject o, String key)
 	{
 		if (!o.has(key) || o.get(key).isJsonNull() || !o.get(key).isJsonPrimitive())

@@ -3,8 +3,6 @@ package com.systeminterface.services.lore;
 import com.google.gson.Gson;
 import com.google.gson.JsonObject;
 import com.systeminterface.services.wiki.BucketRow;
-import java.util.Arrays;
-import java.util.Collections;
 import org.junit.Test;
 
 import static org.junit.Assert.assertEquals;
@@ -70,18 +68,4 @@ public class RecipeUsesMapperTest
 		assertNull(RecipeUsesMapper.mapUse(null, GSON));
 	}
 
-	/** bestUse: lowest required level wins; skill-less entries rank after skilled; tiebreak = first. */
-	@Test
-	public void bestUse_selectionRule()
-	{
-		UseEntry lvl20 = new UseEntry("Sapphire", null, "Crafting", 20, 50);
-		UseEntry lvl5 = new UseEntry("Arrow shaft", null, "Fletching", 5, 5);
-		UseEntry noSkill = new UseEntry("Bonemeal", "Bone grinder", null, null, null);
-		assertEquals("Arrow shaft", RecipeUsesMapper.bestUse(Arrays.asList(lvl20, lvl5, noSkill)).getOutputName());
-		assertEquals("Bonemeal", RecipeUsesMapper.bestUse(Collections.singletonList(noSkill)).getOutputName());
-		UseEntry noSkill2 = new UseEntry("Blessed bones", "Altar", null, null, null);
-		assertEquals("Bonemeal", RecipeUsesMapper.bestUse(Arrays.asList(noSkill, noSkill2)).getOutputName());
-		assertNull(RecipeUsesMapper.bestUse(Collections.emptyList()));
-		assertNull(RecipeUsesMapper.bestUse(null));
-	}
 }
