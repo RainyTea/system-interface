@@ -724,4 +724,81 @@ public class SkillTrackerTest
 		tracker.resetAllTimeSkilling();
 		assertNull(tracker.getSkillState(Skill.WOODCUTTING));
 	}
+
+	private static final int LOCKPICK = 1523; // arbitrary item with no ResourceData mapping
+
+	/** Matcher truth table (spec §2): pocket token required; dodgy save = fail; stall = neither. */
+	@Test
+	public void thievingChat_matcherTruthTable()
+	{
+		tracker.thievingChat("You pick the man's pocket.", 1);          // success
+		tracker.thievingChat("You fail to pick the man's pocket.", 2);  // fail
+		tracker.thievingChat("Your dodgy necklace protects you. It has 9 charges left.", 3); // fail
+		tracker.thievingChat("You pick a herb.", 4);                    // neither
+		tracker.thievingChat("You pick the lock.", 5);                  // neither
+		tracker.thievingChat("You steal a cake.", 6);                   // stall: neither
+		assertEquals(2.0 / 3.0, tracker.getThievingFailRate(), 1e-9);
+	}
+
+	/** A fresh THIEVING signal credits an arbitrary (non-ResourceData) item. */
+	@Test
+	public void thievingSignal_creditsArbitraryLoot()
+	{
+		tracker.applyInventoryDiff(inv(), 0);
+		tracker.thievingChat("You pick the man's pocket.", 1);
+		tracker.applyInventoryDiff(inv(LOCKPICK, 1), 1);
+		assertEquals(1L, keptCount(Skill.THIEVING, LOCKPICK));
+	}
+
+	/** The THIEVING signal outranks the item's gathering mapping (fish-stall salmon is stolen). */
+	@Test
+	public void thievingSignal_winsOverResourceMapping()
+	{
+		tracker.applyInventoryDiff(inv(), 0);
+		tracker.thievingChat("You steal a fish.", 1);
+		tracker.applyInventoryDiff(inv(SALMON, 1), 1);
+		assertEquals(1L, keptCount(Skill.THIEVING, SALMON));
+		assertEquals(0L, keptCount(Skill.FISHING, SALMON));
+	}
+
+	/** No signal → arbitrary gains stay uncredited (GE/bank posture unchanged). */
+	@Test
+	public void noThievingSignal_arbitraryGainNotCredited()
+	{
+		tracker.applyInventoryDiff(inv(), 0);
+		tracker.applyInventoryDiff(inv(LOCKPICK, 1), 5);
+		assertEquals(0L, keptCount(Skill.THIEVING, LOCKPICK));
+	}
+
+	/** Fails mark the player as actively thieving but gate no loot (spec §2). */
+	@Test
+	public void thievingFail_refreshesActivityButGatesNothing()
+	{
+		tracker.applyInventoryDiff(inv(), 0);
+		tracker.thievingChat("You fail to pick the man's pocket.", 1);
+		tracker.applyInventoryDiff(inv(LOCKPICK, 1), 1);
+		assertEquals(0L, keptCount(Skill.THIEVING, LOCKPICK));
+		assertEquals(Skill.THIEVING, tracker.getActiveSkill());
+	}
+
+	/** Inventory-before-signal ordering: the landing THIEVING signal claims the buffered gain. */
+	@Test
+	public void bufferedGainFlushedByLateThievingSignal()
+	{
+		tracker.applyInventoryDiff(inv(), 0);
+		tracker.applyInventoryDiff(inv(LOCKPICK, 1), 3);
+		tracker.thievingChat("You pick the man's pocket.", 3);
+		assertEquals(1L, keptCount(Skill.THIEVING, LOCKPICK));
+	}
+
+	/** Regression: the existing recognition path is untouched for other skills. */
+	@Test
+	public void fishingRecognitionUnchangedByThievingBranch()
+	{
+		tracker.applyInventoryDiff(inv(), 0);
+		tracker.recordGatherSignal(Skill.FISHING, 1);
+		tracker.applyInventoryDiff(inv(SALMON, 1), 1);
+		assertEquals(1L, keptCount(Skill.FISHING, SALMON));
+		assertEquals(0L, keptCount(Skill.THIEVING, SALMON));
+	}
 }

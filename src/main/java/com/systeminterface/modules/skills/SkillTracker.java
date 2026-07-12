@@ -131,7 +131,7 @@ public final class SkillTracker
 	}
 
 	private static final Set<Skill> TRACKED_SKILLS = Collections.unmodifiableSet(
-		EnumSet.of(Skill.WOODCUTTING, Skill.MINING, Skill.FISHING)
+		EnumSet.of(Skill.WOODCUTTING, Skill.MINING, Skill.FISHING, Skill.THIEVING)
 	);
 
 	// How many idle ticks (no gathering animation) before we consider the skill
@@ -481,7 +481,12 @@ public final class SkillTracker
 
 	private void markActivity()
 	{
-		lastActivityTick = client.getTickCount();
+		markActivity(client.getTickCount());
+	}
+
+	private void markActivity(long tick)
+	{
+		lastActivityTick = tick;
 		lastActivityMillis = System.currentTimeMillis();
 	}
 
@@ -754,14 +759,16 @@ public final class SkillTracker
 				continue;
 			}
 
-			final Skill gatherSkill = gatherableSkillFor(itemId);
-			if (gatherSkill == null)
+			Skill gatherSkill = gatherableSkillFor(itemId);
+			if (signalFreshFor(Skill.THIEVING, tick))
 			{
-				continue;
+				// Stolen: a fresh Thieving signal outranks the item's gathering mapping — a
+				// fish-stall salmon is stolen, not fished (spec §3). Thieving loot is arbitrary
+				// items, so recognition is the signal itself inside its tight window.
+				gatherSkill = Skill.THIEVING;
 			}
 
-			// A fresh gather — credited only with a coincident action signal (provenance gate).
-			if (signalFreshFor(gatherSkill, tick))
+			if (gatherSkill != null && signalFreshFor(gatherSkill, tick))
 			{
 				creditGather(gatherSkill, itemId, gained);
 				changed = true;
@@ -769,12 +776,16 @@ public final class SkillTracker
 			}
 			else
 			{
-				// No signal: buffer in case the catch/XP lands later this tick (discarded by
-				// expireStalePending otherwise), and record it as an unexplained gain so a
-				// coincident despawn of my drop this tick can be recognised as a re-pickup.
+				// No fresh signal: buffer in case the catch/XP/steal signal lands later this
+				// tick (discarded by expireStalePending otherwise). Recognized resources also
+				// feed the drop-reconciliation map; arbitrary items can only be claimed by a
+				// late THIEVING signal (flushPendingGains) and never join reconciliation.
 				pendingGains.merge(itemId, gained, Integer::sum);
 				pendingGainsTick = tick;
-				resourceGainsThisTick.merge(itemId, gained, Integer::sum);
+				if (gatherSkill != null)
+				{
+					resourceGainsThisTick.merge(itemId, gained, Integer::sum);
+				}
 			}
 		}
 
@@ -911,7 +922,13 @@ public final class SkillTracker
 		while (it.hasNext())
 		{
 			final Map.Entry<Integer, Integer> e = it.next();
-			final Skill gatherSkill = gatherableSkillFor(e.getKey());
+			Skill gatherSkill = gatherableSkillFor(e.getKey());
+			if (signalSkill == Skill.THIEVING)
+			{
+				// The landing Thieving signal claims every buffered gain in its window —
+				// arbitrary stolen items have no ResourceData mapping to match on.
+				gatherSkill = Skill.THIEVING;
+			}
 			if (gatherSkill != null && gatherSkill == signalSkill)
 			{
 				creditGather(gatherSkill, e.getKey(), e.getValue());
@@ -1129,18 +1146,48 @@ public final class SkillTracker
 	private int thievingFails;
 	private int thievingSuccesses;
 
-	// KNOWN LIMITATION (record per AGENTS.md bug discipline — do NOT rely on this until tightened):
-	// startsWith("You pick") also matches non-Thieving lines (herb/flower/allotment/fruit picking,
-	// lock-picking), and "You fail to pick" can match lock-picking failures — both would skew the
-	// fail-rate. This is currently INERT because Thieving is never an active skill in this build
-	// (not in TRACKED_SKILLS, no activity detection), so the fail-rate row is unreachable. Tighten
-	// the match (e.g. require a "pocket" token) BEFORE a future slice makes Thieving an active skill.
-	/** Feeds the conservative Thieving fail-rate from explicit pickpocket chat lines. */
+	/**
+	 * Thieving chat: outcome counters (fail rate), activity, and gather signals. Pickpocket
+	 * matches require a "pocket" token so herb/flower/lock picking never skew the rate; a
+	 * dodgy-necklace save is a failed roll (the necklace just eats the stun), so it counts —
+	 * otherwise the rate silently flatters anyone wearing the meta item. Successes and stall
+	 * steals fire the gather signal that gates loot (spec §3); fails mark activity only —
+	 * there is no loot to gate off a fail message.
+	 */
 	public void onThievingChat(String message)
 	{
-		if (message == null) { return; }
-		if (message.startsWith("You fail to pick")) { thievingFails++; }
-		else if (message.startsWith("You pick")) { thievingSuccesses++; }
+		thievingChat(message, client != null ? client.getTickCount() : 0);
+	}
+
+	/** Package-private seam: {@link #onThievingChat} with an explicit tick for tests. */
+	void thievingChat(String message, long tick)
+	{
+		if (message == null)
+		{
+			return;
+		}
+		final boolean success = message.startsWith("You pick") && message.contains("pocket");
+		final boolean fail = (message.startsWith("You fail to pick") && message.contains("pocket"))
+			|| message.startsWith("Your dodgy necklace protects you");
+		final boolean stall = message.startsWith("You steal");
+		if (!success && !fail && !stall)
+		{
+			return;
+		}
+		setActiveSkill(Skill.THIEVING);
+		markActivity(tick);
+		if (success)
+		{
+			thievingSuccesses++;
+		}
+		else if (fail)
+		{
+			thievingFails++;
+		}
+		if (success || stall)
+		{
+			recordGatherSignal(Skill.THIEVING, tick);
+		}
 	}
 
 	/** Fails / (fails + successes) so far, or null with no attempts recorded. */
