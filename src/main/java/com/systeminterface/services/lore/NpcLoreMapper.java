@@ -53,6 +53,8 @@ public final class NpcLoreMapper
 	/**
 	 * Strips wiki links and markup: {@code [[A|B]]} → B, {@code [[A]]} → A, HTML tags,
 	 * {@code '''} bold marks and {@code &bull;} entities removed, whitespace collapsed.
+	 * Also drops leaked MediaWiki {@code UNIQ--...-QINU} strip markers and treats newline-{@code *}
+	 * bullets the same as {@code &bull;} spans, both becoming the {@code •} split marker.
 	 */
 	public static String stripWikitext(String s)
 	{
@@ -60,11 +62,15 @@ public final class NpcLoreMapper
 		{
 			return null;
 		}
-		String out = s.replaceAll("\\[\\[([^\\]|]*)\\|([^\\]]*)\\]\\]", "$2");
+		String out = s.replace("&amp;", "&"); // FIRST: un-double-encode so later entity decodes see the real entity
+		// MediaWiki strip markers (<nowiki> leftovers) leak through the bucket raw — drop them.
+		out = out.replaceAll("'?\"?`?UNIQ--[a-zA-Z]+-[0-9A-Fa-f]+-QINU`?\"?'?", "");
+		out = out.replaceAll("\\[\\[([^\\]|]*)\\|([^\\]]*)\\]\\]", "$2");
 		out = out.replaceAll("\\[\\[([^\\]]*)\\]\\]", "$1");
 		out = out.replaceAll("<[^>]*>", "");
-		out = out.replace("'''", "").replace("&bull;", "•"); // bullet survives as a split marker
-		out = out.replace("&nbsp;", " ").replace("&amp;", "&").replace("&quot;", "\"")
+		// Both bullet forms the wiki emits (&bull; spans and newline-* lists) become the split marker.
+		out = out.replace("'''", "").replace("&bull;", "•").replace("*", "•");
+		out = out.replace("&nbsp;", " ").replace("&quot;", "\"")
 			.replace("&#39;", "'").replace("&#91;", "[").replace("&#93;", "]");
 		out = out.replaceAll("\\s+", " ").trim();
 		return out.isEmpty() ? null : out;

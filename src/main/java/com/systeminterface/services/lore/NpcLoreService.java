@@ -35,6 +35,15 @@ public final class NpcLoreService
 	// negative result still short-circuits future fetches without producing a bogus disk entry.
 	private static final NpcLore NONE = new NpcLore(null, null, null, null);
 
+	/** Bumped when lore parsing changes; older cache files are discarded and refetched. */
+	private static final int CACHE_SCHEMA = 2;
+
+	private static final class CacheFile
+	{
+		int schema;
+		NpcLore lore;
+	}
+
 	private final BucketClient bucketClient;
 	private final Gson gson;
 	private final SystemInterfaceConfig config;
@@ -115,8 +124,12 @@ public final class NpcLoreService
 		}
 		try (Reader r = Files.newBufferedReader(file, StandardCharsets.UTF_8))
 		{
-			final NpcLore loaded = gson.fromJson(r, NpcLore.class);
-			lore.put(npcName, loaded == null ? NONE : loaded);
+			final CacheFile cf = gson.fromJson(r, CacheFile.class);
+			if (cf == null || cf.schema != CACHE_SCHEMA || cf.lore == null)
+			{
+				return false;
+			}
+			lore.put(npcName, cf.lore);
 			return true;
 		}
 		catch (IOException | RuntimeException e)
@@ -131,8 +144,11 @@ public final class NpcLoreService
 		try
 		{
 			Files.createDirectories(CACHE_DIR);
+			CacheFile cf = new CacheFile();
+			cf.schema = CACHE_SCHEMA;
+			cf.lore = l;
 			Files.write(CACHE_DIR.resolve(sanitize(npcName) + ".json"),
-				gson.toJson(l, NpcLore.class).getBytes(StandardCharsets.UTF_8));
+				gson.toJson(cf).getBytes(StandardCharsets.UTF_8));
 		}
 		catch (IOException e)
 		{

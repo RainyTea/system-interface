@@ -1,14 +1,12 @@
 package com.systeminterface.services.lore;
 
 import com.google.gson.Gson;
-import com.google.gson.reflect.TypeToken;
 import com.systeminterface.core.SystemInterfaceConfig;
 import com.systeminterface.services.wiki.BucketClient;
 import com.systeminterface.services.wiki.BucketQuery;
 import com.systeminterface.services.wiki.BucketRow;
 import java.io.IOException;
 import java.io.Reader;
-import java.lang.reflect.Type;
 import java.nio.charset.StandardCharsets;
 import java.nio.file.Files;
 import java.nio.file.Path;
@@ -35,7 +33,15 @@ public final class ItemUsesService
 {
 	private static final Path CACHE_DIR =
 		RuneLite.RUNELITE_DIR.toPath().resolve("system-interface").resolve("lore-cache").resolve("uses");
-	private static final Type LIST_TYPE = new TypeToken<List<UseEntry>>() {}.getType();
+
+	/** Bumped when lore parsing changes; older cache files are discarded and refetched. */
+	private static final int CACHE_SCHEMA = 2;
+
+	private static final class CacheFile
+	{
+		int schema;
+		List<UseEntry> uses;
+	}
 
 	private final BucketClient bucketClient;
 	private final Gson gson;
@@ -121,9 +127,12 @@ public final class ItemUsesService
 		}
 		try (Reader r = Files.newBufferedReader(file, StandardCharsets.UTF_8))
 		{
-			final List<UseEntry> loaded = gson.fromJson(r, LIST_TYPE);
-			uses.put(itemName, loaded == null
-				? Collections.emptyList() : Collections.unmodifiableList(loaded));
+			final CacheFile cf = gson.fromJson(r, CacheFile.class);
+			if (cf == null || cf.schema != CACHE_SCHEMA || cf.uses == null)
+			{
+				return false;
+			}
+			uses.put(itemName, Collections.unmodifiableList(cf.uses));
 			return true;
 		}
 		catch (IOException | RuntimeException e)
@@ -138,8 +147,11 @@ public final class ItemUsesService
 		try
 		{
 			Files.createDirectories(CACHE_DIR);
+			CacheFile cf = new CacheFile();
+			cf.schema = CACHE_SCHEMA;
+			cf.uses = result;
 			Files.write(CACHE_DIR.resolve(sanitize(itemName) + ".json"),
-				gson.toJson(result, LIST_TYPE).getBytes(StandardCharsets.UTF_8));
+				gson.toJson(cf).getBytes(StandardCharsets.UTF_8));
 		}
 		catch (IOException e)
 		{

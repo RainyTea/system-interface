@@ -82,4 +82,32 @@ public class NpcLoreMapperTest
 		NpcLore lore = NpcLoreMapper.map(row(r));
 		assertEquals("Lumbridge Castle", lore.getLocation());
 	}
+
+	/** Hans's quest field: leading MediaWiki strip marker + newline-* bullets (raw capture). */
+	@Test
+	public void map_questsWithStarBulletsAndUniqMarker()
+	{
+		String r = "{\"page_name\":\"Hans\",\"npc_name\":\"Hans\","
+			+ "\"quest\":\"'\\\"`UNIQ--nowiki-00000000-QINU`\\\"'\n* [[The Lost Tribe]]\n* [[Death to the Dorgeshuun]]\"}";
+		NpcLore lore = NpcLoreMapper.map(row(r));
+		assertEquals(Arrays.asList("The Lost Tribe", "Death to the Dorgeshuun"), lore.getQuests());
+	}
+
+	/** Banker tutor's location (raw capture): span soup + entities + parenthetical → clean prefix. */
+	@Test
+	public void map_locationFloorTemplateSoup()
+	{
+		String r = "{\"page_name\":\"Banker tutor\",\"npc_name\":\"Banker tutor\","
+			+ "\"location\":\"[[Lumbridge Castle]] (<span class=\\\"floornumber\\\">2<sup>nd</sup>&nbsp;floor"
+			+ "<sup>&#91;<span title=\\\"British convention\\\">UK</span>&#93;</sup></span> bank)\"}";
+		NpcLore lore = NpcLoreMapper.map(row(r));
+		assertEquals("Lumbridge Castle", lore.getLocation());
+	}
+
+	/** Double-encoded entities (&amp;nbsp;) decode fully — &amp; must decode first. */
+	@Test
+	public void stripWikitext_decodesDoubleEncodedEntities()
+	{
+		assertEquals("2nd floor", NpcLoreMapper.stripWikitext("2nd&amp;nbsp;floor"));
+	}
 }
