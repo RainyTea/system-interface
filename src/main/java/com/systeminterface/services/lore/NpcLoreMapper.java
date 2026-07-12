@@ -92,10 +92,33 @@ public final class NpcLoreMapper
 		return out.isEmpty() ? null : out;
 	}
 
-	/** Splits the {@code quest} field's bullet list into clean quest names. Never null. */
+	/**
+	 * Quest names from the raw {@code quest} field. Wiki quest lists always link their entries,
+	 * so links are extracted directly — immune to the bullet-format zoo seen in the wild
+	 * (&bull; spans, newline-* lists, HTML <ul><li>). Plain-text fields (no links) fall back to
+	 * the bullet-split pipeline. Never null.
+	 */
 	static List<String> questList(String questField)
 	{
 		final List<String> quests = new ArrayList<>();
+		if (questField == null)
+		{
+			return quests;
+		}
+		final java.util.regex.Matcher m = java.util.regex.Pattern
+			.compile("\\[\\[([^\\]|]*)(?:\\|([^\\]]*))?\\]\\]").matcher(questField);
+		while (m.find())
+		{
+			final String name = (m.group(2) != null ? m.group(2) : m.group(1)).trim();
+			if (!name.isEmpty())
+			{
+				quests.add(name);
+			}
+		}
+		if (!quests.isEmpty())
+		{
+			return quests;
+		}
 		final String stripped = stripWikitext(questField);
 		if (stripped == null)
 		{

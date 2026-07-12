@@ -35,7 +35,7 @@ public final class ItemUsesService
 		RuneLite.RUNELITE_DIR.toPath().resolve("system-interface").resolve("lore-cache").resolve("uses");
 
 	/** Bumped when lore parsing changes; older cache files are discarded and refetched. */
-	private static final int CACHE_SCHEMA = 3;
+	private static final int CACHE_SCHEMA = 4;
 
 	private static final class CacheFile
 	{

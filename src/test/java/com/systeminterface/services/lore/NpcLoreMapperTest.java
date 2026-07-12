@@ -121,4 +121,17 @@ public class NpcLoreMapperTest
 		NpcLore lore = NpcLoreMapper.map(row(r));
 		assertEquals(Arrays.asList("The Lost Tribe", "Death to the Dorgeshuun"), lore.getQuests());
 	}
+
+	/** Father Aereck (raw capture): quests as an HTML <ul><li> list of links — link extraction
+	 *  must split them (tag-stripping alone concatenates the names). */
+	@Test
+	public void map_questsAsHtmlListOfLinks()
+	{
+		String r = "{\"page_name\":\"Father Aereck\",\"npc_name\":\"Father Aereck\","
+			+ "\"quest\":\"<ul><li>[[The Restless Ghost]]</li><li>[[The Lost Tribe]]</li>"
+			+ "<li>[[Death to the Dorgeshuun]]</li></ul>\"}";
+		NpcLore lore = NpcLoreMapper.map(row(r));
+		assertEquals(Arrays.asList("The Restless Ghost", "The Lost Tribe", "Death to the Dorgeshuun"),
+			lore.getQuests());
+	}
 }
