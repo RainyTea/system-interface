@@ -7,6 +7,8 @@ import com.systeminterface.services.lookup.BossAliases;
 import com.systeminterface.services.lookup.ItemExamineService;
 import com.systeminterface.services.lookup.ItemMembership;
 import com.systeminterface.services.lore.ItemUsesService;
+import com.systeminterface.services.lore.NpcLore;
+import com.systeminterface.services.lore.NpcLoreService;
 import com.systeminterface.services.lore.RecipeUsesMapper;
 import com.systeminterface.services.lore.UseEntry;
 import com.systeminterface.services.portrait.PortraitService;
@@ -111,6 +113,7 @@ public class AnalyzeOverlay extends OverlayPanel implements MouseListener
 	private final SkillTracker skillTracker;
 	private final SystemInterfaceConfig config;
 	private final ItemUsesService itemUsesService;
+	private final NpcLoreService npcLoreService;
 
 	private enum Mode { NPC, PLAYER, ITEM, SELF, RESOURCE, OBJECT }
 
@@ -136,7 +139,7 @@ public class AnalyzeOverlay extends OverlayPanel implements MouseListener
 	public AnalyzeOverlay(Client client, StateTracker stateTracker, LootTables lootTables,
 		ItemManager itemManager, PortraitService portraitService, ItemMembership itemMembership,
 		ItemExamineService itemExamineService, SkillTracker skillTracker, SystemInterfaceConfig config,
-		ItemUsesService itemUsesService)
+		ItemUsesService itemUsesService, NpcLoreService npcLoreService)
 	{
 		this.client = client;
 		this.stateTracker = stateTracker;
@@ -148,6 +151,7 @@ public class AnalyzeOverlay extends OverlayPanel implements MouseListener
 		this.skillTracker = skillTracker;
 		this.config = config;
 		this.itemUsesService = itemUsesService;
+		this.npcLoreService = npcLoreService;
 		setPosition(OverlayPosition.TOP_CENTER);
 		setPriority(OverlayPriority.HIGH);
 	}
@@ -868,7 +872,11 @@ public class AnalyzeOverlay extends OverlayPanel implements MouseListener
 			kc > 0 ? OSRS_ORANGE : DIM);
 	}
 
-	/** Simplified layout for non-attackable NPCs: name, examine text, wiki info. */
+	/**
+	 * Lore card for a non-combat NPC: portrait → examine → Location → Quests, each section only
+	 * when the wiki has the data (smart sections — no filler rows). Lore arrives async from
+	 * NpcLoreService; until then the card shows whatever the drops table already knew.
+	 */
 	private void renderInformationalNpc(String name, DropTable table)
 	{
 		panelComponent.getChildren().add(TitleComponent.builder()
@@ -876,41 +884,55 @@ public class AnalyzeOverlay extends OverlayPanel implements MouseListener
 			.color(OSRS_GOLD)
 			.build());
 
-		if (table != null)
+		final NpcLore lore = config.showNpcLore() ? npcLoreService.get(name) : null;
+
+		final String imageFile = lore != null && lore.getImageFile() != null
+			? lore.getImageFile()
+			: (table != null ? table.getImageFile() : null);
+		final BufferedImage portrait = portraitService.get(name, imageFile);
+		if (portrait != null)
 		{
-			final BufferedImage portrait = portraitService.get(name, table.getImageFile());
-			if (portrait != null)
-			{
-				spacer();
-				panelComponent.getChildren().add(new ImageComponent(centerInPanel(portrait)));
-			}
+			spacer();
+			panelComponent.getChildren().add(new ImageComponent(centerInPanel(portrait)));
 		}
 
 		spacer();
-
 		addRow("Name", name, OSRS_ORANGE);
-		addRow("Type", "NPC", OSRS_PARCHMENT);
 
-		// --- Description ---
-		spacer();
-		panelComponent.getChildren().add(TitleComponent.builder()
-			.text("- Description -")
-			.color(OSRS_GOLD)
-			.build());
-
-		if (table != null && table.getExamine() != null)
+		final String examine = lore != null && lore.getExamine() != null
+			? lore.getExamine()
+			: (table != null ? table.getExamine() : null);
+		if (examine != null)
 		{
+			spacer();
+			panelComponent.getChildren().add(TitleComponent.builder()
+				.text("- Description -")
+				.color(OSRS_GOLD)
+				.build());
 			panelComponent.getChildren().add(LineComponent.builder()
-				.left(table.getExamine())
+				.left(examine)
 				.leftColor(OSRS_PARCHMENT)
 				.build());
 		}
-		else
+
+		if (lore != null && lore.getLocation() != null)
 		{
-			panelComponent.getChildren().add(LineComponent.builder()
-				.left("A non-combat NPC.")
-				.leftColor(DIM)
-				.build());
+			spacer();
+			addRow("Location", lore.getLocation(), OSRS_PARCHMENT);
+		}
+		if (lore != null && !lore.getQuests().isEmpty())
+		{
+			final java.util.List<String> quests = lore.getQuests();
+			final StringBuilder sb = new StringBuilder(quests.get(0));
+			if (quests.size() > 1)
+			{
+				sb.append(", ").append(quests.get(1));
+			}
+			if (quests.size() > 2)
+			{
+				sb.append("  +").append(quests.size() - 2).append(" more");
+			}
+			addRow("Quests", sb.toString(), OSRS_PARCHMENT);
 		}
 
 		if (table != null && table.isMembers())

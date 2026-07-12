@@ -127,6 +127,18 @@ public interface SystemInterfaceConfig extends Config
 	}
 
 	@ConfigItem(
+		position = 108,
+		keyName = "showNpcLore",
+		name = "NPC lore in Appraise",
+		description = "Show wiki lore (location, quests, portrait) on the non-combat NPC Appraise card.",
+		section = FEATURES
+	)
+	default boolean showNpcLore()
+	{
+		return true;
+	}
+
+	@ConfigItem(
 		position = 102,
 		keyName = "showValuableLoot",
 		name = "Valuable loot in Appraise",
