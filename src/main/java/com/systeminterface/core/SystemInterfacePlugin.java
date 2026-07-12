@@ -855,7 +855,7 @@ public class SystemInterfacePlugin extends Plugin
 					event.getMenuEntry()
 						.setOption(ANALYZE)
 						.setType(MenuAction.RUNELITE)
-						.onClick(e -> analyzeOverlay.analyzeItem(cleanName, id));
+						.onClick(e -> analyzeOverlay.analyzeItem(cleanName, id, 1));
 				}
 				else
 				{
@@ -864,7 +864,7 @@ public class SystemInterfacePlugin extends Plugin
 						.setTarget(target)
 						.setType(MenuAction.RUNELITE)
 						.setIdentifier(id)
-						.onClick(e -> analyzeOverlay.analyzeItem(cleanName, id));
+						.onClick(e -> analyzeOverlay.analyzeItem(cleanName, id, 1));
 				}
 			}
 			return;
@@ -881,12 +881,14 @@ public class SystemInterfacePlugin extends Plugin
 			{
 				final String target = event.getTarget();
 				final String cleanName = Text.removeTags(target);
+				final net.runelite.api.widgets.Widget w = event.getMenuEntry().getWidget();
+				final int qty = w != null ? Math.max(1, w.getItemQuantity()) : 1;
 				if (replace)
 				{
 					event.getMenuEntry()
 						.setOption(ANALYZE)
 						.setType(MenuAction.RUNELITE)
-						.onClick(e -> analyzeOverlay.analyzeItem(cleanName, id));
+						.onClick(e -> analyzeOverlay.analyzeItem(cleanName, id, qty));
 				}
 				else
 				{
@@ -895,7 +897,7 @@ public class SystemInterfacePlugin extends Plugin
 						.setTarget(target)
 						.setType(MenuAction.RUNELITE)
 						.setIdentifier(event.getIdentifier())
-						.onClick(e -> analyzeOverlay.analyzeItem(cleanName, id));
+						.onClick(e -> analyzeOverlay.analyzeItem(cleanName, id, qty));
 				}
 			}
 			return;

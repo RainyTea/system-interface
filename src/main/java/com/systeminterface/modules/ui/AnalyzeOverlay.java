@@ -6,6 +6,9 @@ import com.systeminterface.services.drops.LootTables;
 import com.systeminterface.services.lookup.BossAliases;
 import com.systeminterface.services.lookup.ItemExamineService;
 import com.systeminterface.services.lookup.ItemMembership;
+import com.systeminterface.services.lore.ItemUsesService;
+import com.systeminterface.services.lore.RecipeUsesMapper;
+import com.systeminterface.services.lore.UseEntry;
 import com.systeminterface.services.portrait.PortraitService;
 import com.systeminterface.common.model.BestiaryRank;
 import com.systeminterface.common.probability.LuckStatus;
@@ -107,6 +110,7 @@ public class AnalyzeOverlay extends OverlayPanel implements MouseListener
 	private final ItemExamineService itemExamineService;
 	private final SkillTracker skillTracker;
 	private final SystemInterfaceConfig config;
+	private final ItemUsesService itemUsesService;
 
 	private enum Mode { NPC, PLAYER, ITEM, SELF, RESOURCE, OBJECT }
 
@@ -114,6 +118,7 @@ public class AnalyzeOverlay extends OverlayPanel implements MouseListener
 	private volatile Mode mode = Mode.NPC;
 	private volatile int playerCombatLevel;
 	private volatile int itemId = -1;
+	private volatile int itemQuantity = 1;
 	private volatile String objectExamineText;
 
 	// Valuable-loot cache — recomputed only when the target or the player's
@@ -130,7 +135,8 @@ public class AnalyzeOverlay extends OverlayPanel implements MouseListener
 	@Inject
 	public AnalyzeOverlay(Client client, StateTracker stateTracker, LootTables lootTables,
 		ItemManager itemManager, PortraitService portraitService, ItemMembership itemMembership,
-		ItemExamineService itemExamineService, SkillTracker skillTracker, SystemInterfaceConfig config)
+		ItemExamineService itemExamineService, SkillTracker skillTracker, SystemInterfaceConfig config,
+		ItemUsesService itemUsesService)
 	{
 		this.client = client;
 		this.stateTracker = stateTracker;
@@ -141,6 +147,7 @@ public class AnalyzeOverlay extends OverlayPanel implements MouseListener
 		this.itemExamineService = itemExamineService;
 		this.skillTracker = skillTracker;
 		this.config = config;
+		this.itemUsesService = itemUsesService;
 		setPosition(OverlayPosition.TOP_CENTER);
 		setPriority(OverlayPriority.HIGH);
 	}
@@ -163,11 +170,12 @@ public class AnalyzeOverlay extends OverlayPanel implements MouseListener
 		this.playerCombatLevel = combatLevel;
 	}
 
-	public void analyzeItem(String name, int itemId)
+	public void analyzeItem(String name, int itemId, int quantity)
 	{
 		this.targetName = name;
 		this.mode = Mode.ITEM;
 		this.itemId = itemId;
+		this.itemQuantity = Math.max(1, quantity);
 	}
 
 	public void analyzeStatus(String rsn, int combatLevel)
@@ -428,10 +436,7 @@ public class AnalyzeOverlay extends OverlayPanel implements MouseListener
 		{
 			addRow("Rank", rank.getLabel(), rank.getColor());
 		}
-		if (appraisal.getSkillUse() != null)
-		{
-			addRow("Use", appraisal.getSkillUse(), OSRS_ORANGE);
-		}
+		renderUseLine(name, appraisal);
 
 		// --- Requirements ---
 		if (comp != null && (comp.isMembers() || equipable))
@@ -488,6 +493,13 @@ public class AnalyzeOverlay extends OverlayPanel implements MouseListener
 		addRow("Value", value > 0
 			? QuantityFormatter.quantityToStackSize(value) + " gp"
 			: "Untradeable", value > 0 ? OSRS_GOLD : DIM);
+
+		final int qty = this.itemQuantity;
+		if (qty > 1 && value > 0)
+		{
+			addRow("Stack", qty + " × " + QuantityFormatter.quantityToStackSize(value)
+				+ " = " + QuantityFormatter.quantityToStackSize((long) qty * value) + " gp", OSRS_GOLD);
+		}
 
 		if (comp != null)
 		{
@@ -581,6 +593,59 @@ public class AnalyzeOverlay extends OverlayPanel implements MouseListener
 
 	/** Green when the player already meets a skill requirement, orange when they don't. */
 	private static final Color MET = new Color(110, 200, 110);
+
+	/**
+	 * The compact data-driven Use line: best recipe this item is an ingredient of (lowest level
+	 * first), with a dim "+N more uses" when others exist; falls back to the ItemAppraisal
+	 * heuristic when recipe data is absent or the toggle is off. One line + one dim line max —
+	 * never a section (compact-OSRS decision, spec §1.2).
+	 */
+	private void renderUseLine(String name, ItemAppraisal appraisal)
+	{
+		if (config.showItemUses())
+		{
+			final java.util.List<UseEntry> uses = itemUsesService.get(name);
+			final UseEntry best = uses != null ? RecipeUsesMapper.bestUse(uses) : null;
+			if (best != null)
+			{
+				addRow("Use", formatUse(best), OSRS_ORANGE);
+				if (uses.size() > 1)
+				{
+					addRow("", "+" + (uses.size() - 1) + " more uses", DIM);
+				}
+				return;
+			}
+		}
+		if (appraisal.getSkillUse() != null)
+		{
+			addRow("Use", appraisal.getSkillUse(), OSRS_ORANGE);
+		}
+	}
+
+	/** "Crafting 20 → Sapphire (50 xp)" / "→ Dragon bonemeal — Bone grinder". */
+	private static String formatUse(UseEntry u)
+	{
+		final StringBuilder sb = new StringBuilder();
+		if (u.getSkill() != null)
+		{
+			sb.append(u.getSkill());
+			if (u.getLevel() != null)
+			{
+				sb.append(' ').append(u.getLevel());
+			}
+			sb.append(' ');
+		}
+		sb.append("→ ").append(u.getOutputName());
+		if (u.getSkill() != null && u.getXp() != null)
+		{
+			sb.append(" (").append(u.getXp()).append(" xp)");
+		}
+		else if (u.getFacility() != null)
+		{
+			sb.append(" — ").append(u.getFacility());
+		}
+		return sb.toString();
+	}
 
 	/**
 	 * Renders the "Refinement" section for an item that maps to curated skill data —

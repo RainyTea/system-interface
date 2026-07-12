@@ -114,6 +114,19 @@ public interface SystemInterfaceConfig extends Config
 	}
 
 	@ConfigItem(
+		position = 107,
+		keyName = "showItemUses",
+		name = "Item uses in Appraise",
+		description = "Show the data-driven Use line (best recipe this item is an ingredient of, "
+			+ "from the OSRS Wiki) on the item Appraise card. Off = the built-in heuristic only.",
+		section = FEATURES
+	)
+	default boolean showItemUses()
+	{
+		return true;
+	}
+
+	@ConfigItem(
 		position = 102,
 		keyName = "showValuableLoot",
 		name = "Valuable loot in Appraise",
