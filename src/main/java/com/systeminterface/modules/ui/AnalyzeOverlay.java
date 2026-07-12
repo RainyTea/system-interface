@@ -9,7 +9,6 @@ import com.systeminterface.services.lookup.ItemMembership;
 import com.systeminterface.services.lore.ItemUsesService;
 import com.systeminterface.services.lore.NpcLore;
 import com.systeminterface.services.lore.NpcLoreService;
-import com.systeminterface.services.lore.RecipeUsesMapper;
 import com.systeminterface.services.lore.UseEntry;
 import com.systeminterface.services.portrait.PortraitService;
 import com.systeminterface.common.model.BestiaryRank;
@@ -599,56 +598,46 @@ public class AnalyzeOverlay extends OverlayPanel implements MouseListener
 	private static final Color MET = new Color(110, 200, 110);
 
 	/**
-	 * The compact data-driven Use line: best recipe this item is an ingredient of (lowest level
-	 * first), with a dim "+N more uses" when others exist; falls back to the ItemAppraisal
-	 * heuristic when recipe data is absent or the toggle is off. One line + one dim line max —
-	 * never a section (compact-OSRS decision, spec §1.2).
+	 * The Use row: the ItemAppraisal heuristic FIRST (a tool's "Fishing tool" beats any niche
+	 * recipe — QA round-1 decision); when the heuristic is silent, the best skill-training
+	 * recipe (lowest level; skill-less recipes are noise and never shown). Arrowless two-line
+	 * format; no "+N more" count.
 	 */
 	private void renderUseLine(String name, ItemAppraisal appraisal)
 	{
-		if (config.showItemUses())
-		{
-			final java.util.List<UseEntry> uses = itemUsesService.get(name);
-			final UseEntry best = uses != null ? RecipeUsesMapper.bestUse(uses) : null;
-			if (best != null)
-			{
-				addRow("Use", formatUse(best), OSRS_ORANGE);
-				if (uses.size() > 1)
-				{
-					addRow("", "+" + (uses.size() - 1) + " more uses", DIM);
-				}
-				return;
-			}
-		}
 		if (appraisal.getSkillUse() != null)
 		{
 			addRow("Use", appraisal.getSkillUse(), OSRS_ORANGE);
+			return;
 		}
-	}
-
-	/** "Crafting 20 → Sapphire (50 xp)" / "→ Dragon bonemeal — Bone grinder". */
-	private static String formatUse(UseEntry u)
-	{
-		final StringBuilder sb = new StringBuilder();
-		if (u.getSkill() != null)
+		if (!config.showItemUses())
 		{
-			sb.append(u.getSkill());
-			if (u.getLevel() != null)
+			return;
+		}
+		final java.util.List<UseEntry> uses = itemUsesService.get(name);
+		if (uses == null)
+		{
+			return;
+		}
+		UseEntry best = null;
+		for (UseEntry u : uses)
+		{
+			if (u.getSkill() != null && (best == null
+				|| (u.getLevel() != null && (best.getLevel() == null || u.getLevel() < best.getLevel()))))
 			{
-				sb.append(' ').append(u.getLevel());
+				best = u;
 			}
-			sb.append(' ');
 		}
-		sb.append("→ ").append(u.getOutputName());
-		if (u.getSkill() != null && u.getXp() != null)
+		if (best == null)
 		{
-			sb.append(" (").append(u.getXp()).append(" xp)");
+			return;
 		}
-		else if (u.getFacility() != null)
+		addRow("Use", best.getSkill() + (best.getLevel() != null ? " " + best.getLevel() : ""), OSRS_ORANGE);
+		if (best.getOutputName() != null)
 		{
-			sb.append(" — ").append(u.getFacility());
+			addRow("", best.getOutputName()
+				+ (best.getXp() != null ? " (" + best.getXp() + " xp)" : ""), DIM);
 		}
-		return sb.toString();
 	}
 
 	/**
@@ -923,16 +912,16 @@ public class AnalyzeOverlay extends OverlayPanel implements MouseListener
 		if (lore != null && !lore.getQuests().isEmpty())
 		{
 			final java.util.List<String> quests = lore.getQuests();
-			final StringBuilder sb = new StringBuilder(quests.get(0));
+			spacer();
+			panelComponent.getChildren().add(LineComponent.builder()
+				.left("Quest:").leftColor(OSRS_GOLD).build());
+			panelComponent.getChildren().add(LineComponent.builder()
+				.left(quests.get(0)).leftColor(OSRS_PARCHMENT).build());
 			if (quests.size() > 1)
 			{
-				sb.append(", ").append(quests.get(1));
+				panelComponent.getChildren().add(LineComponent.builder()
+					.left("+" + (quests.size() - 1) + " more").leftColor(DIM).build());
 			}
-			if (quests.size() > 2)
-			{
-				sb.append("  +").append(quests.size() - 2).append(" more");
-			}
-			addRow("Quests", sb.toString(), OSRS_PARCHMENT);
 		}
 
 		if (table != null && table.isMembers())

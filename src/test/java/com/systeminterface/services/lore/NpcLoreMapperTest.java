@@ -65,4 +65,21 @@ public class NpcLoreMapperTest
 		assertEquals(generic, NpcLoreMapper.pickBest(Arrays.asList(generic), "Cook"));
 		assertNull(NpcLoreMapper.pickBest(null, "Cook"));
 	}
+
+	@Test
+	public void stripWikitext_decodesHtmlEntities()
+	{
+		assertEquals("2nd floor[UK] bank",
+			NpcLoreMapper.stripWikitext("2nd&nbsp;floor&#91;UK&#93; bank"));
+		assertEquals("Fish & chips", NpcLoreMapper.stripWikitext("Fish &amp; chips"));
+	}
+
+	@Test
+	public void map_locationTruncatesParenthetical()
+	{
+		String r = "{\"page_name\":\"Banker tutor\",\"npc_name\":\"Banker tutor\","
+			+ "\"location\":\"[[Lumbridge Castle]] (2nd&nbsp;floor&#91;UK&#93;3rd&nbsp;floor&#91;US&#93; bank)\"}";
+		NpcLore lore = NpcLoreMapper.map(row(r));
+		assertEquals("Lumbridge Castle", lore.getLocation());
+	}
 }

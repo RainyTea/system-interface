@@ -23,7 +23,7 @@ public final class NpcLoreMapper
 			return null;
 		}
 		final String examine = row.str("examine");
-		final String location = stripWikitext(row.str("location"));
+		final String location = truncateAtParen(stripWikitext(row.str("location")));
 		final List<String> quests = questList(row.str("quest"));
 		String image = row.str("image");
 		if (image != null && image.startsWith("File:"))
@@ -64,7 +64,22 @@ public final class NpcLoreMapper
 		out = out.replaceAll("\\[\\[([^\\]]*)\\]\\]", "$1");
 		out = out.replaceAll("<[^>]*>", "");
 		out = out.replace("'''", "").replace("&bull;", "•"); // bullet survives as a split marker
+		out = out.replace("&nbsp;", " ").replace("&amp;", "&").replace("&quot;", "\"")
+			.replace("&#39;", "'").replace("&#91;", "[").replace("&#93;", "]");
 		out = out.replaceAll("\\s+", " ").trim();
+		return out.isEmpty() ? null : out;
+	}
+
+	/** Drops a trailing parenthetical annotation ("(2nd floor... bank)") — secondary detail
+	 *  and the escape hatch for floor-numbering template junk the wiki emits raw. */
+	private static String truncateAtParen(String s)
+	{
+		if (s == null)
+		{
+			return null;
+		}
+		final int p = s.indexOf('(');
+		final String out = (p >= 0 ? s.substring(0, p) : s).trim();
 		return out.isEmpty() ? null : out;
 	}
 
