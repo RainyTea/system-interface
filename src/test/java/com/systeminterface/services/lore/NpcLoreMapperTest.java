@@ -110,4 +110,15 @@ public class NpcLoreMapperTest
 	{
 		assertEquals("2nd floor", NpcLoreMapper.stripWikitext("2nd&amp;nbsp;floor"));
 	}
+
+	/** Production strip markers are wrapped in invisible DEL () chars — they must not
+	 *  survive as a phantom first quest entry (field bug: Hans showed a blank quest line). */
+	@Test
+	public void map_questsWithDelWrappedUniqMarker()
+	{
+		String r = "{\"page_name\":\"Hans\",\"npc_name\":\"Hans\","
+			+ "\"quest\":\"\\u007F'\\\"`UNIQ--nowiki-00000000-QINU`\\\"'\\u007F\\n* [[The Lost Tribe]]\\n* [[Death to the Dorgeshuun]]\"}";
+		NpcLore lore = NpcLoreMapper.map(row(r));
+		assertEquals(Arrays.asList("The Lost Tribe", "Death to the Dorgeshuun"), lore.getQuests());
+	}
 }

@@ -36,7 +36,7 @@ public final class NpcLoreService
 	private static final NpcLore NONE = new NpcLore(null, null, null, null);
 
 	/** Bumped when lore parsing changes; older cache files are discarded and refetched. */
-	private static final int CACHE_SCHEMA = 2;
+	private static final int CACHE_SCHEMA = 3;
 
 	private static final class CacheFile
 	{

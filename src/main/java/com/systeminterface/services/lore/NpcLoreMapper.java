@@ -63,6 +63,9 @@ public final class NpcLoreMapper
 			return null;
 		}
 		String out = s.replace("&amp;", "&"); // FIRST: un-double-encode so later entity decodes see the real entity
+		// MediaWiki strip markers are wrapped in DEL (0x7f) control chars, which String.trim()
+		// does not remove — drop all ASCII control chars so no invisible residue survives.
+		out = out.replaceAll("[\\x00-\\x1f\\x7f]", " ");
 		// MediaWiki strip markers (<nowiki> leftovers) leak through the bucket raw — drop them.
 		out = out.replaceAll("'?\"?`?UNIQ--[a-zA-Z]+-[0-9A-Fa-f]+-QINU`?\"?'?", "");
 		out = out.replaceAll("\\[\\[([^\\]|]*)\\|([^\\]]*)\\]\\]", "$2");
