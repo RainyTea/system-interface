@@ -364,7 +364,8 @@ public class SystemInterfacePlugin extends Plugin
 			String name = npc.getName();
 			// Skilling precedence: fishing spots are NPCs. Skip the combat-select so fishing doesn't
 			// pop the Combat section open for a frame before the next tick's skilling clears it.
-			if (name != null && !skillTracker.isFishingSpot(npc.getId()))
+			if (name != null && !skillTracker.isFishingSpot(npc.getId())
+				&& !skillTracker.isThievingInteractionRecent(client.getTickCount()))
 			{
 				panel.setCurrentTarget(name);
 			}
@@ -568,6 +569,10 @@ public class SystemInterfacePlugin extends Plugin
 				if (method != null)
 				{
 					skillTracker.setActiveFishingMethod(method);
+				}
+				if ("Pickpocket".equals(event.getMenuOption()))
+				{
+					skillTracker.markThievingInteraction(client.getTickCount());
 				}
 			}
 		}

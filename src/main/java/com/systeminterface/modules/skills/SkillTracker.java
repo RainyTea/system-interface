@@ -182,6 +182,25 @@ public final class SkillTracker
 	/** Wall-clock time of the last gathering activity, so overlays can honour the auto-hide setting. */
 	private volatile long lastActivityMillis;
 
+	/** Tick of the most recent Pickpocket click / thieving chat — suppresses the combat-section
+	 *  auto-open for NPC pickpocket targets (mirrors the fishing-spot guard). */
+	private long lastThievingInteractionTick = Long.MIN_VALUE;
+	private static final long THIEVING_INTERACTION_WINDOW_TICKS = 2;
+
+	/** Records a Pickpocket interaction at {@code tick}. Client-free (testable). */
+	public void markThievingInteraction(long tick)
+	{
+		lastThievingInteractionTick = tick;
+	}
+
+	/** True when a Pickpocket interaction happened within the recent window of {@code tick}. */
+	public boolean isThievingInteractionRecent(long tick)
+	{
+		return lastThievingInteractionTick != Long.MIN_VALUE
+			&& tick >= lastThievingInteractionTick
+			&& tick - lastThievingInteractionTick <= THIEVING_INTERACTION_WINDOW_TICKS;
+	}
+
 	// Fishing context. Fishing spots are NPCs offering several fish; we track which spot is
 	// being fished (for Appraise).
 	private volatile int activeFishingSpotId = -1;
@@ -1193,6 +1212,7 @@ public final class SkillTracker
 		}
 		setActiveSkill(Skill.THIEVING);
 		markActivity(tick);
+		markThievingInteraction(tick);
 		if (success)
 		{
 			thievingSuccesses++;
@@ -1280,6 +1300,7 @@ public final class SkillTracker
 		pendingGainsTick = Long.MIN_VALUE;
 		lastGatherSignalSkill = null;
 		lastGatherSignalTick = Long.MIN_VALUE;
+		lastThievingInteractionTick = Long.MIN_VALUE;
 		lastXp.clear();
 		sessionStartXp.clear();
 		// Reset the activity clock so the in-game overlay doesn't linger / reappear on the

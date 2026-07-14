@@ -821,4 +821,22 @@ public class SkillTrackerTest
 		assertNotNull(SkillTracker.timeToNextLevelText(13_034_431, 50_000));
 		assertNull(SkillTracker.timeToNextLevelText(13_034_431, 0));       // no rate → null
 	}
+
+	@Test
+	public void thievingInteractionMarker_windowedRecency()
+	{
+		assertFalse(tracker.isThievingInteractionRecent(5));   // never marked
+		tracker.markThievingInteraction(5);
+		assertTrue(tracker.isThievingInteractionRecent(5));    // same tick
+		assertTrue(tracker.isThievingInteractionRecent(7));    // within window (2)
+		assertFalse(tracker.isThievingInteractionRecent(8));   // past window
+		assertFalse(tracker.isThievingInteractionRecent(4));   // before the mark (clock skew guard)
+	}
+
+	@Test
+	public void thievingChat_refreshesInteractionMarker()
+	{
+		tracker.thievingChat("You pick the man's pocket.", 10);
+		assertTrue(tracker.isThievingInteractionRecent(11));
+	}
 }
