@@ -93,7 +93,8 @@ public class SystemInterfacePanel extends PluginPanel
 		this.skilling = new SkillingSection(skillTracker, resourceData, itemManager,
 			collapseStateStore, configManager, config, heldItemCache,
 			() -> { activityFocus.manualSectionToggle(ActivityFocus.Mode.SKILLING); applyFocus(); },
-			() -> { activityFocus.pinSectionOpen(ActivityFocus.Mode.SKILLING); applyFocus(); });
+			() -> { activityFocus.pinSectionOpen(ActivityFocus.Mode.SKILLING); applyFocus(); },
+			itemNameCache);
 
 		final JPanel content = new JPanel();
 		content.setLayout(new DynamicGridLayout(0, 1, 0, 0));

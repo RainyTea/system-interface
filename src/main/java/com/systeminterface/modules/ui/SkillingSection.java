@@ -5,6 +5,7 @@ import com.systeminterface.modules.skills.PetDisplay;
 import com.systeminterface.modules.skills.ResourceData;
 import com.systeminterface.modules.skills.SkillTracker;
 import com.systeminterface.services.lookup.HeldItemCache;
+import com.systeminterface.services.lookup.ItemNameCache;
 import java.awt.BorderLayout;
 import java.awt.Color;
 import java.awt.Cursor;
@@ -72,6 +73,7 @@ public class SkillingSection extends JPanel
 	private final HeldItemCache heldItemCache;
 	private final Runnable onManualSectionToggle;
 	private final Runnable onContentEngaged;
+	private final ItemNameCache itemNameCache;
 
 	private final JLabel sectionHeaderLabel = new JLabel("Skilling", SwingConstants.CENTER);
 	private final JLabel sectionArrow = new JLabel();
@@ -115,7 +117,8 @@ public class SkillingSection extends JPanel
 		SystemInterfaceConfig config,
 		HeldItemCache heldItemCache,
 		Runnable onManualSectionToggle,
-		Runnable onContentEngaged)
+		Runnable onContentEngaged,
+		ItemNameCache itemNameCache)
 	{
 		super();
 		this.skillTracker = skillTracker;
@@ -127,6 +130,7 @@ public class SkillingSection extends JPanel
 		this.heldItemCache = heldItemCache;
 		this.onManualSectionToggle = onManualSectionToggle;
 		this.onContentEngaged = onContentEngaged;
+		this.itemNameCache = itemNameCache;
 
 		setLayout(new DynamicGridLayout(0, 1, 0, 0));
 		setBackground(ColorScheme.DARK_GRAY_COLOR);
@@ -292,7 +296,7 @@ public class SkillingSection extends JPanel
 			headerPanel.add(skillLabel);
 
 			ResourceData.SkillData skillData = resourceData.getSkillData(displaySkill);
-			int level = skillTracker.getCurrentLevel(displaySkill);
+			int level = skillTracker.getDisplayLevel(displaySkill);
 
 			headerPanel.add(statRow("Level", String.valueOf(level)));
 
@@ -310,10 +314,12 @@ public class SkillingSection extends JPanel
 
 			// Pet odds only — the accurate, formula-based rate. We don't show a dry streak or
 			// chance-seen: the plugin can't read true lifetime actions or pet ownership, so any
-			// such figure would just be misleading.
-			if (skillData != null && level > 0)
+			// such figure would just be misleading. Pet-odds formula is real-level (1-99) only —
+			// the display level above may be virtual (100-126) and must not feed the formula.
+			int realLevel = skillTracker.getCurrentLevel(displaySkill);
+			if (skillData != null && realLevel > 0)
 			{
-				headerPanel.add(statRow("Pet odds", PetDisplay.oddsText(skillData.getPetBaseChance(), level)));
+				headerPanel.add(statRow("Pet odds", PetDisplay.oddsText(skillData.getPetBaseChance(), realLevel)));
 			}
 		}
 
@@ -694,6 +700,11 @@ public class SkillingSection extends JPanel
 		if (rw != null && rw.getName() != null && !rw.getName().isEmpty())
 		{
 			return rw.getName();
+		}
+		final String cached = itemNameCache.name(itemId);
+		if (cached != null && !cached.isEmpty() && !cached.startsWith("Item "))
+		{
+			return cached;
 		}
 		return "Item " + itemId;
 	}

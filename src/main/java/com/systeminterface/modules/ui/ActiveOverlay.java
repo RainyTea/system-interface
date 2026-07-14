@@ -330,16 +330,25 @@ public class ActiveOverlay extends OverlayPanel
 			.build());
 
 		final ResourceData.SkillData skillData = skillTracker.getResourceData().getSkillData(active);
-		final int level = client.getRealSkillLevel(active);
+		final int level = skillTracker.getDisplayLevel(active);
 
 		// activity → source  (e.g. "Chopping → Yew tree", "Fishing → Lobster spot")
 		if (config.showActivitySource())
 		{
-			panelComponent.getChildren().add(LineComponent.builder()
-				.left(capitalize(active.getName()))
-				.right(sourceLabel(active))
-				.rightColor(ACCENT_SKILL)
-				.build());
+			final String source = sourceLabel(active);
+			if ("—".equals(source))
+			{
+				// No gathering node (e.g. Thieving): show the skill as the value, not a dangling dash.
+				panelComponent.getChildren().add(LineComponent.builder()
+					.left("Skill").right(capitalize(active.getName()))
+					.rightColor(ACCENT_SKILL).build());
+			}
+			else
+			{
+				panelComponent.getChildren().add(LineComponent.builder()
+					.left(capitalize(active.getName())).right(source)
+					.rightColor(ACCENT_SKILL).build());
+			}
 		}
 		if (config.showLevelRow())
 		{
@@ -366,9 +375,12 @@ public class ActiveOverlay extends OverlayPanel
 		}
 		if (config.showPetOddsRow() && skillData != null && level > 0)
 		{
+			// Pet odds formula is real-level (1-99) only — `level` above may be virtual
+			// (100-126), so use the real level here to keep the pet-odds formula unaffected.
+			final int realLevel = client.getRealSkillLevel(active);
 			panelComponent.getChildren().add(LineComponent.builder()
 				.left("Pet odds")
-				.right(PetDisplay.oddsText(skillData.getPetBaseChance(), level))
+				.right(PetDisplay.oddsText(skillData.getPetBaseChance(), realLevel))
 				.rightColor(ACCENT_SKILL)
 				.build());
 		}
@@ -443,7 +455,7 @@ public class ActiveOverlay extends OverlayPanel
 	/** A thin XP progress bar toward the next level (reuses the combat bar glyphs). */
 	private void buildXpBar(Skill active, int level, int width, boolean compact)
 	{
-		if (level <= 0 || level >= net.runelite.api.Experience.MAX_REAL_LEVEL)
+		if (level <= 0 || level >= net.runelite.api.Experience.MAX_VIRT_LEVEL)
 		{
 			return;
 		}

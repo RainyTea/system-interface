@@ -591,7 +591,39 @@ public final class SkillTracker
 
 	public int getCurrentLevel(Skill skill)
 	{
-		return client.getRealSkillLevel(skill);
+		return client.getRealSkillLevel(skill);   // unchanged — real level for mechanics/pet odds
+	}
+
+	/** Display level incl. virtual 100–126 (Level row / XP bar). */
+	public int getDisplayLevel(Skill skill)
+	{
+		return client == null ? 0 : displayLevelForXp(client.getSkillExperience(skill));
+	}
+
+	/** Level for total XP, up to the virtual cap {@link Experience#MAX_VIRT_LEVEL} (126). */
+	static int displayLevelForXp(int xp)
+	{
+		return Experience.getLevelForXp(xp);
+	}
+
+	/** Time-to-next-(virtual)-level text, or null at the virtual cap / with no rate. */
+	static String timeToNextLevelText(int xp, int xpHr)
+	{
+		final int level = Experience.getLevelForXp(xp);
+		if (level >= Experience.MAX_VIRT_LEVEL)
+		{
+			return null;
+		}
+		final int remaining = Experience.getXpForLevel(level + 1) - xp;
+		if (remaining <= 0 || xpHr <= 0)
+		{
+			return null;
+		}
+		final long seconds = Math.round((remaining / (double) xpHr) * 3600.0);
+		final long h = seconds / 3600;
+		final long m = (seconds % 3600) / 60;
+		final long s = seconds % 60;
+		return String.format("%d:%02d:%02d", h, m, s);
 	}
 
 	public void onAnimationChanged(int animationId)
@@ -626,26 +658,11 @@ public final class SkillTracker
 	 */
 	public String getTimeToNextLevel(Skill skill)
 	{
-		if (skill == null)
+		if (skill == null || client == null)
 		{
 			return null;
 		}
-		final int level = client.getRealSkillLevel(skill);
-		if (level >= Experience.MAX_REAL_LEVEL)
-		{
-			return null;
-		}
-		final int remaining = Experience.getXpForLevel(level + 1) - client.getSkillExperience(skill);
-		final int xpHr = getXpHr(skill);
-		if (remaining <= 0 || xpHr <= 0)
-		{
-			return null;
-		}
-		final long seconds = Math.round((remaining / (double) xpHr) * 3600.0);
-		final long h = seconds / 3600;
-		final long m = (seconds % 3600) / 60;
-		final long s = seconds % 60;
-		return String.format("%d:%02d:%02d", h, m, s);
+		return timeToNextLevelText(client.getSkillExperience(skill), getXpHr(skill));
 	}
 
 	public void onGameTick()

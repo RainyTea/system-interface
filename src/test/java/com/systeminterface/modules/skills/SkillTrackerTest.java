@@ -801,4 +801,24 @@ public class SkillTrackerTest
 		assertEquals(1L, keptCount(Skill.FISHING, SALMON));
 		assertEquals(0L, keptCount(Skill.THIEVING, SALMON));
 	}
+
+	/** Virtual level (up to 126) is derived from total XP, not capped at 99. */
+	@Test
+	public void displayLevelFromXp_supportsVirtualLevels()
+	{
+		// 13,034,431 = exactly level 99; 14,391,160 = level 100 threshold.
+		assertEquals(99, SkillTracker.displayLevelForXp(13_034_431));
+		assertEquals(100, SkillTracker.displayLevelForXp(14_391_160));
+		assertEquals(126, SkillTracker.displayLevelForXp(200_000_000));
+	}
+
+	/** Time-to-next-level is null only at the true virtual cap (126), not at 99. */
+	@Test
+	public void timeToNextLevel_nullOnlyAtVirtualCap()
+	{
+		assertNull(SkillTracker.timeToNextLevelText(200_000_000, 50_000)); // level 126 → null
+		// 13,034,431 = level 99 with headroom to 100 and a positive rate → non-null.
+		assertNotNull(SkillTracker.timeToNextLevelText(13_034_431, 50_000));
+		assertNull(SkillTracker.timeToNextLevelText(13_034_431, 0));       // no rate → null
+	}
 }
